@@ -15,7 +15,10 @@ common warnings
 executable concordia
     import:           warnings
     main-is:          Main.hs
-    other-modules:    KOI, Types, State, Setup, Static, Score, Play
+    other-modules:
+      KOI, Types, State, Setup, Static, Score, Play, Question,
+      Maps.Builder,
+      Maps.Italia
     default-extensions:
       TemplateHaskell,
       ImportQualifiedPost,

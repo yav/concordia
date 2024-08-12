@@ -89,8 +89,7 @@ setupBoard cfg =
       Just (tile : more) -> ( Map.insert tileType more tiles
                             , Map.insert cityId tile produce
                             )
-      -- Shouldn't happen, but of we run out of tiles we just make bricks.
-      _ -> (tiles, Map.insert cityId Brick produce)
+      _ -> (tiles, produce)
 
   addStartWorker pid bs =
     bagUnion (bagMap (pid :->) (cfgStartBoardWorkers cfg)) bs

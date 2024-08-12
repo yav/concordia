@@ -1,11 +1,12 @@
 module KOI (module I, Interact, Concordia(..)) where
 
 import Optics
-import Data.Aeson(ToJSON,FromJSON)
+import Data.Aeson(ToJSON)
 import GHC.Generics(Generic)
 import KOI.Interact hiding (Interact)
 import KOI.Interact qualified as I
 import State
+import Question
 
 data Concordia = Concordia
 type Interact = I.Interact Concordia
@@ -15,7 +16,7 @@ instance Component Concordia where
   type AppStateView Concordia = StateView
   type AppUpdate Concordia = Update
   type AppUpdateView Concordia = StateView
-  type AppInput Concordia = Input
+  type AppInput Concordia = Question
 
   doUpdate _ (SetState s) _ = s
 
@@ -34,6 +35,3 @@ data Update = SetState GameState
 data StateView = StateView
   deriving (Generic,ToJSON)
 
--- XXX
-data Input = Input
-  deriving (Show,Read,Eq,Ord,Generic,FromJSON,ToJSON)

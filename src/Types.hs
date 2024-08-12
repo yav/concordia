@@ -8,7 +8,7 @@ data ResourceCost = Resource Resource | Any
 data Worker   = Person | Ship
   deriving (Eq,Ord)
 
-data CityTile = A | B | C | D | E
+data CityTile = A | B | C | D | E | Capital
   deriving (Eq,Ord)
 
 data Action   = Architect | Senator | Prefect | Diplomat | Tribune
