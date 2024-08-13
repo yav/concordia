@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+.container {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  background-position: top left;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.component {
+  display: inline-block;
+  position: absolute;
+  z-index: 1;
+}
+
+.partial {
+  border: 5px solid red !important;
+}
+
+.controls {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  left: 30px;
+  padding-left: 5px;
+  width: 7em;
+  z-index: 2;
+  background-color: white;
+  border: 1px solid black;
+  padding: 0.5em;
+}
+
+.region {
+  width:  32px;
+  height: 32px;
+  border: 1px solid black;
+}
+
+input {
+  margin-bottom: 5px;
+  height: 2em;
+  width: 7em;
+  z-index: 2;
+}
+
+button {
+  z-index: 2;
+  width: 8em;
+  height: 2em;
+  margin-bottom: 5px;
+  margin-right: 5px;
+  cursor: pointer;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.city {
+  width: 22px;
+  height: 22px;
+  border: 5px solid black;
+  text-align: center;
+}
+
+.selected {
+  border-width: 10px;
+}
+
+.edge {
+  width:  32px;
+  height: 32px;
+}
+
+.Ship {
+  background-image: url("ship.svg");
+}
+
+.Person {
+  background-image: url("person.svg");
+}
+
+.highlight {
+  box-shadow: 0px 0px 10px white;
+  cursor: pointer;
+}
+
+</style>
+<script>
+let state = {
+  map: "Italia",
+  next_region: 0,
+  next_city: 0,
+  next_edge: 0,
+  region: {}, city: {}, edge: {},
+  loc: { region: {}, city: {}, edge: {} }
+}
+
+function get(ty,i) {
+  return document.getElementById(ty + "_" + i)
+}
+
+function newContainer() {
+  const dom = document.createElement("div")
+  dom.style.backgroundImage = "url(\"maps/" + state.map + ".jpg\")"
+
+  dom.setAttribute("id","container")
+  dom.classList.add("container")
+  dom.addEventListener("dragover",(ev) => ev.preventDefault())
+  dom.addEventListener("drop",(ev) => {
+    ev.preventDefault()
+    const me = dom.getBoundingClientRect()
+    const [id,x,y,ty] = JSON.parse(ev.dataTransfer.getData("application/json"))
+    const el = get(ty,id)
+    const new_left = ev.clientX - me.x - x
+    const new_top  =  ev.clientY - me.y - y
+    el.style.left = new_left + 'px'
+    el.style.top = new_top + 'px'
+    state.loc[ty][id] = [ new_left, new_top ]
+  })
+  document.getElementById("body").appendChild(dom)
+}
+
+function draggable(id,ty,dom) {
+  dom.addEventListener("dragstart",(ev) => {
+    ev.dataTransfer.setData("application/json",
+      JSON.stringify([ id, ev.offsetX, ev.offsetY, ty ]))
+  })
+  dom.setAttribute("draggable","true")
+}
+
+let question = null
+
+function ask(ty,f) {
+  question = { type: ty, fun: f }
+  for (const i in state[ty]) get(ty,i).classList.add("highlight")
+}
+
+function clearQuestion(ty) {
+  question = null
+  for (const i in state[ty]) {
+    get(ty,i).classList.remove("highlight")
+  }
+}
+
+
+function newComponent(id,ty) {
+  const dom = document.createElement("div")
+  dom.setAttribute("id", ty + "_" + id)
+  dom.classList.add("component")
+  dom.classList.add(ty)
+  dom.style.position = "absolute"
+  draggable(id,ty,dom)
+  const controls = document.createElement("div")
+  controls.classList.add("controls")
+  controls.style.display = "none"
+  let inMenu = false
+  let timeout = null
+  dom.addEventListener("mouseenter",() => {
+    if (question === null) {
+      const [x,y] = state.loc[ty][id]
+      controls.style.left = x + 34 + "px"
+      controls.style.top = y + "px"
+      controls.style.display = "inline-block"
+    }
+  })
+  dom.addEventListener("mouseleave",() => {
+    timeout = setTimeout(() => {
+      if (!inMenu) controls.style.display = "none"
+    }, 500)
+  })
+  controls.addEventListener("mouseenter",() => {
+    inMenu = true
+  })
+  controls.addEventListener("mouseleave",() => {
+    clearTimeout(timeout)
+    controls.style.display = "none"
+    inMenu = false
+  })
+  dom.addEventListener("click",() => {
+    if (question === null || question.type !== ty) return
+    question.fun(id)
+    clearQuestion(ty)
+  })
+
+  const loc = state.loc[ty][id]
+  if (loc === undefined) {
+    const l = state.loc[ty][id - 1]
+    state.loc[ty][id] = l === undefined? [0,0] : [l[0] + 32, l[1]]
+  }
+  const [x,y] = state.loc[ty][id]
+  dom.style.left = x + "px"
+  dom.style.top = y + "px"
+
+  const cont = document.getElementById("container")
+  cont.appendChild(dom)
+  cont.appendChild(controls)
+  return [dom,controls]
+}
+
+function newRegion(exist) {
+  const id = exist === undefined? state.next_region++ : exist
+  const [dom,controls] = newComponent(id, "region")
+  dom.setAttribute("id", "region_" + id)
+
+  function updateColor(color) {
+    dom.style.backgroundColor = color
+    state.region[id] = color
+    for (const i in state.city) {
+      const c = state.city[i]
+      if (c.cityRegion !== id) continue
+      get("city", i).style.backgroundColor = color
+    }
+  }
+  if (exist === undefined) {
+    updateColor("#f00")
+  } else {
+    dom.style.backgroundColor = state.region[id]
+  }
+  const colorEdit = document.createElement("input")
+  colorEdit.setAttribute("title", "Change color.")
+  colorEdit.addEventListener("keydown",(ev) => {
+    if (ev.key === "Enter") updateColor(colorEdit.value)
+  })
+  controls.appendChild(colorEdit)
+
+  const button = document.createElement("button")
+  button.setAttribute("title", "Add a new city to this region.")
+  button.style.backgroundImage = "url(\"city.svg\")"
+  button.addEventListener("click", () => newCity({ cityTile: "A", cityRegion: id }))
+  controls.appendChild(button)
+}
+
+function newCity(info, exist) {
+  const id = exist === undefined? state.next_city++ : exist
+  const [dom,controls] = newComponent(id, "city")
+
+  function update(newInfo) {
+    state.city[id] = newInfo
+    dom.textContent = newInfo.cityTile
+    dom.style.backgroundColor = state.region[newInfo.cityRegion]
+  }
+  update(info)
+  function updateLetter(l) { update({ ...state.city[id], cityTile: l }) }
+  function updateRegion(r) { update({ ...state.city[id], cityRegion: r }) }
+
+
+  const letter = document.createElement("input")
+  letter.setAttribute("title", "Change setup letter.")
+  letter.addEventListener("keydown",(ev) => {
+    if (ev.key === "Enter") updateLetter(letter.value)
+  })
+  controls.appendChild(letter)
+
+  const button = document.createElement("button")
+  button.textContent = "Change Region"
+  button.addEventListener("click", () => ask("region", updateRegion))
+  controls.appendChild(button)
+
+  const makeLand = document.createElement("button")
+  makeLand.setAttribute("title", "Make a new land path.")
+  makeLand.classList.add("Person")
+  makeLand.addEventListener("click", () => newEdge("Person", id))
+  controls.appendChild(makeLand)
+
+  const makeWater = document.createElement("button")
+  makeWater.setAttribute("title", "Make a new water route.")
+  makeWater.classList.add("Ship")
+  makeWater.addEventListener("click", () => newEdge("Ship", id))
+  controls.appendChild(makeWater)
+}
+
+function newEdge(ty, from, to, exist) {
+  const id = exist === undefined? state.next_edge++ : exist
+  const [dom,controls] = newComponent(id, "edge")
+  dom.classList.add(ty)
+
+
+  state.edge[id] = { pathWorker: ty,
+                     pathCanStop: true,
+                     pathFrom: from,
+                     pathTo: to === undefined? from : to }
+  if (state.edge[id].pathFrom === state.edge[id].pathTo) {
+    dom.classList.add("partial")
+  }
+  function update(what) {
+    return (c) => {
+      state.edge[id][what] = c
+      if (state.edge[id].pathFrom === state.edge[id].pathTo) {
+        dom.classList.add("partial")
+      } else {
+        dom.classList.remove("partial")
+      }
+    }
+  }
+
+  dom.addEventListener("mouseenter",() => {
+    get("city",state.edge[id].pathFrom).classList.add("selected")
+    get("city",state.edge[id].pathTo).classList.add("selected")
+  })
+  dom.addEventListener("mouseleave",() => {
+    get("city",state.edge[id].pathFrom).classList.remove("selected")
+    get("city",state.edge[id].pathTo).classList.remove("selected")
+  })
+
+  const changeFrom = document.createElement("button")
+  changeFrom.textContent = "Change City 1"
+  changeFrom.addEventListener("click", () => ask("city", update("pathFrom")))
+  controls.appendChild(changeFrom)
+
+  const changeTo = document.createElement("button")
+  changeTo.textContent = "Change City 2"
+  changeTo.addEventListener("click", () => ask("city", update("pathTo")))
+  controls.appendChild(changeTo)
+}
+
+function download() {
+  const data = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state,null,2))
+  const button = document.createElement('a')
+  button.setAttribute("href", data)
+  button.setAttribute("download", state.map + ".json")
+  document.body.appendChild(button)
+  button.click()
+  button.remove()
+}
+
+function setupLoad() {
+  const dom = document.getElementById("load")
+  dom.addEventListener("change",() => {
+    if (dom.files.length === 1) {
+      const file = dom.files[0]
+      const reader = new FileReader()
+      reader.addEventListener("load", () => {
+        state = JSON.parse(reader.result)
+        document.getElementById("container").remove()
+        newContainer()
+        for (const i in state.region) {
+          newRegion(i)
+        }
+        for (const i in state.city) {
+          const city = state.city[i]
+          newCity(city,i)
+        }
+        for (const i in state.edge) {
+          const edge = state.edge[i]
+          newEdge(edge.pathWorker, edge.pathFrom, edge.pathTo, i)
+        }
+
+      })
+      reader.readAsText(file)
+    }
+  })
+}
+
+function setupMap() {
+  const dom = document.getElementById("map")
+  dom.addEventListener("change",() => {
+    state.map = dom.value
+    const cont = document.getElementById("container")
+    cont.style.backgroundImage = "url(\"maps/" + dom.value + ".jpg\")"
+  })
+}
+
+</script>
+</head>
+<body id="body">
+<div>
+<button onclick="newRegion()">New Region</button>
+<select id="map">
+  <option selected value="Italia">Italia</option>
+  <option value="Byzantium">Byzantium</option>
+</select>
+<input style="float:right" type="file" id="load" accept=".json" />
+<button style="float:right" onclick="download()">Save</button>
+</div>
+
+<script>
+setupLoad()
+setupMap()
+newContainer()
+</script>
+</body>
+</html>
