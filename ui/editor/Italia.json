@@ -1,8 +1,8 @@
 {
     "map": "Italia",
     "next_region": 11,
-    "next_city": 25,
-    "next_edge": 56,
+    "next_city": 26,
+    "next_edge": 63,
     "region": {
       "0": "#33FF93",
       "1": "#9B7128",
@@ -116,6 +116,10 @@
       "24": {
         "cityTile": "C",
         "cityRegion": 10
+      },
+      "25": {
+        "cityTile": "X",
+        "cityRegion": "7"
       }
     },
     "edge": {
@@ -454,6 +458,48 @@
         "pathCanStop": true,
         "pathFrom": 5,
         "pathTo": 6
+      },
+      "56": {
+        "pathWorker": "Person",
+        "pathCanStop": true,
+        "pathFrom": "10",
+        "pathTo": 25
+      },
+      "57": {
+        "pathWorker": "Person",
+        "pathCanStop": true,
+        "pathFrom": "12",
+        "pathTo": 25
+      },
+      "58": {
+        "pathWorker": "Person",
+        "pathCanStop": true,
+        "pathFrom": "16",
+        "pathTo": 25
+      },
+      "59": {
+        "pathWorker": "Ship",
+        "pathCanStop": true,
+        "pathFrom": "10",
+        "pathTo": 25
+      },
+      "60": {
+        "pathWorker": "Ship",
+        "pathCanStop": true,
+        "pathFrom": "17",
+        "pathTo": 25
+      },
+      "61": {
+        "pathWorker": "Ship",
+        "pathCanStop": true,
+        "pathFrom": "15",
+        "pathTo": 25
+      },
+      "62": {
+        "pathWorker": "Ship",
+        "pathCanStop": true,
+        "pathFrom": "23",
+        "pathTo": 25
       }
     },
     "loc": {
@@ -603,6 +649,10 @@
         "24": [
           1334,
           838.3359375
+        ],
+        "25": [
+          735,
+          662.3359375
         ]
       },
       "edge": {
@@ -829,8 +879,35 @@
         "55": [
           316.5,
           815.3359375
+        ],
+        "56": [
+          667,
+          648.3359375
+        ],
+        "57": [
+          731,
+          586.3359375
+        ],
+        "58": [
+          798,
+          626.3359375
+        ],
+        "59": [
+          676,
+          727.3359375
+        ],
+        "60": [
+          883,
+          667.3359375
+        ],
+        "61": [
+          722,
+          799.3359375
+        ],
+        "62": [
+          893,
+          794.3359375
         ]
       }
     }
   }
-  
