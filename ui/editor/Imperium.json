@@ -1,0 +1,1118 @@
+{
+  "map": "Imperium",
+  "next_region": 12,
+  "next_city": 31,
+  "next_edge": 79,
+  "region": {
+    "0": "#A70E0E",
+    "1": "#62458B",
+    "2": "#DEBB37",
+    "3": "#5F7D23",
+    "4": "#9ECF3B",
+    "5": "#9A7B0A",
+    "6": "#F1E11D",
+    "7": "#2C68B4",
+    "8": "#DD9A24",
+    "9": "#CD8DEE",
+    "10": "#BFF5AE",
+    "11": "#FF9483"
+  },
+  "city": {
+    "0": {
+      "cityTile": "A",
+      "cityRegion": 0
+    },
+    "1": {
+      "cityTile": "A",
+      "cityRegion": 0
+    },
+    "2": {
+      "cityTile": "B",
+      "cityRegion": 1
+    },
+    "3": {
+      "cityTile": "B",
+      "cityRegion": 1
+    },
+    "4": {
+      "cityTile": "B",
+      "cityRegion": 1
+    },
+    "5": {
+      "cityTile": "B",
+      "cityRegion": 2
+    },
+    "6": {
+      "cityTile": "B",
+      "cityRegion": 2
+    },
+    "7": {
+      "cityTile": "B",
+      "cityRegion": 2
+    },
+    "8": {
+      "cityTile": "A",
+      "cityRegion": 3
+    },
+    "9": {
+      "cityTile": "A",
+      "cityRegion": 3
+    },
+    "10": {
+      "cityTile": "D",
+      "cityRegion": 4
+    },
+    "11": {
+      "cityTile": "D",
+      "cityRegion": 4
+    },
+    "12": {
+      "cityTile": "X",
+      "cityRegion": 4
+    },
+    "13": {
+      "cityTile": "D",
+      "cityRegion": 4
+    },
+    "14": {
+      "cityTile": "C",
+      "cityRegion": 5
+    },
+    "15": {
+      "cityTile": "C",
+      "cityRegion": 5
+    },
+    "16": {
+      "cityTile": "C",
+      "cityRegion": 5
+    },
+    "17": {
+      "cityTile": "A",
+      "cityRegion": 6
+    },
+    "18": {
+      "cityTile": "A",
+      "cityRegion": 6
+    },
+    "19": {
+      "cityTile": "A",
+      "cityRegion": 6
+    },
+    "20": {
+      "cityTile": "D",
+      "cityRegion": 7
+    },
+    "21": {
+      "cityTile": "D",
+      "cityRegion": 7
+    },
+    "22": {
+      "cityTile": "B",
+      "cityRegion": 8
+    },
+    "23": {
+      "cityTile": "B",
+      "cityRegion": 8
+    },
+    "24": {
+      "cityTile": "C",
+      "cityRegion": 9
+    },
+    "25": {
+      "cityTile": "C",
+      "cityRegion": 9
+    },
+    "26": {
+      "cityTile": "C",
+      "cityRegion": 10
+    },
+    "27": {
+      "cityTile": "C",
+      "cityRegion": 10
+    },
+    "28": {
+      "cityTile": "C",
+      "cityRegion": 11
+    },
+    "29": {
+      "cityTile": "C",
+      "cityRegion": 11
+    },
+    "30": {
+      "cityTile": "C",
+      "cityRegion": 11
+    }
+  },
+  "edge": {
+    "0": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 0,
+      "pathTo": 1
+    },
+    "1": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 1,
+      "pathTo": 3
+    },
+    "2": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 1,
+      "pathTo": 0
+    },
+    "3": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 1,
+      "pathTo": 8
+    },
+    "4": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 0,
+      "pathTo": 5
+    },
+    "5": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 0,
+      "pathTo": 2
+    },
+    "6": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 5,
+      "pathTo": 2
+    },
+    "7": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 5,
+      "pathTo": 2
+    },
+    "8": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 5,
+      "pathTo": 7
+    },
+    "9": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 5,
+      "pathTo": 6
+    },
+    "10": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 2,
+      "pathTo": 4
+    },
+    "11": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 3,
+      "pathTo": 2
+    },
+    "12": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 3,
+      "pathTo": 8
+    },
+    "13": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 3,
+      "pathTo": 4
+    },
+    "14": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 4,
+      "pathTo": 7
+    },
+    "15": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 7,
+      "pathTo": 6
+    },
+    "16": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 7,
+      "pathTo": 23
+    },
+    "17": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 6,
+      "pathTo": 23
+    },
+    "18": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 6,
+      "pathTo": 23
+    },
+    "19": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 6,
+      "pathTo": 5
+    },
+    "20": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 4,
+      "pathTo": 7
+    },
+    "21": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 7,
+      "pathTo": 22
+    },
+    "22": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 7,
+      "pathTo": 23
+    },
+    "23": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 23,
+      "pathTo": 22
+    },
+    "24": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 22,
+      "pathTo": 4
+    },
+    "25": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 22,
+      "pathTo": 23
+    },
+    "26": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 22,
+      "pathTo": 24
+    },
+    "27": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 22,
+      "pathTo": 24
+    },
+    "28": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 24,
+      "pathTo": 13
+    },
+    "29": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 24,
+      "pathTo": 25
+    },
+    "30": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 25,
+      "pathTo": 13
+    },
+    "31": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 25,
+      "pathTo": 21
+    },
+    "32": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 21,
+      "pathTo": 13
+    },
+    "33": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 13,
+      "pathTo": 20
+    },
+    "34": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 13,
+      "pathTo": 12
+    },
+    "35": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 13,
+      "pathTo": 12
+    },
+    "36": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 13,
+      "pathTo": 22
+    },
+    "37": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 22,
+      "pathTo": 12
+    },
+    "38": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 4,
+      "pathTo": 12
+    },
+    "39": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 4,
+      "pathTo": 10
+    },
+    "40": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 10,
+      "pathTo": 8
+    },
+    "41": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 10,
+      "pathTo": 11
+    },
+    "42": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 10,
+      "pathTo": 12
+    },
+    "43": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 11,
+      "pathTo": 12
+    },
+    "44": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 11,
+      "pathTo": 20
+    },
+    "45": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 11,
+      "pathTo": 18
+    },
+    "46": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 11,
+      "pathTo": 9
+    },
+    "47": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 9,
+      "pathTo": 18
+    },
+    "48": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 18,
+      "pathTo": 17
+    },
+    "49": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 17,
+      "pathTo": 19
+    },
+    "50": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 19,
+      "pathTo": 18
+    },
+    "51": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 19,
+      "pathTo": 14
+    },
+    "52": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 19,
+      "pathTo": 14
+    },
+    "53": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 14,
+      "pathTo": 15
+    },
+    "54": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 15,
+      "pathTo": 19
+    },
+    "55": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 15,
+      "pathTo": 14
+    },
+    "56": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 14,
+      "pathTo": 16
+    },
+    "57": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 14,
+      "pathTo": 21
+    },
+    "58": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 14,
+      "pathTo": 20
+    },
+    "59": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 20,
+      "pathTo": 18
+    },
+    "60": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 20,
+      "pathTo": 21
+    },
+    "61": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 21,
+      "pathTo": 16
+    },
+    "62": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 21,
+      "pathTo": 28
+    },
+    "63": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 16,
+      "pathTo": 28
+    },
+    "64": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 16,
+      "pathTo": 26
+    },
+    "65": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 16,
+      "pathTo": 26
+    },
+    "66": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 26,
+      "pathTo": 15
+    },
+    "67": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 26,
+      "pathTo": 27
+    },
+    "68": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 26,
+      "pathTo": 27
+    },
+    "69": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 27,
+      "pathTo": 28
+    },
+    "70": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 28,
+      "pathTo": 27
+    },
+    "71": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 29,
+      "pathTo": 27
+    },
+    "72": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 29,
+      "pathTo": 30
+    },
+    "73": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 28,
+      "pathTo": 30
+    },
+    "74": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 28,
+      "pathTo": 25
+    },
+    "75": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 25,
+      "pathTo": 30
+    },
+    "76": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 25,
+      "pathTo": 24
+    },
+    "77": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 8,
+      "pathTo": 9
+    },
+    "78": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 25,
+      "pathTo": 28
+    }
+  },
+  "loc": {
+    "region": {
+      "0": [
+        80,
+        86.3359375
+      ],
+      "1": [
+        80,
+        145.3359375
+      ],
+      "2": [
+        79,
+        200.3359375
+      ],
+      "3": [
+        214,
+        82.3359375
+      ],
+      "4": [
+        214,
+        141.3359375
+      ],
+      "5": [
+        478,
+        81.8359375
+      ],
+      "6": [
+        348,
+        85.3359375
+      ],
+      "7": [
+        346,
+        143.8359375
+      ],
+      "8": [
+        216,
+        201.3359375
+      ],
+      "9": [
+        349,
+        201.8359375
+      ],
+      "10": [
+        478,
+        141.8359375
+      ],
+      "11": [
+        477,
+        200.3359375
+      ]
+    },
+    "city": {
+      "0": [
+        235,
+        355.3359375
+      ],
+      "1": [
+        318,
+        308.3359375
+      ],
+      "2": [
+        341,
+        534.3359375
+      ],
+      "3": [
+        394,
+        395.3359375
+      ],
+      "4": [
+        495,
+        566.3359375
+      ],
+      "5": [
+        160,
+        585.3359375
+      ],
+      "6": [
+        156,
+        741.3359375
+      ],
+      "7": [
+        386,
+        730.3359375
+      ],
+      "8": [
+        507,
+        304.3359375
+      ],
+      "9": [
+        721,
+        323.3359375
+      ],
+      "10": [
+        573,
+        473.3359375
+      ],
+      "11": [
+        705,
+        446.3359375
+      ],
+      "12": [
+        698,
+        585.3359375
+      ],
+      "13": [
+        807,
+        707.3359375
+      ],
+      "14": [
+        1119,
+        519.8359375
+      ],
+      "15": [
+        1291,
+        468.8359375
+      ],
+      "16": [
+        1202,
+        651.8359375
+      ],
+      "17": [
+        950,
+        332.3359375
+      ],
+      "18": [
+        867,
+        423.3359375
+      ],
+      "19": [
+        1055,
+        411.3359375
+      ],
+      "20": [
+        883,
+        562.8359375
+      ],
+      "21": [
+        1019,
+        659.8359375
+      ],
+      "22": [
+        663,
+        765.3359375
+      ],
+      "23": [
+        321,
+        881.8359375
+      ],
+      "24": [
+        800,
+        904.8359375
+      ],
+      "25": [
+        986,
+        869.8359375
+      ],
+      "26": [
+        1370,
+        652.8359375
+      ],
+      "27": [
+        1347,
+        782.8359375
+      ],
+      "28": [
+        1200,
+        854.8359375
+      ],
+      "29": [
+        1382,
+        901.8359375
+      ],
+      "30": [
+        1281,
+        943.8359375
+      ]
+    },
+    "edge": {
+      "0": [
+        265,
+        302.3359375
+      ],
+      "1": [
+        375,
+        344.3359375
+      ],
+      "2": [
+        311,
+        355.3359375
+      ],
+      "3": [
+        406,
+        279.3359375
+      ],
+      "4": [
+        140,
+        446.3359375
+      ],
+      "5": [
+        215,
+        469.3359375
+      ],
+      "6": [
+        241,
+        554.3359375
+      ],
+      "7": [
+        273,
+        591.3359375
+      ],
+      "8": [
+        288,
+        646.3359375
+      ],
+      "9": [
+        171,
+        661.3359375
+      ],
+      "10": [
+        407,
+        543.3359375
+      ],
+      "11": [
+        350,
+        456.3359375
+      ],
+      "12": [
+        449,
+        361.3359375
+      ],
+      "13": [
+        475,
+        437.3359375
+      ],
+      "14": [
+        418,
+        632.3359375
+      ],
+      "15": [
+        271,
+        761.3359375
+      ],
+      "16": [
+        308,
+        790.3359375
+      ],
+      "17": [
+        216,
+        811.3359375
+      ],
+      "18": [
+        127,
+        833.3359375
+      ],
+      "19": [
+        95,
+        652.3359375
+      ],
+      "20": [
+        457,
+        650.3359375
+      ],
+      "21": [
+        520,
+        736.3359375
+      ],
+      "22": [
+        411,
+        784.3359375
+      ],
+      "23": [
+        474,
+        786.3359375
+      ],
+      "24": [
+        558,
+        650.3359375
+      ],
+      "25": [
+        488,
+        837.3359375
+      ],
+      "26": [
+        674,
+        879.3359375
+      ],
+      "27": [
+        720,
+        841.3359375
+      ],
+      "28": [
+        814,
+        797.3359375
+      ],
+      "29": [
+        873,
+        847.3359375
+      ],
+      "30": [
+        883,
+        787.3359375
+      ],
+      "31": [
+        991,
+        772.3359375
+      ],
+      "32": [
+        928,
+        732.3359375
+      ],
+      "33": [
+        860,
+        647.3359375
+      ],
+      "34": [
+        778,
+        613.3359375
+      ],
+      "35": [
+        748,
+        639.3359375
+      ],
+      "36": [
+        712,
+        693.3359375
+      ],
+      "37": [
+        670,
+        654.3359375
+      ],
+      "38": [
+        566,
+        563.3359375
+      ],
+      "39": [
+        533,
+        520.3359375
+      ],
+      "40": [
+        516,
+        384.3359375
+      ],
+      "41": [
+        622,
+        429.3359375
+      ],
+      "42": [
+        628,
+        515.3359375
+      ],
+      "43": [
+        665,
+        494.3359375
+      ],
+      "44": [
+        754,
+        521.3359375
+      ],
+      "45": [
+        770,
+        434.3359375
+      ],
+      "46": [
+        733,
+        378.3359375
+      ],
+      "47": [
+        797,
+        363.3359375
+      ],
+      "48": [
+        869,
+        344.3359375
+      ],
+      "49": [
+        1016,
+        347.3359375
+      ],
+      "50": [
+        972,
+        459.3359375
+      ],
+      "51": [
+        1033,
+        481.3359375
+      ],
+      "52": [
+        1073,
+        477.3359375
+      ],
+      "53": [
+        1183,
+        460.3359375
+      ],
+      "54": [
+        1176,
+        406.3359375
+      ],
+      "55": [
+        1206,
+        502.3359375
+      ],
+      "56": [
+        1144,
+        595.3359375
+      ],
+      "57": [
+        1047,
+        566.3359375
+      ],
+      "58": [
+        982,
+        522.3359375
+      ],
+      "59": [
+        866,
+        482.3359375
+      ],
+      "60": [
+        926,
+        626.3359375
+      ],
+      "61": [
+        1114,
+        685.3359375
+      ],
+      "62": [
+        1118,
+        745.3359375
+      ],
+      "63": [
+        1224,
+        750.3359375
+      ],
+      "64": [
+        1279,
+        689.3359375
+      ],
+      "65": [
+        1286,
+        638.3359375
+      ],
+      "66": [
+        1326,
+        542.3359375
+      ],
+      "67": [
+        1377,
+        716.3359375
+      ],
+      "68": [
+        1333,
+        712.3359375
+      ],
+      "69": [
+        1276,
+        815.3359375
+      ],
+      "70": [
+        1315,
+        852.8359375
+      ],
+      "71": [
+        1384,
+        833.8359375
+      ],
+      "72": [
+        1312,
+        892.3359375
+      ],
+      "73": [
+        1244,
+        902.3359375
+      ],
+      "74": [
+        1091,
+        885.3359375
+      ],
+      "75": [
+        1124,
+        960.3359375
+      ],
+      "76": [
+        914,
+        966.3359375
+      ],
+      "77": [
+        618,
+        282.3359375
+      ],
+      "78": [
+        1086,
+        826.3359375
+      ]
+    }
+  }
+}
