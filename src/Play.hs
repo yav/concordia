@@ -1,12 +1,15 @@
 module Play where
 
 import Control.Monad(when)
+import Data.Maybe(fromMaybe)
 import Optics
 import KOI.Basics
 import KOI.Bag
 import KOI
+import Static
 import State
 import Types
+import Question
 
 play :: Interact ()
 play =
@@ -47,18 +50,28 @@ nextPlayer =
 doTakeTurn :: Interact ()
 doTakeTurn = pure ()
 
-{-
-doTribune :: Interact ()
-doTribune =
-  do s <- getState
-     let pid       = s ^. curPlayer
-         pstate    = s ^. players % at pid
-         discard   = pstate ^. playerDiscard
-         money     = max 0 (length discard - 3)
-         resources =
-     undefined
--}
+-- | Change the money by this much.
+doChangeMoney :: PlayerId -> Int -> Interact ()
+doChangeMoney pid amt
+  | amt == 0 = pure ()
+  | otherwise = updateThe_ (playerState pid % playerMoney) (max 0 . (+ amt))
 
+-- | Add some cards to a player's hand
+doAddCards :: PlayerId -> [Card] -> Interact ()
+doAddCards pid cs = updateThe_ (playerState pid % playerHand) (cs ++)
+
+-- | Pay for a worker and place it on the board
+doBuildWorker :: PlayerId -> Worker -> CityId -> Interact ()
+doBuildWorker pid w city =
+  do updateThe_ (playerState pid % playerResources)
+                (bagChange (-1) Wheat . bagChange (-1) Iron)
+     updateThe_ (playerState pid % playerWorkersForHire)
+                (bagChange (-1) w)
+     updateThe_ (board % mapCityWorkers % at city)
+                (Just . bagChange 1 (pid :-> w) . fromMaybe bagEmpty)
+
+-- | What kind of worker can this player build at the moment
+-- (i.e., they have the worker and the resources to build it).
 canBuildWorker :: PlayerId -> Interact [Worker]
 canBuildWorker pid =
   do mbPstate <- the (players % at pid)
@@ -73,11 +86,24 @@ canBuildWorker pid =
          canPay    = hasR Wheat && hasR Iron
 
 
-{-
-askBuildWorker :: [Worker] -> Interact ()
-askBuildWorker =
-  askInputsMaybe_
--}
+
+
+actTribune :: Interact ()
+actTribune =
+  do pid <- the curPlayer
+     discard <- updateThe (playerState pid % playerDiscard) (\d -> (d, []))
+     doChangeMoney pid (length discard + 1 - 3) -- assuming tribune is not in discard
+     doAddCards pid discard
+     ws <- canBuildWorker pid
+     capital <- mapStartCity . mapLayout <$> the board
+     askInputsMaybe_ "Would you like to build a worker?" $
+        (pid :-> Pass, "Do not build worker.", pure ())
+      : [ (pid :-> AskWorker w, "Build a worker.",
+           doBuildWorker pid w capital)
+        | w <- ws
+        ]
+
+
 
 
 

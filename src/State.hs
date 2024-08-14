@@ -1,6 +1,7 @@
 module State where
 
 import Data.Map(Map)
+import Data.Map qualified as Map
 
 import Optics
 import KOI.Basics
@@ -47,6 +48,10 @@ makeLenses ''PlayerState
 makeLenses ''BoardState
 makeLenses ''GameState
 
+playerState :: PlayerId -> Lens' GameState PlayerState
+playerState pid = lens ((Map.! pid) . _players) setP
+  where
+  setP s v = s { _players = Map.insert pid v (_players s) }
 
 
 
