@@ -17,6 +17,7 @@ executable concordia
     main-is:          Main.hs
     other-modules:
       KOI, Types, State, Setup, Static, Score, Play, Question, Cards,
+      Constants,
       Maps.Builder,
       Maps.Italia
     default-extensions:

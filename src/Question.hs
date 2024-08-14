@@ -9,6 +9,8 @@ import Static
 data Question =
     AskWorker Worker
   | AskCity CityId
+  | AskRegion RegionId
+  | AskPath PathId
   | AskText Text
   deriving (Show,Read,Eq,Ord,Generic,FromJSON,ToJSON)
 

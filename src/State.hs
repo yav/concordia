@@ -35,6 +35,7 @@ data BoardState = BoardState
   , _mapHouses       :: !(Map CityId [PlayerId])
   , _mapCityWorkers  :: !(Map CityId (Bag (WithPlayer Worker)))
   , _mapPathWorkers  :: !(Map PathId (WithPlayer Worker))
+  , _mapRegionBonus  :: !(Map RegionId Resource)
   , _mapProduces     :: !(Map CityId Resource)
   , _mapPrefected    :: ![ RegionId ]
   , marketLayout     :: ![ [ResourceCost] ]

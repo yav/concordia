@@ -10,6 +10,7 @@ import KOI
 import Static
 import State
 import Types
+import Constants
 import Question
 
 play :: Interact ()
@@ -74,8 +75,10 @@ doDiscardCard pid n =
 -- | Pay for a worker and place it on the board
 doBuildWorker :: PlayerId -> Worker -> CityId -> Interact ()
 doBuildWorker pid w city =
-  do updateThe_ (playerState pid % playerResources)
-                (bagChange (-1) Wheat . bagChange (-1) Tools)
+  do sequence_
+      [ updateThe_ (playerState pid % playerResources) (bagChange (-1) r)
+      | r <- workerCost
+      ]
      updateThe_ (playerState pid % playerWorkersForHire)
                 (bagChange (-1) w)
      updateThe_ (board % mapCityWorkers % at city)
@@ -93,8 +96,9 @@ canBuildWorker pid =
          workers   = pstate ^. playerWorkersForHire
          hasW p    = bagContains p workers > 0
          resources = pstate ^. playerResources
-         hasR p    = bagContains p resources > 0
-         canPay    = hasR Wheat && hasR Tools
+         canPay =
+           and [ bagContains r resources >= n
+               | (r,n) <- bagToNumList (bagFromList workerCost) ]
 
 countWorkersOnBoard :: PlayerId -> Interact Int
 countWorkersOnBoard pid =

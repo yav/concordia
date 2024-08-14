@@ -1,11 +1,13 @@
 module Setup where
 
+import Data.Maybe(fromMaybe)
 import Data.Map(Map)
 import Data.Map qualified as Map
 import KOI.Basics
 import KOI.Bag
 import KOI.RNGM
 import Types
+import Constants
 import Static
 import State
 
@@ -68,6 +70,17 @@ setupBoard cfg =
      let ps = cfgPlayerOrder cfg
      let decks = take (length ps) (cfgMarketCards cfg)
      shuffled <- mapM shuffle decks
+     let cityProd = snd (Map.foldlWithKey' pickTile (tiles,mempty)
+                        (mapCities layout))
+
+     let regBonus mp cid city =
+          fromMaybe mp
+          do resource <- Map.lookup cid cityProd
+             cost     <- Map.lookup resource resourceCost
+             let bigger (res1,cost1) (res2,cost2) =
+                   if cost1 > cost2 then (res1,cost1) else (res2,cost2)
+             pure (Map.insertWith bigger (cityRegion city) (resource,cost) mp)
+
      pure BoardState
        { mapLayout        = layout
        , _mapHouses       = mempty
@@ -75,8 +88,9 @@ setupBoard cfg =
                               (mapStartCity layout)
                               (foldr addStartWorker bagEmpty ps)
        , _mapPathWorkers  = mempty
-       , _mapProduces =
-         snd (Map.foldlWithKey' pickTile (tiles,mempty) (mapCities layout))
+       , _mapRegionBonus  =
+         fst <$> Map.foldlWithKey' regBonus mempty (mapCities layout)
+       , _mapProduces     = cityProd
        , _mapPrefected    = []
        , marketLayout     = cfgMarket cfg
        , _marketDeck      = concat shuffled
@@ -93,5 +107,4 @@ setupBoard cfg =
 
   addStartWorker pid bs =
     bagUnion (bagMap (pid :->) (cfgStartBoardWorkers cfg)) bs
-
 
