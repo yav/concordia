@@ -3,7 +3,7 @@ module Types where
 import GHC.Generics(Generic)
 import Data.Aeson(ToJSON,FromJSON)
 
-data Resource = Brick | Wheat | Iron | Wine | Cloth
+data Resource = Brick | Wheat | Tools | Wine | Cloth
   deriving (Eq,Ord)
 
 data ResourceCost = Resource Resource | Any
@@ -15,13 +15,14 @@ data CityTile = A | B | C | D | E | Capital
   deriving (Eq,Ord)
 
 data Action   = Architect | Senator | Prefect | Diplomat | Tribune
+              | Colonist
               | Mercator Int | Specialist Resource
 
-data Color    = Purple | Blue | Yellow | Brown | Orange | LightGreen
+data God      = Vesta | Jupiter | Saturnus | Venus | Mercurius | Mars | Minerva
 
 data Card     = Card { cardActions :: [Action]
                      , cardCost    :: [ResourceCost]
-                     , cardColor   :: Color
+                     , cardColor   :: [God]
                      }
 
 

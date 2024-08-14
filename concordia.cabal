@@ -16,7 +16,7 @@ executable concordia
     import:           warnings
     main-is:          Main.hs
     other-modules:
-      KOI, Types, State, Setup, Static, Score, Play, Question,
+      KOI, Types, State, Setup, Static, Score, Play, Question, Cards,
       Maps.Builder,
       Maps.Italia
     default-extensions:

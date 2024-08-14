@@ -12,10 +12,10 @@ newtype CityId = CityId Int
   deriving (Eq,Ord,Generic,Show,Read,ToJSON,FromJSON)
 
 newtype RegionId = RegionId Int
-  deriving (Eq,Ord)
+  deriving (Eq,Ord,Generic,Show,Read,ToJSON,FromJSON)
 
 newtype PathId = PathId Int
-  deriving (Eq,Ord)
+  deriving (Eq,Ord,Generic,Show,Read,ToJSON,FromJSON)
 
 data City = City
   { cityName    :: Text

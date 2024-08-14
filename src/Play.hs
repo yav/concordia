@@ -75,7 +75,7 @@ doDiscardCard pid n =
 doBuildWorker :: PlayerId -> Worker -> CityId -> Interact ()
 doBuildWorker pid w city =
   do updateThe_ (playerState pid % playerResources)
-                (bagChange (-1) Wheat . bagChange (-1) Iron)
+                (bagChange (-1) Wheat . bagChange (-1) Tools)
      updateThe_ (playerState pid % playerWorkersForHire)
                 (bagChange (-1) w)
      updateThe_ (board % mapCityWorkers % at city)
@@ -94,7 +94,7 @@ canBuildWorker pid =
          hasW p    = bagContains p workers > 0
          resources = pstate ^. playerResources
          hasR p    = bagContains p resources > 0
-         canPay    = hasR Wheat && hasR Iron
+         canPay    = hasR Wheat && hasR Tools
 
 countWorkersOnBoard :: PlayerId -> Interact Int
 countWorkersOnBoard pid =
@@ -120,6 +120,7 @@ actTribune pid =
            doBuildWorker pid w capital)
         | w <- ws
         ]
+
 
 actColonist :: PlayerId -> Int -> Interact ()
 actColonist pid cardNum =
@@ -164,6 +165,11 @@ actColonist pid cardNum =
        | city <- tgts ]
 
 
+{-
+actPrefect :: PlayerId -> Int -> Interact ()
+actPrefect pid cardNum =
+  do 
+-}
 
 
 
