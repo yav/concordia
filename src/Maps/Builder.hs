@@ -2,6 +2,7 @@ module Maps.Builder where
 
 import Data.Text(Text)
 import Data.Map qualified as Map
+import Data.Set qualified as Set
 import Control.Monad(liftM,ap)
 
 import Static
@@ -28,18 +29,18 @@ instance Monad Builder where
     in m2 s1
 
 region :: Text -> Builder ()
-region y = Builder \s ->
-  let x = mapRegionName s
-      n = RegionId (Map.size x)
-  in ((), s { mapRegionName = Map.insert n y x })
+region _y = Builder \s ->
+  let x = mapRegions s
+      n = RegionId (Set.size x)
+  in ((), s { mapRegions = Set.insert n x })
 
 city :: Text -> CityTile -> Builder CityId
-city name tile = Builder \s ->
+city _name tile = Builder \s ->
   let x = mapCities s
       n = CityId (Map.size x)
-      y = City name tile (case Map.minViewWithKey (mapRegionName s) of
-                            Just ((r,_),_) -> r
-                            Nothing -> error "No region")
+      y = City tile (case Set.maxView (mapRegions s) of
+                       Just (r,_) -> r
+                       Nothing -> error "No region")
   in (n, s { mapCities = Map.insert n y x
            , mapStartCity = case tile of
                               Capital -> n

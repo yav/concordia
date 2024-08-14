@@ -3,6 +3,7 @@ module Play where
 import Control.Monad(when)
 import Data.Maybe(fromMaybe)
 import Data.Map qualified as Map
+import Data.Set qualified as Set
 import Optics
 import KOI.Basics
 import KOI.Bag
@@ -169,11 +170,34 @@ actColonist pid cardNum =
        | city <- tgts ]
 
 
-{-
+
 actPrefect :: PlayerId -> Int -> Interact ()
 actPrefect pid cardNum =
-  do 
--}
+  do brd <- the board
+     let regs = Set.toList (mapRegions (mapLayout brd))
+     askInputsMaybe_ "Choose a region to prefect."
+        [ ( pid :-> AskRegion r
+          , "Prefect this region."
+          , do done <- the (board % mapPrefected)
+               if r `elem` done then getMoney done else getGoods r
+          )
+        | r <- regs
+        ]
+     doDiscardCard pid cardNum
+  where
+  getMoney done =
+    do bonuses <- the (board % mapRegionBonus)
+       let fromRegion r =
+             fromMaybe 0
+             do bonus <- Map.lookup r bonuses
+                Map.lookup bonus resourcePrefectMoney
+       doChangeMoney pid (sum (map fromRegion done))
+       setThe (board % mapPrefected) []
+
+  getGoods r =
+    do bonuses <- the (board % mapRegionBonus)
+       undefined
+
 
 
 
