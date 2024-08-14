@@ -2,6 +2,7 @@ module Play where
 
 import Control.Monad(when)
 import Data.Maybe(fromMaybe)
+import Data.Map qualified as Map
 import Optics
 import KOI.Basics
 import KOI.Bag
@@ -60,6 +61,16 @@ doChangeMoney pid amt
 doAddCards :: PlayerId -> [Card] -> Interact ()
 doAddCards pid cs = updateThe_ (playerState pid % playerHand) (cs ++)
 
+-- | Move the card at the given index from the hand to the top of the discard.
+doDiscardCard :: PlayerId -> Int -> Interact ()
+doDiscardCard pid n =
+  do inHand <- the (playerState pid % playerHand)
+     case splitAt n inHand of
+       (as,b:bs) ->
+         do setThe (playerState pid % playerHand) (as ++ bs)
+            updateThe_ (playerState pid % playerDiscard) (b :)
+       _ -> pure ()
+
 -- | Pay for a worker and place it on the board
 doBuildWorker :: PlayerId -> Worker -> CityId -> Interact ()
 doBuildWorker pid w city =
@@ -85,24 +96,72 @@ canBuildWorker pid =
          hasR p    = bagContains p resources > 0
          canPay    = hasR Wheat && hasR Iron
 
+countWorkersOnBoard :: PlayerId -> Interact Int
+countWorkersOnBoard pid =
+  do let count (p :-> _) = if p == pid then 1 else 0
+     inCities <- the (board % mapCityWorkers)
+     let cityCount = sum (sum . map count . bagToList <$> inCities )
+     onPaths  <- the (board % mapPathWorkers)
+     let pathCount = sum (count <$> onPaths)
+     pure (cityCount + pathCount)
 
 
 
-actTribune :: Interact ()
-actTribune =
-  do pid <- the curPlayer
-     discard <- updateThe (playerState pid % playerDiscard) (\d -> (d, []))
-     doChangeMoney pid (length discard + 1 - 3) -- assuming tribune is not in discard
+actTribune :: PlayerId -> Interact ()
+actTribune pid =
+  do discard <- updateThe (playerState pid % playerDiscard) (\d -> (d, []))
+     doChangeMoney pid (length discard + 1 - 3)
      doAddCards pid discard
      ws <- canBuildWorker pid
      capital <- mapStartCity . mapLayout <$> the board
      askInputsMaybe_ "Would you like to build a worker?" $
-        (pid :-> Pass, "Do not build worker.", pure ())
+        (pid :-> AskText "No", "Do not build worker.", pure ())
       : [ (pid :-> AskWorker w, "Build a worker.",
            doBuildWorker pid w capital)
         | w <- ws
         ]
 
+actColonist :: PlayerId -> Int -> Interact ()
+actColonist pid cardNum =
+  do ws   <- canBuildWorker pid
+     tgts <- getBuildTargets
+     doAction tgts ws getMoney
+     doDiscardCard pid cardNum
+
+  where
+  getBuildTargets =
+    do b <- the board
+       let ours = [ city | (city,ps) <- Map.toList (b ^. mapHouses)
+                         , pid `elem` ps ]
+       pure (mapStartCity (mapLayout b) : ours)
+
+  getMoney =
+    ( pid :-> AskText "Gain money."
+    , "Gain money: 5 + deployed workers."
+    , do n <- countWorkersOnBoard pid
+         doChangeMoney pid (5 + n)
+    )
+
+  pass =
+    ( pid :-> AskText "End turn."
+    , "No more deployments."
+    , pure ()
+    )
+
+  doAction tgts ws otherOpt =
+     askInputsMaybe_ "Choose COLONIST actoin." $
+       [ (pid :-> AskWorker w, "Deploy this worker.", buildWorker tgts w)
+       | w <- ws ] ++ [otherOpt]
+
+  buildWorker tgts w =
+    askInputsMaybe_ "Choose where to deploy worker."
+       [ ( pid :-> AskCity city
+         , "Deploy here."
+         , do doBuildWorker pid w city
+              newWs <- canBuildWorker pid
+              doAction tgts newWs pass
+         )
+       | city <- tgts ]
 
 
 
