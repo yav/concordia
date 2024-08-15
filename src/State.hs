@@ -35,7 +35,7 @@ data BoardState = BoardState
   , _mapHouses       :: !(Map CityId [PlayerId])
   , _mapCityWorkers  :: !(Map CityId (Bag (WithPlayer Worker)))
   , _mapPathWorkers  :: !(Map PathId (WithPlayer Worker))
-  , _mapRegionBonus  :: !(Map RegionId Resource)
+  , _mapRegionBonus  :: !(Map RegionId RegionBonus)
   , _mapProduces     :: !(Map CityId Resource)
   , _mapPrefected    :: ![ RegionId ]
   , marketLayout     :: ![ [ResourceCost] ]
@@ -43,11 +43,17 @@ data BoardState = BoardState
                                  -- they are at the front
   }
 
+data RegionBonus = RegionBonus
+  { _rbResource :: Maybe Resource
+  , _rbMoney    :: Int
+  }
+
 data GameStatus = InProgress | EndTriggeredBy PlayerId | Finished {- Score -}
 
 makeLenses ''PlayerState
 makeLenses ''BoardState
 makeLenses ''GameState
+makeLenses ''RegionBonus
 
 playerState :: PlayerId -> Lens' GameState PlayerState
 playerState pid = lens ((Map.! pid) . _players) setP

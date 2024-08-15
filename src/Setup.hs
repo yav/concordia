@@ -89,7 +89,10 @@ setupBoard cfg =
                               (foldr addStartWorker bagEmpty ps)
        , _mapPathWorkers  = mempty
        , _mapRegionBonus  =
-         fst <$> Map.foldlWithKey' regBonus mempty (mapCities layout)
+          let mk (r,_) = RegionBonus { _rbResource = Just r
+                                     , _rbMoney = Map.findWithDefault 0 r
+                                                      resourcePrefectMoney }
+          in mk <$>  Map.foldlWithKey' regBonus mempty (mapCities layout)
        , _mapProduces     = cityProd
        , _mapPrefected    = []
        , marketLayout     = cfgMarket cfg

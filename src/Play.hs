@@ -190,7 +190,7 @@ actPrefect pid cardNum =
        let fromRegion r =
              fromMaybe 0
              do bonus <- Map.lookup r bonuses
-                Map.lookup bonus resourcePrefectMoney
+                pure (bonus ^. rbMoney)
        doChangeMoney pid (sum (map fromRegion done))
        setThe (board % mapPrefected) []
 
