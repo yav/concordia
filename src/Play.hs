@@ -85,6 +85,33 @@ doBuildWorker pid w city =
      updateThe_ (board % mapCityWorkers % at city)
                 (Just . bagChange 1 (pid :-> w) . fromMaybe bagEmpty)
 
+-- | Gain some reasource and ask which, if not enough space.
+doGainResources :: PlayerId -> Bag Resource -> Interact ()
+doGainResources pid new =
+  do s <- the (playerState pid)
+     let limit = s ^. playerResourceLimit
+         haveR = bagSize (s ^. playerResources)
+         haveW = bagSize (s ^. playerWorkersForHire)
+         free  = limit - haveR - haveW
+         need  = bagSize new
+         yes   = s ^. playerAutoAccept
+     if need <= free && yes
+       then updateThe_ (playerState pid % playerResources) (bagUnion new)
+       else askWhich new free
+  where
+  askWhich todo free
+    | bagIsEmpty todo = pure ()
+    | free == 0       = pure ()
+    | otherwise =
+      askInputs "Choose resource to gain." $
+        (pid :-> AskText "Refuse", "Don't take any more resources.", pure ()) :
+        [ (pid :-> AskResource r, "Gain resource.",
+          do updateThe_ (playerState pid % playerResources) (bagChange 1 r)
+             askWhich (bagChange (-1) r todo) (free - 1)
+          )
+        | (r,_) <-  bagToNumList todo
+        ]
+
 -- | What kind of worker can this player build at the moment
 -- (i.e., they have the worker and the resources to build it).
 canBuildWorker :: PlayerId -> Interact [Worker]
@@ -120,7 +147,7 @@ actTribune pid =
      ws <- canBuildWorker pid
      capital <- mapStartCity . mapLayout <$> the board
      askInputsMaybe_ "Would you like to build a worker?" $
-        (pid :-> AskText "No", "Do not build worker.", pure ())
+        (pid :-> AskText "End turn.", "Do not build worker.", pure ())
       : [ (pid :-> AskWorker w, "Build a worker.",
            doBuildWorker pid w capital)
         | w <- ws
@@ -194,9 +221,40 @@ actPrefect pid cardNum =
        doChangeMoney pid (sum (map fromRegion done))
        setThe (board % mapPrefected) []
 
+  playerBefore =
+    do before <- the prevPlayers
+       after  <- the nextPlayers
+       cur    <- the curPlayer
+       pure $ last
+            $ takeWhile (/= pid)
+            $ cycle
+            $ after ++ reverse before ++ [cur]
+
+  getPrefectBonus r =
+    do rbs <- the (board % mapRegionBonus)
+       case view rbResource =<< Map.lookup r rbs of
+         Nothing -> pure mempty
+         Just rsr ->
+           do pm <- the playerDoubleBonus
+              amt <- if pid == pm
+                          then do p <- playerBefore
+                                  setThe playerDoubleBonus p
+                                  pure 2
+                          else pure 1
+              pure (Map.singleton pid (bagFromList (replicate amt rsr)))
+
   getGoods r =
-    do bonuses <- the (board % mapRegionBonus)
-       undefined
+    do bonus <- getPrefectBonus r
+       brd <- the board
+       let cities = Map.findWithDefault [] r (citiesInRegion (mapLayout brd))
+       let doCity tot cid =
+             fromMaybe tot
+             do resource <- Map.lookup cid (brd ^. mapProduces)
+                let earn = bagFromList [resource]
+                houses <- Map.lookup cid (brd ^. mapHouses)
+                let addP mp p = Map.insertWith bagUnion p earn mp
+                pure (foldl' addP tot houses)
+       mapM_ (uncurry doGainResources) (Map.toList (foldl' doCity bonus cities))
 
 
 

@@ -44,6 +44,7 @@ setupGame cfg0 =
        , _prevPlayers  = []
        , _nextPlayers  = rest
        , _gameStatus   = InProgress
+       , _playerDoubleBonus = last (first : rest)
        }
 
 
@@ -57,10 +58,10 @@ setupPlayer cfg turnOrder = PlayerState
   , _playerHousesToBuild  = cfgStartHouses cfg
   , _playerResources      = cfgStartResources cfg
   , _playerMoney          = cfgStartMoney cfg + turnOrder
-  , _playerDoubleBonus    = length (cfgPlayerOrder cfg) == turnOrder + 1
   , _playerHand           = cfgPlayerCards cfg
   , _playerDiscard        = []
-  , _resourceLimit        = cfgResourceLimit cfg
+  , _playerResourceLimit  = cfgResourceLimit cfg
+  , _playerAutoAccept     = True
   }
 
 setupBoard :: Config -> Gen BoardState

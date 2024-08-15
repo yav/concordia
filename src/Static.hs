@@ -44,7 +44,12 @@ mapCityPaths layout =
     , conn <- [ (pathFrom path,[pathId]), (pathTo path,[pathId]) ]
     ]
 
-
+citiesInRegion :: MapLayout -> Map RegionId [CityId]
+citiesInRegion layout =
+  Map.fromListWith (++)
+    [ (cityRegion city, [cid])
+    | (cid,city) <- Map.toList (mapCities layout)
+    ]
 
 
 

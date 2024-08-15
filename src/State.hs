@@ -16,6 +16,7 @@ data GameState = GameState
   , _curPlayer    :: !PlayerId
   , _prevPlayers  :: ![PlayerId]   -- ^ Most recent first
   , _nextPlayers  :: ![PlayerId]
+  , _playerDoubleBonus :: !PlayerId
   , _gameStatus   :: !GameStatus
   }
 
@@ -24,10 +25,10 @@ data PlayerState = PlayerState
   , _playerHousesToBuild  :: !Int
   , _playerResources      :: !(Bag Resource)
   , _playerMoney          :: !Int
-  , _playerDoubleBonus    :: !Bool
   , _playerHand           :: ![Card]
   , _playerDiscard        :: ![Card]   -- ^ Most recent first
-  , _resourceLimit        :: !Int      -- ^ Including workers
+  , _playerResourceLimit  :: !Int      -- ^ Including workers
+  , _playerAutoAccept     :: !Bool
   }
 
 data BoardState = BoardState
