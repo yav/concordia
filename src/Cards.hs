@@ -9,20 +9,20 @@ basic_mercator :: Card
 basic_mercator = Card [Mercator 3] [] [Mercurius]
 
 adv_mercator :: Card
-adv_mercator = Card [Mercator 5] [Resource Wine] [Mercurius]
+adv_mercator = Card [Mercator 5] [Wine] [Mercurius]
 
 architect :: Card
-architect = Card [Architect] [Resource Tools] [Jupiter]
+architect = Card [Architect] [Tools] [Jupiter]
 
 diplomat, diplomat1, diplomat3, diplomat4, diplomat5 :: Card
 diplomat = Card [Diplomat] [] [Jupiter]
-diplomat1 = Card [Diplomat] [Resource Tools] [Saturnus]
-diplomat3 = Card [Diplomat] [Resource Wheat] [Saturnus]
-diplomat4 = Card [Diplomat] [Resource Tools] [Mercurius]
-diplomat5 = Card [Diplomat] [Resource Wheat] [Mars]
+diplomat1 = Card [Diplomat] [Tools] [Saturnus]
+diplomat3 = Card [Diplomat] [Wheat] [Saturnus]
+diplomat4 = Card [Diplomat] [Tools] [Mercurius]
+diplomat5 = Card [Diplomat] [Wheat] [Mars]
 
 prefect :: Card
-prefect = Card [Prefect] [Resource Wine] [Saturnus]
+prefect = Card [Prefect] [Wine] [Saturnus]
 
 senator :: Card
 senator = Card [Senator] [] [Vesta]
@@ -31,29 +31,27 @@ magister :: Card
 magister = Card [Magister] [] [Venus]
 
 specialist_mason :: Card
-specialist_mason = Card [Specialist Brick] [Resource Wheat] [Minerva]
+specialist_mason = Card [Specialist Brick] [Wheat] [Minerva]
 
 specialist_farmer :: Card
 specialist_farmer =
-  Card [Specialist Wheat] [Resource Brick, Resource Wheat] [Minerva]
+  Card [Specialist Wheat] [Brick, Wheat] [Minerva]
 
 specialist_smith :: Card
 specialist_smith =
-  Card [Specialist Tools] [Resource Brick, Resource Tools] [Minerva]
+  Card [Specialist Tools] [Brick, Tools] [Minerva]
 
 specialist_vintner :: Card
-specialist_vintner =
-  Card [Specialist Wine] [Resource Brick, Resource Wine] [Minerva]
+specialist_vintner = Card [Specialist Wine] [Brick, Wine] [Minerva]
 
 specialist_weaver :: Card
-specialist_weaver =
-  Card [Specialist Cloth] [Resource Brick, Resource Cloth] [Minerva]
+specialist_weaver = Card [Specialist Cloth] [Brick, Cloth] [Minerva]
 
 consul :: Card
-consul = Card [Consul] [Resource Cloth] [Jupiter]
+consul = Card [Consul] [Cloth] [Jupiter]
 
 colonist :: Card
-colonist = Card [Colonist] [Resource Wheat] [Mars]
+colonist = Card [Colonist] [Wheat] [Mars]
 
 
 

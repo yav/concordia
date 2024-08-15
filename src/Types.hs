@@ -22,7 +22,7 @@ data Action   = Architect | Senator | Prefect | Diplomat | Tribune
 data God      = Vesta | Jupiter | Saturnus | Venus | Mercurius | Mars | Minerva
 
 data Card     = Card { cardActions :: [Action]
-                     , cardCost    :: [ResourceCost]
+                     , cardCost    :: [Resource]
                      , cardColor   :: [God]
                      }
 
