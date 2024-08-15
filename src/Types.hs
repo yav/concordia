@@ -17,6 +17,7 @@ data CityTile = A | B | C | D | E | Capital
 data Action   = Architect | Senator | Prefect | Diplomat | Tribune
               | Colonist
               | Mercator Int | Specialist Resource
+              | Magister | Consul
 
 data God      = Vesta | Jupiter | Saturnus | Venus | Mercurius | Mars | Minerva
 
