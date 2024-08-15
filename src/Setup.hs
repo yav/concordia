@@ -61,7 +61,6 @@ setupPlayer cfg turnOrder = PlayerState
   , _playerHand           = cfgPlayerCards cfg
   , _playerDiscard        = []
   , _playerResourceLimit  = cfgResourceLimit cfg
-  , _playerAutoAccept     = True
   }
 
 setupBoard :: Config -> Gen BoardState

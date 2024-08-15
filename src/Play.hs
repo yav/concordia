@@ -4,6 +4,7 @@ import Control.Monad(when)
 import Data.Maybe(fromMaybe)
 import Data.Map qualified as Map
 import Data.Set qualified as Set
+import Data.List(foldl')
 import Optics
 import KOI.Basics
 import KOI.Bag
@@ -94,22 +95,19 @@ doGainResources pid new =
          haveW = bagSize (s ^. playerWorkersForHire)
          free  = limit - haveR - haveW
          need  = bagSize new
-         yes   = s ^. playerAutoAccept
-     if need <= free && yes
+     if need <= free
        then updateThe_ (playerState pid % playerResources) (bagUnion new)
        else askWhich new free
   where
   askWhich todo free
-    | bagIsEmpty todo = pure ()
-    | free == 0       = pure ()
+    | free == 0 = pure ()
     | otherwise =
-      askInputs "Choose resource to gain." $
-        (pid :-> AskText "Refuse", "Don't take any more resources.", pure ()) :
+      askInputs "Choose resource to gain."
         [ (pid :-> AskResource r, "Gain resource.",
           do updateThe_ (playerState pid % playerResources) (bagChange 1 r)
              askWhich (bagChange (-1) r todo) (free - 1)
           )
-        | (r,_) <-  bagToNumList todo
+        | (r,_) <- bagToNumList todo
         ]
 
 -- | What kind of worker can this player build at the moment

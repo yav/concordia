@@ -28,7 +28,6 @@ data PlayerState = PlayerState
   , _playerHand           :: ![Card]
   , _playerDiscard        :: ![Card]   -- ^ Most recent first
   , _playerResourceLimit  :: !Int      -- ^ Including workers
-  , _playerAutoAccept     :: !Bool
   }
 
 data BoardState = BoardState
