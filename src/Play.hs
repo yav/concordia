@@ -102,7 +102,7 @@ doGainResources pid new =
   askWhich todo free
     | free == 0 = pure ()
     | otherwise =
-      askInputs "Choose resource to gain."
+      askInputsMaybe_ "Choose resource to gain."
         [ (pid :-> AskResource r, "Gain resource.",
           do updateThe_ (playerState pid % playerResources) (bagChange 1 r)
              askWhich (bagChange (-1) r todo) (free - 1)
