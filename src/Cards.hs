@@ -53,6 +53,11 @@ consul = Card [Consul] [Cloth] [Jupiter]
 colonist :: Card
 colonist = Card [Colonist] [Wheat] [Mars]
 
+start_deck = [tribune, prefect, prefect, diplomat, architect, basic_mercator, senator]
+deck1 = [adv_mercator, architect, colonist, prefect, diplomat1, specialist_mason, specialist_farmer, specialist_smith]
+deck2 = [adv_mercator, architect, colonist, prefect, consul, specialist_vintner, specialist_weaver]
+deck3 = [adv_mercator, architect, colonist, prefect, consul, diplomat3]
+deck4 = [architect, colonist, prefect, consul, diplomat4]
+deck5 = [adv_mercator, prefect, consul, diplomat5]
 
-
-
+market_deck = [deck1, deck2, deck3, deck4, deck5]
