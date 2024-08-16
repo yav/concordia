@@ -254,7 +254,15 @@ actPrefect pid cardNum =
                 pure (foldl' addP tot houses)
        mapM_ (uncurry doGainResources) (Map.toList (foldl' doCity bonus cities))
 
-
+actSpecialist :: PlayerId -> Resource -> Int -> Interact ()
+actSpecialist pid r cardId =
+  do allHouses <- the (board % mapHouses)
+     let ourCities = Map.keysSet (Map.filter (pid `elem`) allHouses)
+     prod <- the (board % mapProduces)
+     let thisResource = Map.keysSet (Map.filter (== r) prod)
+     let amt = Set.size (Set.intersection ourCities thisResource)
+     doGainResources pid (bagFromNumList [(r,amt)])
+     doDiscardCard pid cardId
 
 
 
