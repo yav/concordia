@@ -119,7 +119,7 @@
       },
       "25": {
         "cityTile": "X",
-        "cityRegion": "7"
+        "cityRegion": 7
       }
     },
     "edge": {
@@ -462,43 +462,43 @@
       "56": {
         "pathWorker": "Person",
         "pathCanStop": true,
-        "pathFrom": "10",
+        "pathFrom": 10,
         "pathTo": 25
       },
       "57": {
         "pathWorker": "Person",
         "pathCanStop": true,
-        "pathFrom": "12",
+        "pathFrom": 12,
         "pathTo": 25
       },
       "58": {
         "pathWorker": "Person",
         "pathCanStop": true,
-        "pathFrom": "16",
+        "pathFrom": 16,
         "pathTo": 25
       },
       "59": {
         "pathWorker": "Ship",
         "pathCanStop": true,
-        "pathFrom": "10",
+        "pathFrom": 10,
         "pathTo": 25
       },
       "60": {
         "pathWorker": "Ship",
         "pathCanStop": true,
-        "pathFrom": "17",
+        "pathFrom": 17,
         "pathTo": 25
       },
       "61": {
         "pathWorker": "Ship",
         "pathCanStop": true,
-        "pathFrom": "15",
+        "pathFrom": 15,
         "pathTo": 25
       },
       "62": {
         "pathWorker": "Ship",
         "pathCanStop": true,
-        "pathFrom": "23",
+        "pathFrom": 23,
         "pathTo": 25
       }
     },

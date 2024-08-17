@@ -12,8 +12,8 @@ data ResourceCost = Resource Resource | Any
 data Worker   = Person | Ship
   deriving (Eq,Ord,Show,Read,Generic,ToJSON,FromJSON)
 
-data CityTile = A | B | C | D | Capital
-  deriving (Eq,Ord)
+data CityTile = A | B | C | D | X
+  deriving (Eq,Ord,Generic,FromJSON)
 
 data Action   = Architect | Senator | Prefect | Diplomat | Tribune
               | Colonist

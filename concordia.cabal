@@ -24,6 +24,8 @@ executable concordia
       OverloadedStrings,
       TypeFamilies,
       DeriveGeneric,
+      DerivingVia,
+      DerivingStrategies,
       DeriveAnyClass,
       BlockArguments
 

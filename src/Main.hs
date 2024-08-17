@@ -1,42 +1,52 @@
 module Main where
 
+import Data.Aeson qualified as JS
 import KOI.Basics
+import KOI.Bag
 import KOI.RNGM
 import KOI
 import Setup
 import Play
+import Constants
+import Types
+import Cards
+import Static
 
 main :: IO ()
 main =
-  startApp App
-  { appId = Concordia
-  , appOptions = []
-  , appColors = [ "yellow", "red", "green", "blue", "black" ]
-  , appJS = ""
-  , appInitialState = \rng opts ps ->
-    withRNG_ rng
-      do s <- setupGame (getConfig opts ps)
-         pure (Right s)
-  , appStart = play
-  }
+  -- XXX
+  JS.eitherDecodeFileStrict' "ui/maps/Italia.json" >>= \mb ->
+  case mb of
+    Left err -> fail err
+    Right mp ->
+      startApp App
+      { appId = Concordia
+      , appOptions = []
+      , appColors = [ "yellow", "red", "green", "blue", "black" ]
+      , appJS = ""
+      , appInitialState = \rng opts ps ->
+        withRNG_ rng
+          do s <- setupGame (getConfig mp opts ps)
+             pure (Right s)
+      , appStart = play
+      }
 
 
 
-getConfig :: config -> [PlayerId] -> Config
-getConfig _opts ps = Config
+getConfig :: MapLayout -> config -> [PlayerId] -> Config
+getConfig mp _opts ps = Config
   { cfgPlayerOrder        = ps
-  , cfgMap                = undefined
-  , cfgCityTiles          = undefined
-  , cfgResourceLimit      = undefined
-  , cfgStartHireWorkers   = undefined
-  , cfgStartBoardWorkers  = undefined
-  , cfgStartResources     = undefined
-  , cfgStartMoney         = undefined
-  , cfgStartHouses        = undefined
-
-  , cfgMarket             = undefined
-  , cfgPlayerCards        = undefined
-  , cfgMarketCards        = undefined
+  , cfgMap                = mp
+  , cfgCityTiles          = cityTiles
+  , cfgResourceLimit      = 12
+  , cfgStartHireWorkers   = bagFromNumList [(Person,2), (Ship,2)]
+  , cfgStartBoardWorkers  = bagFromList [Person,Ship]
+  , cfgStartResources     = bagFromList [Brick,Wheat,Wheat,Tool,Wine,Cloth]
+  , cfgStartMoney         = 5
+  , cfgStartHouses        = 15
+  , cfgMarket             = marketCosts
+  , cfgPlayerCards        = startDeck
+  , cfgMarketCards        = marketDeck
   }
 
 

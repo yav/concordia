@@ -43,7 +43,7 @@ setupGame cfg0 =
        , _board        = brd
        , _curPlayer    = first
        , _playerOrder  = first : rest
-       , _gameStatus   = InProgress
+       , _gameStatus   = Finished -- InProgress
        , _playerDoubleBonus = last (first : rest)
        }
 
@@ -108,6 +108,5 @@ setupBoard cfg =
                             )
       _ -> (tiles, produce)
 
-  addStartWorker pid bs =
-    bagUnion (bagMap (pid :->) (cfgStartBoardWorkers cfg)) bs
+  addStartWorker pid = bagUnion (bagMap (pid :->) (cfgStartBoardWorkers cfg))
 
