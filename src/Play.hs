@@ -4,7 +4,7 @@ import Control.Monad(when)
 import Data.Maybe(fromMaybe)
 import Data.Map qualified as Map
 import Data.Set qualified as Set
-import Data.List(foldl')
+import Data.List(foldl',nub)
 import Optics
 import KOI.Basics
 import KOI.Bag
@@ -114,17 +114,71 @@ doGainResources pid new =
 -- (i.e., they have the worker and the resources to build it).
 canBuildWorker :: PlayerId -> Interact [Worker]
 canBuildWorker pid =
-  do mbPstate <- the (players % at pid)
-     case mbPstate of
-       Nothing -> pure []
-       Just pstate -> pure [ w | canPay, w <- [Person,Ship], hasW w ]
-         where
-         workers   = pstate ^. playerWorkersForHire
+  do pstate <- the (playerState pid)
+     let workers   = pstate ^. playerWorkersForHire
          hasW p    = bagContains p workers > 0
          resources = pstate ^. playerResources
          canPay =
            and [ bagContains r resources >= n
                | (r,n) <- bagToNumList (bagFromList workerCost) ]
+     pure [ w | canPay, w <- [Person,Ship], hasW w ]
+
+-- | Compute various ways in which a player can pay a cost.
+-- If the result is empty, then they can't affor this.
+canAfford :: PlayerId -> [ResourceCost] -> Interact [Bag Resource]
+canAfford pid cost =
+  do resources <- the (playerState pid % playerResources)
+     pure (canAfford' cost resources)
+
+-- | Compute various ways to satisfy a cost using some resources.
+canAfford' :: [ResourceCost] -> Bag Resource -> [Bag Resource]
+canAfford' need0 have0 = nub (map bagFromList ans)
+  where
+  ans = go need0 have0
+  go need have =
+    case need of
+      [] -> pure []
+      x : xs ->
+        case x of
+          Any ->
+            do (r,_) <- bagToNumList have
+               rs <- go xs (bagChange (-1) r have)
+               pure (r:rs)
+          Resource r ->
+            do pay <- [r,Salt]
+               case bagChangeMaybe (-1) pay have of
+                 Just have' ->
+                   do rs <- go xs have'
+                      pure (pay : rs)
+                 Nothing -> []
+
+-- | Choose one of the ways to pay for the given cost.
+-- The list option should be non-empty (i.e., they can afford it)
+doPayCost :: PlayerId -> [Bag Resource] -> Interact ()
+doPayCost pid opts0
+  | null opts0 = pure ()  -- they can't afford it, give it for free :-)
+  | otherwise = go opts0
+  where
+  go opts
+    | any bagIsEmpty opts = pure ()
+    | otherwise =
+    do let allRs = nub [ r | opt <- opts, (r,_) <- bagToNumList opt ]
+           inAll r = all ((> 0) . bagContains r) opts
+           doPick r =
+             do updateThe_ (playerState pid % playerResources)
+                           (bagChange (-1) r)
+                go [ b1
+                   | opt <- opts
+                   , Just b1 <- [bagChangeMaybe (-1) r opt]
+                   ]
+       case filter inAll allRs of
+         r : _ -> doPick r
+         [] ->
+           askInputs "How would would like to pay?"
+              [ (pid :-> AskResource r, "Pay with this.", doPick r)
+              | r <- allRs
+              ]
+
 
 countWorkersOnBoard :: PlayerId -> Interact Int
 countWorkersOnBoard pid =
