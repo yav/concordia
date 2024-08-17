@@ -50,7 +50,7 @@ actTribune pid =
      doChangeMoney pid (length discard - 3)
      doAddCards pid discard
      ws <- canBuildWorker pid
-     capital <- mapStartCity . mapLayout <$> the board
+     capital <- the (board % mapLayout % mapStartCity)
      askInputsMaybe_ "Would you like to build a worker?" $
         (pid :-> AskText "End turn.", "Do not build worker.", pure ())
       : [ (pid :-> AskWorker w, "Build a worker.",
@@ -66,10 +66,11 @@ actColonist pid =
      doAction tgts ws getMoney
   where
   getBuildTargets =
-    do b <- the board
-       let ours = [ city | (city,ps) <- Map.toList (b ^. mapHouses)
+    do brd <- the board
+       let capital = brd ^. mapLayout % mapStartCity
+       let ours = [ city | (city,ps) <- Map.toList (brd ^. mapHouses)
                          , pid `elem` ps ]
-       pure (mapStartCity (mapLayout b) : ours)
+       pure (capital : ours)
 
   getMoney =
     ( pid :-> AskText "Gain money."
@@ -103,15 +104,14 @@ actColonist pid =
 
 actPrefect :: PlayerId -> Interact ()
 actPrefect pid =
-  do brd <- the board
-     let regs = Set.toList (mapRegions (mapLayout brd))
+  do regs <- the (board % mapLayout % mapRegions)
      askInputsMaybe_ "Choose a region to prefect."
         [ ( pid :-> AskRegion r
           , "Prefect this region."
           , do done <- the (board % mapPrefected)
                if r `elem` done then getMoney done else getGoods r
           )
-        | r <- regs
+        | r <- Set.toList regs
         ]
   where
   getMoney done =
@@ -140,7 +140,7 @@ actPrefect pid =
   getGoods r =
     do bonus <- getPrefectBonus r
        brd <- the board
-       let cities = Map.findWithDefault [] r (citiesInRegion (mapLayout brd))
+       let cities = Map.findWithDefault [] r (citiesInRegion (brd ^. mapLayout))
        let doCity tot cid =
              fromMaybe tot
              do resource <- Map.lookup cid (brd ^. mapProduces)

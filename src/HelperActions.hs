@@ -166,7 +166,7 @@ doGetMarketCards :: Bool -> Interact [(Card, [ResourceCost])]
 doGetMarketCards withBoardCost =
   do brd <- the board
      let cards = brd ^. marketDeck
-         spotCosts = marketLayout brd
+         spotCosts = brd ^. marketLayout
          cost c b =
            (c, map Resource (cardCost c) ++ if withBoardCost then b else [])
      pure (zipWith cost cards spotCosts)

@@ -30,14 +30,14 @@ data PlayerState = PlayerState
   }
 
 data BoardState = BoardState
-  { mapLayout        :: !MapLayout
+  { _mapLayout       :: !MapLayout
   , _mapHouses       :: !(Map CityId [PlayerId])
   , _mapCityWorkers  :: !(Map CityId (Bag (WithPlayer Worker)))
   , _mapPathWorkers  :: !(Map PathId (WithPlayer Worker))
   , _mapRegionBonus  :: !(Map RegionId RegionBonus)
   , _mapProduces     :: !(Map CityId Resource)
   , _mapPrefected    :: ![ RegionId ]
-  , marketLayout     :: ![ [ResourceCost] ]
+  , _marketLayout    :: ![ [ResourceCost] ]
   , _marketDeck      :: ![ Card ] -- ^ This includes the cards on display,
                                  -- they are at the front
   }

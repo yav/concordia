@@ -3,6 +3,7 @@ module Setup where
 import Data.Maybe(fromMaybe)
 import Data.Map(Map)
 import Data.Map qualified as Map
+import Optics
 import KOI.Basics
 import KOI.Bag
 import KOI.RNGM
@@ -70,7 +71,7 @@ setupBoard cfg =
      let decks = take (length ps) (cfgMarketCards cfg)
      shuffled <- mapM shuffle decks
      let cityProd = snd (Map.foldlWithKey' pickTile (tiles,mempty)
-                        (mapCities layout))
+                        (layout ^. mapCities))
 
      let regBonus mp cid city =
           fromMaybe mp
@@ -78,29 +79,29 @@ setupBoard cfg =
              cost     <- Map.lookup resource resourceCost
              let bigger (res1,cost1) (res2,cost2) =
                    if cost1 > cost2 then (res1,cost1) else (res2,cost2)
-             pure (Map.insertWith bigger (cityRegion city) (resource,cost) mp)
+             pure (Map.insertWith bigger (city ^. cityRegion) (resource,cost) mp)
 
      pure BoardState
-       { mapLayout        = layout
+       { _mapLayout       = layout
        , _mapHouses       = mempty
        , _mapCityWorkers  = Map.singleton
-                              (mapStartCity layout)
+                              (layout ^. mapStartCity)
                               (foldr addStartWorker bagEmpty ps)
        , _mapPathWorkers  = mempty
        , _mapRegionBonus  =
           let mk (r,_) = RegionBonus { _rbResource = Just r
                                      , _rbMoney = Map.findWithDefault 0 r
                                                       resourcePrefectMoney }
-          in mk <$>  Map.foldlWithKey' regBonus mempty (mapCities layout)
+          in mk <$>  Map.foldlWithKey' regBonus mempty (layout ^. mapCities)
        , _mapProduces     = cityProd
        , _mapPrefected    = []
-       , marketLayout     = cfgMarket cfg
+       , _marketLayout    = cfgMarket cfg
        , _marketDeck      = concat shuffled
        }
 
   where
   pickTile (tiles,produce) cityId city =
-    let tileType = cityTile city in
+    let tileType = city ^. cityTile in
     case Map.lookup tileType tiles of
       Just (tile : more) -> ( Map.insert tileType more tiles
                             , Map.insert cityId tile produce

@@ -4,6 +4,7 @@ import GHC.Generics(Generic)
 import Data.Map(Map)
 import Data.Map qualified as Map
 import Data.Set
+import Optics
 import Data.Aeson(ToJSON,FromJSON)
 
 import Types
@@ -18,37 +19,42 @@ newtype PathId = PathId Int
   deriving (Eq,Ord,Generic,Show,Read,ToJSON,FromJSON)
 
 data City = City
-  { cityTile    :: CityTile
-  , cityRegion  :: RegionId
+  { _cityTile    :: CityTile
+  , _cityRegion  :: RegionId
   }
 
 data Path = Path
-  { pathWorker      :: Worker   -- ^ What workers we support
-  , pathCanStop     :: Bool     -- ^ For dotted path
-  , pathFrom        :: CityId   -- ^ Paths are not directed so from/to is arb.
-  , pathTo          :: CityId
+  { _pathWorker      :: Worker   -- ^ What workers we support
+  , _pathCanStop     :: Bool     -- ^ For dotted path
+  , _pathFrom        :: CityId   -- ^ Paths are not directed so from/to is arb.
+  , _pathTo          :: CityId
   }
 
 data MapLayout = MapLayout
-  { mapCities       :: Map CityId City
-  , mapRegions      :: Set RegionId
-  , mapPaths        :: Map PathId Path
-  , mapStartCity    :: CityId
+  { _mapCities       :: Map CityId City
+  , _mapRegions      :: Set RegionId
+  , _mapPaths        :: Map PathId Path
+  , _mapStartCity    :: CityId
   }
+
+
+makeLenses ''City
+makeLenses ''Path
+makeLenses ''MapLayout
 
 mapCityPaths :: MapLayout -> Map CityId [PathId]
 mapCityPaths layout =
   Map.fromListWith (++)
     [ conn
-    | (pathId, path) <- Map.toList (mapPaths layout)
-    , conn <- [ (pathFrom path,[pathId]), (pathTo path,[pathId]) ]
+    | (pathId, path) <- Map.toList (layout ^. mapPaths)
+    , conn <- [ (path ^. pathFrom, [pathId]), (path ^. pathTo,[pathId]) ]
     ]
 
 citiesInRegion :: MapLayout -> Map RegionId [CityId]
 citiesInRegion layout =
   Map.fromListWith (++)
-    [ (cityRegion city, [cid])
-    | (cid,city) <- Map.toList (mapCities layout)
+    [ (city ^. cityRegion, [cid])
+    | (cid,city) <- Map.toList (layout ^. mapCities)
     ]
 
 
