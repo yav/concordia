@@ -105,7 +105,7 @@ function get(ty,i) {
 
 function newContainer() {
   const dom = document.createElement("div")
-  dom.style.backgroundImage = "url(\"maps/" + state.map + ".jpg\")"
+  dom.style.backgroundImage = "url(\"../maps/" + state.map + ".jpg\")"
 
   dom.setAttribute("id","container")
   dom.classList.add("container")
@@ -360,7 +360,7 @@ function setupMap() {
   dom.addEventListener("change",() => {
     state.map = dom.value
     const cont = document.getElementById("container")
-    cont.style.backgroundImage = "url(\"maps/" + dom.value + ".jpg\")"
+    cont.style.backgroundImage = "url(\"../maps/" + dom.value + ".jpg\")"
   })
 }
 
