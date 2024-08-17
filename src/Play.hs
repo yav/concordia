@@ -4,7 +4,7 @@ import Control.Monad(when)
 import Data.Maybe(fromMaybe)
 import Data.Map qualified as Map
 import Data.Set qualified as Set
-import Data.List(foldl',nub)
+import Data.List(foldl',nub,partition)
 import Optics
 import KOI.Basics
 import KOI.Bag
@@ -319,5 +319,38 @@ actSpecialist pid r cardId =
      doDiscardCard pid cardId
 
 
+actSenator :: PlayerId -> Int -> Interact ()
+actSenator pid cardNum =
+  do brd <- the board
+     let cards = brd ^. marketDeck
+         spotCosts = marketLayout brd
+         marketLen = length spotCosts
+         cost c b = map Resource (cardCost c) ++ b
+         avail = zip [0..] (zipWith cost cards spotCosts)
+     picked <- pickCard [] avail
+     let (pickedCards, otherCards) =
+            partition ((`elem` picked) . fst)
+                      (zip (take marketLen [ 0 .. ]) cards)
+     doAddCards pid (map snd pickedCards)
+     setThe (board % marketDeck)
+            (map snd otherCards ++ drop marketLen cards)
+     doDiscardCard pid cardNum
+  where
+  pickCard picked avail
+    | length picked >= 2 = pure picked
+    | otherwise =
+    do opts <- mapM (canAfford pid . snd) avail
+       let indexedOpts = [ (n,opt)
+                         | ((n,_),opt) <- zip avail opts
+                         , not (null opt)
+                         ]
+       askInputs "Select a card." $
+          ( pid :-> AskText "End Turn", "No more cards.", pure picked) :
+          [ ( pid :-> AskMarket n, "Get this card."
+            , do doPayCost pid opt
+                 pickCard (n : picked) (filter ((/= n) . fst) avail)
+            )
+          | (n,opt) <- indexedOpts
+          ]
 
 

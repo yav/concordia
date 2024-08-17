@@ -12,6 +12,7 @@ data Question =
   | AskCity CityId
   | AskRegion RegionId
   | AskPath PathId
+  | AskMarket Int
   | AskText Text
   deriving (Show,Read,Eq,Ord,Generic,FromJSON,ToJSON)
 
