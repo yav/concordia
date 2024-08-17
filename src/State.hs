@@ -14,8 +14,7 @@ data GameState = GameState
   { _players      :: !(Map PlayerId PlayerState)
   , _board        :: !BoardState
   , _curPlayer    :: !PlayerId
-  , _prevPlayers  :: ![PlayerId]   -- ^ Most recent first
-  , _nextPlayers  :: ![PlayerId]
+  , _playerOrder  :: ![PlayerId]
   , _playerDoubleBonus :: !PlayerId
   , _gameStatus   :: !GameStatus
   }
@@ -59,7 +58,6 @@ playerState :: PlayerId -> Lens' GameState PlayerState
 playerState pid = lens ((Map.! pid) . _players) setP
   where
   setP s v = s { _players = Map.insert pid v (_players s) }
-
 
 
 

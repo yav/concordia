@@ -37,19 +37,8 @@ checkEndGame =
 
 nextPlayer :: Interact ()
 nextPlayer =
-  do s <- getState
-     case s ^. nextPlayers of
-       x : xs ->
-         do setThe curPlayer x
-            setThe nextPlayers xs
-            setThe prevPlayers (s ^. curPlayer : s ^. prevPlayers)
-       [] ->
-         case reverse (s ^. prevPlayers) of
-           x : xs ->
-             do setThe curPlayer x
-                setThe nextPlayers xs
-                setThe prevPlayers []
-           [] -> pure ()
+  do order <- the playerOrder
+     updateThe_ curPlayer (playerAfter order)
 
 doTakeTurn :: Interact ()
 doTakeTurn = pure ()
@@ -137,14 +126,9 @@ actPrefect pid cardNum =
        doChangeMoney pid (sum (map fromRegion done))
        setThe (board % mapPrefected) []
 
-  playerBefore =
-    do before <- the prevPlayers
-       after  <- the nextPlayers
-       cur    <- the curPlayer
-       pure $ last
-            $ takeWhile (/= pid)
-            $ cycle
-            $ after ++ reverse before ++ [cur]
+  getPlayerBefore =
+    do order <- the playerOrder
+       pure (playerBefore order pid)
 
   getPrefectBonus r =
     do rbs <- the (board % mapRegionBonus)
@@ -153,7 +137,7 @@ actPrefect pid cardNum =
          Just rsr ->
            do pm <- the playerDoubleBonus
               amt <- if pid == pm
-                          then do p <- playerBefore
+                          then do p <- getPlayerBefore
                                   setThe playerDoubleBonus p
                                   pure 2
                           else pure 1

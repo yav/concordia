@@ -12,6 +12,20 @@ import Types
 import Constants
 import Question
 
+-- | Assumes the player is in the list of players.
+playerAfter :: Eq a => [a] -> a -> a
+playerAfter order pid =
+  case dropWhile (/= pid) order of
+    _ : next : _ -> next
+    _            -> head order
+
+-- | Assumes the player is in the list of players.
+playerBefore :: Eq a => [a] -> a -> a
+playerBefore order pid =
+  case takeWhile (/= pid) order of
+    [] -> last order
+    xs -> last xs
+
 -- | Change the money by this much.
 doChangeMoney :: PlayerId -> Int -> Interact ()
 doChangeMoney pid amt

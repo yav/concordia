@@ -41,8 +41,7 @@ setupGame cfg0 =
                                            (map (setupPlayer cfg) [ 0 .. ]))
        , _board        = brd
        , _curPlayer    = first
-       , _prevPlayers  = []
-       , _nextPlayers  = rest
+       , _playerOrder  = first : rest
        , _gameStatus   = InProgress
        , _playerDoubleBonus = last (first : rest)
        }
