@@ -319,27 +319,30 @@ actSpecialist pid r cardId =
      doDiscardCard pid cardId
 
 
-actSenator :: PlayerId -> Int -> Interact ()
-actSenator pid cardNum =
+doGetMarketCards :: Bool -> Interact [(Card, [ResourceCost])]
+doGetMarketCards withBoardCost =
   do brd <- the board
      let cards = brd ^. marketDeck
          spotCosts = marketLayout brd
-         marketLen = length spotCosts
-         cost c b = map Resource (cardCost c) ++ b
-         avail = zip [0..] (zipWith cost cards spotCosts)
-     picked <- pickCard [] avail
+         cost c b =
+           (c, map Resource (cardCost c) ++ if withBoardCost then b else [])
+     pure (zipWith cost cards spotCosts)
+
+doPickCards :: PlayerId -> Int -> Bool -> Interact ()
+doPickCards pid howMany extraCost =
+  do avail <- zip [ 0 .. ] <$> doGetMarketCards extraCost
+     let marketLen = length avail
+     picked <- pickCard []  avail
      let (pickedCards, otherCards) =
-            partition ((`elem` picked) . fst)
-                      (zip (take marketLen [ 0 .. ]) cards)
-     doAddCards pid (map snd pickedCards)
-     setThe (board % marketDeck)
-            (map snd otherCards ++ drop marketLen cards)
-     doDiscardCard pid cardNum
+            partition ((`elem` picked) . fst) avail
+     doAddCards pid (map (fst . snd) pickedCards)
+     updateThe_ (board % marketDeck)
+                ((map (fst . snd) otherCards ++) . drop marketLen)
   where
   pickCard picked avail
-    | length picked >= 2 = pure picked
+    | length picked >= howMany = pure picked
     | otherwise =
-    do opts <- mapM (canAfford pid . snd) avail
+    do opts <- mapM (canAfford pid . snd . snd) avail
        let indexedOpts = [ (n,opt)
                          | ((n,_),opt) <- zip avail opts
                          , not (null opt)
@@ -352,5 +355,22 @@ actSenator pid cardNum =
             )
           | (n,opt) <- indexedOpts
           ]
+
+
+
+
+actSenator :: PlayerId -> Int -> Interact ()
+actSenator pid cardNum =
+  do doPickCards pid 2 True
+     doDiscardCard pid cardNum
+
+actConsul :: PlayerId -> Int -> Interact ()
+actConsul pid cardNum =
+  do doPickCards pid 1 False
+     doDiscardCard pid cardNum
+
+
+
+
 
 
