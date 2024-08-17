@@ -58,5 +58,11 @@ citiesInRegion layout =
     | (cid,city) <- Map.toList (layout ^. mapCities)
     ]
 
+pathCities :: MapLayout -> PathId -> [CityId]
+pathCities layout eid =
+  case Map.lookup eid (layout ^. mapPaths) of
+    Just path -> [ path ^. pathFrom, path ^. pathTo ]
+    Nothing   -> []
+
 
 

@@ -12,13 +12,13 @@ adv_mercator :: Card
 adv_mercator = Card [Mercator 5] [Wine] [Mercurius]
 
 architect :: Card
-architect = Card [Architect] [Tools] [Jupiter]
+architect = Card [Architect] [Tool] [Jupiter]
 
 diplomat, diplomat1, diplomat3, diplomat4, diplomat5 :: Card
 diplomat = Card [Diplomat] [] [Jupiter]
-diplomat1 = Card [Diplomat] [Tools] [Saturnus]
+diplomat1 = Card [Diplomat] [Tool] [Saturnus]
 diplomat3 = Card [Diplomat] [Wheat] [Saturnus]
-diplomat4 = Card [Diplomat] [Tools] [Mercurius]
+diplomat4 = Card [Diplomat] [Tool] [Mercurius]
 diplomat5 = Card [Diplomat] [Wheat] [Mars]
 
 prefect :: Card
@@ -39,7 +39,7 @@ specialist_farmer =
 
 specialist_smith :: Card
 specialist_smith =
-  Card [Specialist Tools] [Brick, Tools] [Minerva]
+  Card [Specialist Tool] [Brick, Tool] [Minerva]
 
 specialist_vintner :: Card
 specialist_vintner = Card [Specialist Wine] [Brick, Wine] [Minerva]

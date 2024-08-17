@@ -212,11 +212,6 @@ canMoveWorker w loc0 steps =
 
          cityNeighbours cid = Map.findWithDefault [] cid cityPaths
 
-         pathCities eid =
-           case Map.lookup eid (layout ^. mapPaths) of
-             Just path -> [ path ^. pathFrom, path ^. pathTo ]
-             Nothing -> []
-
          isBlocked eid =
             eid `Map.member` onPaths ||
             case Map.lookup eid (layout ^. mapPaths) of
@@ -244,7 +239,8 @@ canMoveWorker w loc0 steps =
                        if stepsTaken < 1 || isBlocked loc
                          then reachable
                          else (loc,stepsTaken) : reachable
-                     newWork = [ (Left cid, stepsTaken) | cid <- pathCities loc ]
+                     newWork = [ (Left cid, stepsTaken)
+                               | cid <- pathCities layout loc ]
                  in search newVisted newReachable todo (newWork ++ moreTodo)
 
      pure (search mempty mempty [(loc0,0)] [])

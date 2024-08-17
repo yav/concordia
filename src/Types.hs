@@ -3,10 +3,11 @@ module Types where
 import GHC.Generics(Generic)
 import Data.Aeson(ToJSON,FromJSON)
 
-data Resource = Brick | Wheat | Tools | Wine | Cloth | Salt
+data Resource = Brick | Wheat | Tool | Wine | Cloth | Salt
   deriving (Eq,Ord,Show,Read,Generic,ToJSON,FromJSON)
 
 data ResourceCost = Resource Resource | Any
+  deriving Eq
 
 data Worker   = Person | Ship
   deriving (Eq,Ord,Show,Read,Generic,ToJSON,FromJSON)

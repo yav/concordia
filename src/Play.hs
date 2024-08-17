@@ -1,14 +1,15 @@
 module Play where
 
-import Control.Monad(when,forM)
+import Control.Monad(when,forM,guard)
 import Data.Maybe(fromMaybe,catMaybes)
 import Data.Map qualified as Map
 import Data.Set qualified as Set
-import Data.List(foldl')
+import Data.List(foldl',nub)
 import Optics
 import KOI.Basics
 import KOI.Bag
 import KOI
+import Constants
 import Static
 import State
 import Types
@@ -171,7 +172,7 @@ actArchitect :: PlayerId -> Interact ()
 actArchitect pid =
   do move <- countWorkersOnBoard pid
      doMoves move
-     -- XXX: build
+     buildHouses
 
   where
   getWorkers =
@@ -233,7 +234,51 @@ actArchitect pid =
          | (w,loc,tgts) <- opts
          ]
 
+  buildHouses =
+    do ws <- getWorkers
+       let paths = [ eid | (_,Right eid) <- ws ]
+       layout <- the (board % mapLayout)
+       prod   <- the (board % mapProduces)
+       let canBuild built cid =
+             do houses <- case Map.lookup cid built of
+                            Nothing -> pure 0
+                            Just ps ->
+                              do guard (pid `notElem` ps)
+                                 pure (length ps)
+                r             <- Map.lookup cid prod
+                (money, cost) <- Map.lookup r cityCosts
+                pure (money * (1 + houses), map Resource cost)
+       let cityOpts built =
+              nub [ (cid,cost)
+                  | eid <- paths
+                  , cid <- pathCities layout eid
+                  , Just cost <- [canBuild built cid]
+                  ]
+       buildHouse cityOpts
 
 
+  endBuild = (pid :-> AskText "End Turn", "No more houses.", pure ())
+
+  buildHouse cityOpts =
+    do houses    <- the (playerState pid % playerHousesToBuild)
+       built     <- the (board % mapHouses)
+       resources <- the (playerState pid % playerResources)
+       money     <- the (playerState pid % playerMoney)
+
+       askInputs "Build houses." $
+         endBuild :
+         [ ( pid :-> AskCity cid
+           , "Build house here."
+           , do doPayCost pid cost
+                updateThe_ (players % ix pid % playerHousesToBuild) (subtract 1)
+                updateThe_ (board % mapHouses % ix cid) (pid :)
+                buildHouse cityOpts
+           )
+         | houses >= 1
+         , (cid,(moneyCost,rCost)) <- cityOpts built
+         , money >= moneyCost
+         , let cost = canAfford' rCost resources
+         , not (null cost)
+         ]
 
 
