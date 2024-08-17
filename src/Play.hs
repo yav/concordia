@@ -123,10 +123,6 @@ actPrefect pid =
        doChangeMoney pid (sum (map fromRegion done))
        setThe (board % mapPrefected) []
 
-  getPlayerBefore =
-    do order <- the playerOrder
-       pure (playerBefore order pid)
-
   getPrefectBonus r =
     do rbs <- the (board % mapRegionBonus)
        case view rbResource =<< Map.lookup r rbs of
@@ -134,9 +130,10 @@ actPrefect pid =
          Just rsr ->
            do pm <- the playerDoubleBonus
               amt <- if pid == pm
-                          then do p <- getPlayerBefore
-                                  setThe playerDoubleBonus p
-                                  pure 2
+                          then
+                            do order <- the playerOrder
+                               setThe playerDoubleBonus (playerBefore order pid)
+                               pure 2
                           else pure 1
               pure (Map.singleton pid (bagFromList (replicate amt rsr)))
 
