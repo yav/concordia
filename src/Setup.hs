@@ -33,7 +33,7 @@ setupGame :: Config -> Gen GameState
 setupGame cfg0 =
   do let solo = PlayerId "Solo"
      let (cfg,first,rest) =
-            case cfgPlayerOrder cfg of
+            case cfgPlayerOrder cfg0 of
               []     -> (cfg0 { cfgPlayerOrder = [solo] }, solo, [])
               p : ps -> (cfg0,p,ps)
      brd <- setupBoard cfg
