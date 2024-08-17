@@ -2,6 +2,8 @@ module HelperActions where
 
 import Data.Maybe(fromMaybe)
 import Data.List(nub,partition)
+import Data.Map qualified as Map
+import Data.Set qualified as Set
 import Optics
 import KOI.Basics
 import KOI.Bag
@@ -199,8 +201,53 @@ doPickCards pid howMany extraCost =
           | (n,opt) <- indexedOpts
           ]
 
+-- | What paths can a worker reach with the given amount of work.
+-- We don't count 0 movement.
+canMoveWorker ::
+  Worker -> Either CityId PathId -> Int -> Interact [(PathId,Int)]
+canMoveWorker w loc0 steps =
+  do layout  <- the (board % mapLayout)
+     onPaths <- the (board % mapPathWorkers)
+     let cityPaths = mapCityPaths w layout
 
+         cityNeighbours cid = Map.findWithDefault [] cid cityPaths
 
+         pathCities eid =
+           case Map.lookup eid (layout ^. mapPaths) of
+             Just path -> [ path ^. pathFrom, path ^. pathTo ]
+             Nothing -> []
+
+         isBlocked eid =
+            eid `Map.member` onPaths ||
+            case Map.lookup eid (layout ^. mapPaths) of
+              Just path -> path ^. pathCanStop
+              Nothing -> True
+
+     let search visited reachable todo moreTodo =
+           case todo of
+             [] ->
+               case moreTodo of
+                 [] -> reachable
+                 _  -> search visited reachable (reverse moreTodo) []
+             (Left cid,stepsTaken) : rest ->
+               let newWork = [ (Right loc, stepsTaken + 1)
+                             | loc <- cityNeighbours cid
+                             ]
+               in search visited reachable rest (newWork ++ moreTodo)
+
+             (Right loc,stepsTaken) : rest
+               | loc `Set.member` visited || stepsTaken > steps ->
+                 search visited reachable rest moreTodo
+               | otherwise ->
+                 let newVisted = Set.insert loc visited
+                     newReachable =
+                       if stepsTaken < 1 || isBlocked loc
+                         then reachable
+                         else (loc,stepsTaken) : reachable
+                     newWork = [ (Left cid, stepsTaken) | cid <- pathCities loc ]
+                 in search newVisted newReachable todo (newWork ++ moreTodo)
+
+     pure (search mempty mempty [(loc0,0)] [])
 
 
 

@@ -42,11 +42,12 @@ makeLenses ''City
 makeLenses ''Path
 makeLenses ''MapLayout
 
-mapCityPaths :: MapLayout -> Map CityId [PathId]
-mapCityPaths layout =
+mapCityPaths :: Worker -> MapLayout -> Map CityId [PathId]
+mapCityPaths w layout =
   Map.fromListWith (++)
     [ conn
     | (pathId, path) <- Map.toList (layout ^. mapPaths)
+    , path ^. pathWorker == w
     , conn <- [ (path ^. pathFrom, [pathId]), (path ^. pathTo,[pathId]) ]
     ]
 
@@ -56,7 +57,6 @@ citiesInRegion layout =
     [ (city ^. cityRegion, [cid])
     | (cid,city) <- Map.toList (layout ^. mapCities)
     ]
-
 
 
 

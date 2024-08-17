@@ -8,6 +8,7 @@ import Static
 
 data Question =
     AskWorker Worker
+  | AskCityWorker CityId Worker
   | AskResource Resource
   | AskCity CityId
   | AskRegion RegionId

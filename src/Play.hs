@@ -1,7 +1,7 @@
 module Play where
 
-import Control.Monad(when)
-import Data.Maybe(fromMaybe)
+import Control.Monad(when,forM)
+import Data.Maybe(fromMaybe,catMaybes)
 import Data.Map qualified as Map
 import Data.Set qualified as Set
 import Data.List(foldl')
@@ -40,6 +40,7 @@ nextPlayer =
   do order <- the playerOrder
      updateThe_ curPlayer (playerAfter order)
 
+-- XXX
 doTakeTurn :: Interact ()
 doTakeTurn = pure ()
 
@@ -160,13 +161,77 @@ actSpecialist pid r =
      let amt = Set.size (Set.intersection ourCities thisResource)
      doGainResources pid (bagFromNumList [(r,amt)])
 
-
 actSenator :: PlayerId -> Interact ()
 actSenator pid = doPickCards pid 2 True
 
 actConsul :: PlayerId -> Interact ()
 actConsul pid = doPickCards pid 1 False
 
+actArchitect :: PlayerId -> Interact ()
+actArchitect pid =
+  do move <- countWorkersOnBoard pid
+     doMoves move
+     -- XXX: build
+
+  where
+  getWorkers =
+    do brd <- the board
+       let fromCity cid inCity rest =
+             [ (w, Left cid) | w <- [Person,Ship]
+                             , bagContains (pid :-> w) inCity > 0 ] ++
+             rest
+       let cities = Map.foldrWithKey fromCity [] (brd ^. mapCityWorkers)
+
+       let fromPath eid (p :-> w) rest
+             | pid == p  = (w,Right eid) : rest
+             | otherwise = rest
+       pure (Map.foldrWithKey fromPath cities (brd ^. mapPathWorkers))
+
+  endMove = (pid :-> AskText "End Movement", "No more moves.", pure ())
+
+  moveCityWorker steps w cid tgts =
+    ( pid :-> AskCityWorker cid w
+    , "Move this worker."
+    , askInputs "Choose where to move."
+        [ ( pid :-> AskPath eid
+          , "Move here."
+          , do updateThe_ (board % mapCityWorkers % ix cid)
+                          (bagChange (-1) (pid :-> w))
+               setThe (board % mapPathWorkers % ix eid) (pid :-> w)
+               doMoves (steps - takenSteps)
+          )
+        | (eid, takenSteps) <- tgts
+        ]
+    )
+
+  movePathWorker steps w from tgts =
+    ( pid :-> AskPath from
+    , "Move this worker."
+    , askInputs "Choose where to move."
+        [ ( pid :-> AskPath tgt
+          , "Move here."
+          , do setThe (board % mapPathWorkers % at from) Nothing
+               setThe (board % mapPathWorkers % ix tgt) (pid :-> w)
+               doMoves (steps - takenSteps)
+          )
+        | (tgt, takenSteps) <- tgts
+        ]
+    )
+
+  doMoves steps =
+    do ws <- getWorkers
+       opts <- catMaybes <$> forM ws \(w,loc) ->
+         do opts <- canMoveWorker w loc steps
+            if null opts
+              then pure Nothing
+              else pure (Just (w,loc,opts))
+       askInputsMaybe_ "Choose a worker to move." $
+         endMove :
+         [ case loc of
+             Left cid  -> moveCityWorker steps w cid tgts
+             Right eid -> movePathWorker steps w eid tgts
+         | (w,loc,tgts) <- opts
+         ]
 
 
 
