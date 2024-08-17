@@ -47,7 +47,7 @@ doTakeTurn = pure ()
 actTribune :: PlayerId -> Interact ()
 actTribune pid =
   do discard <- updateThe (playerState pid % playerDiscard) (\d -> (d, []))
-     doChangeMoney pid (length discard + 1 - 3)
+     doChangeMoney pid (length discard - 3)
      doAddCards pid discard
      ws <- canBuildWorker pid
      capital <- mapStartCity . mapLayout <$> the board
@@ -59,13 +59,11 @@ actTribune pid =
         ]
 
 
-actColonist :: PlayerId -> Int -> Interact ()
-actColonist pid cardNum =
+actColonist :: PlayerId -> Interact ()
+actColonist pid =
   do ws   <- canBuildWorker pid
      tgts <- getBuildTargets
      doAction tgts ws getMoney
-     doDiscardCard pid cardNum
-
   where
   getBuildTargets =
     do b <- the board
@@ -103,8 +101,8 @@ actColonist pid cardNum =
 
 
 
-actPrefect :: PlayerId -> Int -> Interact ()
-actPrefect pid cardNum =
+actPrefect :: PlayerId -> Interact ()
+actPrefect pid =
   do brd <- the board
      let regs = Set.toList (mapRegions (mapLayout brd))
      askInputsMaybe_ "Choose a region to prefect."
@@ -115,7 +113,6 @@ actPrefect pid cardNum =
           )
         | r <- regs
         ]
-     doDiscardCard pid cardNum
   where
   getMoney done =
     do bonuses <- the (board % mapRegionBonus)
@@ -156,26 +153,22 @@ actPrefect pid cardNum =
                 pure (foldl' addP tot houses)
        mapM_ (uncurry doGainResources) (Map.toList (foldl' doCity bonus cities))
 
-actSpecialist :: PlayerId -> Resource -> Int -> Interact ()
-actSpecialist pid r cardId =
+
+actSpecialist :: PlayerId -> Resource -> Interact ()
+actSpecialist pid r =
   do allHouses <- the (board % mapHouses)
      let ourCities = Map.keysSet (Map.filter (pid `elem`) allHouses)
      prod <- the (board % mapProduces)
      let thisResource = Map.keysSet (Map.filter (== r) prod)
      let amt = Set.size (Set.intersection ourCities thisResource)
      doGainResources pid (bagFromNumList [(r,amt)])
-     doDiscardCard pid cardId
 
 
-actSenator :: PlayerId -> Int -> Interact ()
-actSenator pid cardNum =
-  do doPickCards pid 2 True
-     doDiscardCard pid cardNum
+actSenator :: PlayerId -> Interact ()
+actSenator pid = doPickCards pid 2 True
 
-actConsul :: PlayerId -> Int -> Interact ()
-actConsul pid cardNum =
-  do doPickCards pid 1 False
-     doDiscardCard pid cardNum
+actConsul :: PlayerId -> Interact ()
+actConsul pid = doPickCards pid 1 False
 
 
 
