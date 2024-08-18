@@ -1,0 +1,17 @@
+@font-face {
+  font-family: "Cinzel";
+  src: url("Cinzel Family/Cinzel/Cinzel-Regular.otf") format("opentype");
+}
+
+body {
+  font-family: "Cinzel";
+}
+
+.card {
+  width:  2in;
+  height: 3in;
+  border: 1px solid black;
+}
+
+
+

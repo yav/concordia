@@ -17,7 +17,7 @@ executable concordia
     main-is:          Main.hs
     other-modules:
       KOI, Types, State, Setup, Static, Score, Play, Question, Cards,
-      Constants, HelperActions
+      Constants, HelperActions, View
     default-extensions:
       TemplateHaskell,
       ImportQualifiedPost,
@@ -27,7 +27,8 @@ executable concordia
       DerivingVia,
       DerivingStrategies,
       DeriveAnyClass,
-      BlockArguments
+      BlockArguments,
+      LambdaCase
 
     build-depends:    base, containers, text, aeson,
                       optics, KOI-interact, KOI-utils

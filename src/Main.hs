@@ -2,6 +2,7 @@ module Main where
 
 import Data.Aeson qualified as JS
 import KOI.Basics
+import KOI.CallJS(jsHandlers)
 import KOI.Bag
 import KOI.RNGM
 import KOI
@@ -15,15 +16,15 @@ import Static
 main :: IO ()
 main =
   -- XXX
-  JS.eitherDecodeFileStrict' "ui/maps/Italia.json" >>= \mb ->
-  case mb of
+  JS.eitherDecodeFileStrict' "ui/maps/Italia.json" >>=
+  \case
     Left err -> fail err
     Right mp ->
       startApp App
       { appId = Concordia
       , appOptions = []
       , appColors = [ "yellow", "red", "green", "blue", "black" ]
-      , appJS = ""
+      , appJS = $(jsHandlers [])
       , appInitialState = \rng opts ps ->
         withRNG_ rng
           do s <- setupGame (getConfig mp opts ps)

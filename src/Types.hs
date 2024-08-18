@@ -19,13 +19,16 @@ data Action   = Architect | Senator | Prefect | Diplomat | Tribune
               | Colonist
               | Mercator Int | Specialist Resource
               | Magister | Consul
+  deriving (Generic,ToJSON)
 
 data God      = Vesta | Jupiter | Saturnus | Venus | Mercurius | Mars | Minerva
+  deriving (Generic,ToJSON)
 
 data Card     = Card { cardActions :: [Action]
                      , cardCost    :: [Resource]
                      , cardColor   :: [God]
                      }
+  deriving (Generic,ToJSON)
 
 
 
