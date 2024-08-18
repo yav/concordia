@@ -14,7 +14,7 @@ data View = View
 
 
 stateView :: PlayerId -> GameState -> View
-stateView _ s = View
-  { hand = []
+stateView p s = View
+  { hand = s ^. playerState p % playerHand
   , market = zipWith const (s ^. board % marketDeck) (s ^. board % marketLayout)
   }

@@ -8,10 +8,71 @@ body {
 }
 
 .card {
-  width:  2in;
-  height: 3in;
+  width: 128px;
+  border: 1px solid black;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: linear-gradient(#eee,#cba);
+  margin: 0.3em;
+}
+
+.card-element {
+  text-align: center;
+  margin: 0.3em;
   border: 1px solid black;
 }
+
+.action {
+  background: linear-gradient(#fff,#eee);
+}
+
+.vesta {
+  background-color: #96c;
+}
+
+.jupiter {
+  background-color: #39c;
+}
+
+.saturnus {
+  background-color: #fe3;
+}
+
+.venus {
+  background-color: #090;
+}
+
+.mercurius {
+  background: #c93;
+}
+
+.mars {
+  background-color: #f90;
+}
+
+.minerva {
+  background-color: #cfc;
+}
+
+
+.resource-icon {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  padding: 0.1em;
+}
+
+.card-element.card-cost {
+  text-align: right;
+  border: 0;
+}
+
+.brick { background-image: url("icons/brick.svg"); }
+.wheat { background-image: url("icons/wheat.svg"); }
+.tool  { background-image: url("icons/tool.svg"); }
+.wine  { background-image: url("icons/wine.svg"); }
+.cloth { background-image: url("icons/cloth.svg"); }
 
 
 

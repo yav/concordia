@@ -6,6 +6,15 @@ function main() {
 
 function uiRedraw(s) {
   console.log("uiRedraw",s)
+  for (const c of s.game.hand) {
+    const ca = new Card(c)
+    document.body.appendChild(ca.getDom())
+  }
+
+  for (const c of s.game.market) {
+    const ca = new Card(c)
+    document.body.appendChild(ca.getDom())
+  }
 }
 
 function uiSetQuestion(q) {

@@ -11,6 +11,9 @@ basicMercator = Card [Mercator 3] [] [Mercurius]
 advMercator :: Card
 advMercator = Card [Mercator 5] [Wine] [Mercurius]
 
+basicArchitect :: Card
+basicArchitect = Card [Architect] [] [Jupiter]
+
 architect :: Card
 architect = Card [Architect] [Tool] [Jupiter]
 
@@ -20,6 +23,10 @@ diplomat1 = Card [Diplomat] [Tool] [Saturnus]
 diplomat3 = Card [Diplomat] [Wheat] [Saturnus]
 diplomat4 = Card [Diplomat] [Tool] [Mercurius]
 diplomat5 = Card [Diplomat] [Wheat] [Mars]
+
+
+basicPrefect :: Card
+basicPrefect = Card [Prefect] [] [Saturnus]
 
 prefect :: Card
 prefect = Card [Prefect] [Wine] [Saturnus]
@@ -55,7 +62,8 @@ colonist = Card [Colonist] [Wheat] [Mars]
 
 startDeck, deck1, deck2, deck3, deck4, deck5 :: [Card]
 startDeck =
-  [tribune, prefect, prefect, diplomat, architect, basicMercator, senator]
+  [tribune, basicPrefect, basicPrefect, diplomat,
+    basicArchitect, basicMercator, senator]
 
 deck1 = [ advMercator, architect, colonist, prefect, diplomat1,
           specialistMason, specialistFarmer, specialistSmith]
