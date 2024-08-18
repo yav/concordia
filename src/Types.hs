@@ -7,7 +7,7 @@ data Resource = Brick | Wheat | Tool | Wine | Cloth | Salt
   deriving (Eq,Ord,Show,Read,Generic,ToJSON,FromJSON)
 
 data ResourceCost = Resource Resource | Any
-  deriving Eq
+  deriving (Eq,Generic,ToJSON)
 
 data Worker   = Person | Ship
   deriving (Eq,Ord,Show,Read,Generic,ToJSON,FromJSON)
