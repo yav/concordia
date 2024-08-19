@@ -14,6 +14,7 @@ data Question =
   | AskRegion RegionId
   | AskPath PathId
   | AskMarket Int
+  | AskHand Int
   | AskText Text
   deriving (Show,Read,Eq,Ord,Generic,FromJSON,ToJSON)
 

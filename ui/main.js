@@ -1,20 +1,14 @@
 let conn = null
+let gui = null
 
 function main() {
   conn = srvConnect()
 }
 
 function uiRedraw(s) {
-  console.log("uiRedraw",s)
-  for (const c of s.game.hand) {
-    const ca = new Card(c)
-    document.body.appendChild(ca.getDom())
-  }
-
-  for (const c of s.game.market) {
-    const ca = new Card(c)
-    document.body.appendChild(ca.getDom())
-  }
+  if (gui !== null) gui.destroy()
+  gui = new GUI()
+  gui.set(s.game)
 }
 
 function uiSetQuestion(q) {

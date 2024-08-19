@@ -57,10 +57,10 @@ body {
 
 
 .resource-icon {
-  width: 1em;
-  height: 1em;
+  width: 1.5em;
+  height: 1.5em;
   display: inline-block;
-  padding: 0.1em;
+  text-align: center;
 }
 
 .card-element.card-cost {
@@ -68,11 +68,59 @@ body {
   border: 0;
 }
 
+.red {
+  fill: red;
+}
+
 .brick { background-image: url("icons/brick.svg"); }
 .wheat { background-image: url("icons/wheat.svg"); }
 .tool  { background-image: url("icons/tool.svg"); }
 .wine  { background-image: url("icons/wine.svg"); }
 .cloth { background-image: url("icons/cloth.svg"); }
+.money { background-image: url("icons/money.svg"); }
+.cards { background-image: url("icons/cards.svg"); }
+.house { background-image: url("icons/house.svg"); }
+.ship  { background-image: url("icons/ship.svg"); }
+.person { background-image: url("icons/person.svg"); }
+.blank { background-image: url("icons/blank.svg"); }
+.any   { background-image: url("icons/blank.svg"); }
 
 
+#players {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: stretch;
+}
 
+.player {
+  background-color: white;
+  border: 1px solid black;
+}
+
+.player .name {
+  max-width: 8em;
+}
+
+
+#market {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: stretch;
+}
+
+.spot_cost {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.cost {
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}

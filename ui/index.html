@@ -1,14 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="template.js"></script>
+<script src="list.js"></script>
 <script src="dynamic.js"></script>
 <script src="connect.js"></script>
 <script src="main.js"></script>
 <script src="card.js"></script>
 <script src="resource.js"></script>
+<script src="player.js"></script>
 <script src="market.js"></script>
+<script src="gui.js"></script>
 <link rel="stylesheet" href="style.css">
 </head>
 <body id="body" onload="main()">
+<div id="players"></div>
+<div id="hand"></div>
+<div id="market"></div>
+
+<div style="display: none;">
+
+<div id="card-template" class="card">
+  <div id="card_header" class="card-header"></div>
+  <div id="card_footer" class="card-footer"></div>
+</div>
+
+<div id="card-element" class="card-element"></div>
+
+<div id="resource-icon" class="resource-icon"></div>
+
+<div id="market-spot" class="market-spot">
+  <div id="market_card"></div>
+  <div class="spot_cost">
+    <div id="card_cost" class="cost"></div>&nbsp;+&nbsp;
+    <div id="spot_cost" class="cost"></div>
+  </div>
+</div>
+
+<table id="player" class="player">
+<tr>
+  <td id="name" colspan=6 class="name"></td>
+  <td id="0"></td>
+  <td id="2"></td>
+  <td id="4"></td>
+  <td id="6"></td>
+  <td id="8"></td>
+  <td id="10"></td>
+  <td id="top_card" rowspan=2"></td>
+</tr>
+<tr>
+  <td title="Available houses"><div class="resource-icon house"></div
+    ></td><td id="houses"></td>
+  <td title="Cards in hand"><div class="resource-icon cards"></div
+    ></td><td id="cards"></td>
+  <td><div title="Money" class="resource-icon money"></div
+    ></td><td id="money"></td>
+  <td id="1"></td>
+  <td id="3"></td>
+  <td id="5"></td>
+  <td id="7"></td>
+  <td id="9"></td>
+  <td id="11"></td>
+</tr>
+</table>
+
+</div>
 </body>
 </html>

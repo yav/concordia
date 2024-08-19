@@ -1,7 +1,7 @@
 module View(View, stateView) where
 
 import GHC.Generics(Generic)
-import Data.Maybe(listToMaybe)
+import Data.Maybe(listToMaybe, fromMaybe)
 import Data.Text(Text)
 import Data.Map(Map)
 import Data.Map qualified as Map
@@ -65,9 +65,7 @@ data MarketSpot = MarketSpot
 
 stateView :: PlayerId -> GameState -> View
 stateView pid s = View
-  { hand = case s ^? players % ix pid % playerHand of
-             Just cs -> cs
-             Nothing -> []
+  { hand = fromMaybe [] (s ^? players % ix pid % playerHand)
   , playerInfo =
       [ playerView p (s ^. playerState p) | p <- s ^. playerOrder ]
   , boardInfo = boardView (s ^. board)
@@ -89,5 +87,11 @@ playerView pid s = PlayerView
   }
 
 boardView :: BoardState -> BoardView
-boardView = undefined
+boardView s = BoardView
+  { name = s ^. mapLayout % mapName
+  , cities = [] -- XXX
+  , paths = [] -- XXX
+  , regions = mempty -- XXX
+  , market = zipWith MarketSpot (s ^. marketDeck) (s ^. marketLayout)
+  }
 
