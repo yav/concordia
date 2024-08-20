@@ -8,7 +8,7 @@ class Player {
     this.resources = []
 
     for (let i = 0; i < 12; ++i) {
-      this.resources.push(new Resource(this.els[i]))
+      this.resources.push(new PlayerResource(this.els[i]))
     }
 
     owner.appendChild(dom)
@@ -26,9 +26,7 @@ class Player {
     this.setText("cards",   obj.handSize)
     this.setText("money",   obj.money)
     for (let i = 0; i < 12; ++i) {
-      const val = obj.resources[i]
-      const v = val.tag === "Available"? "blank" : val.contents
-      this.resources[i].set(v)
+      this.resources[i].set(obj.resources[i])
     }
   }
 
@@ -36,3 +34,4 @@ class Player {
     this.dom.remove()
   }
 }
+

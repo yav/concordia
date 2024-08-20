@@ -19,11 +19,20 @@ class Resource {
   }
 }
 
-class ResourceCost {
+class ResourceCost extends Tagged {
   constructor(owner) {
-    this.resource = new Resource(owner)
+    super({ Any: () => new Const(owner,uiFromTemplate("wild-resource"))
+          , Resource: () => new Resource(owner)
+          })
   }
-  destroy() { this.resource.destroy() }
-  set(x) { this.resource.set(x.tag === "Resource"? x.contents : x.tag) }
+}
+
+class PlayerResource extends Tagged {
+  constructor(owner) {
+    super({ Available: () => new Const(owner,uiFromTemplate("available-spot"))
+          , HasWorker: () => new Resource(owner) // XXX
+          , HasResource: () => new Resource(owner)
+          })
+  }
 }
 
