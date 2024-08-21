@@ -5,10 +5,10 @@ function main() {
   conn = srvConnect()
 }
 
-function uiRedraw(s) {
+async function uiRedraw(s) {
   if (gui !== null) gui.destroy()
   gui = new GUI()
-  gui.set(s.game)
+  await gui.set(s.game)
 }
 
 function uiSetQuestion(q) {

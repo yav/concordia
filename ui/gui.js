@@ -2,22 +2,21 @@ class GUI {
   constructor() {
     const playerContainer = uiGet("players")
     const handContainer   = uiGet("hand")
-    const marketContainer = uiGet("market")
     this.players          = new List(() => new Player(playerContainer))
     this.hand             = new List(() => new Card(handContainer))
-    this.market           = new List(() => new MarketSpot(marketContainer))
+    this.board            = new Board()
   }
 
-  set(obj) {
+  async set(obj) {
     this.players.set(obj.playerInfo)
     this.hand.set(obj.hand)
-    this.market.set(obj.boardInfo.market)
+    await this.board.set(obj.boardInfo)
   }
 
   destroy() {
     this.players.destroy()
     this.hand.destroy()
-    this.market.destroy()
+    this.board.destroy()
   }
 
 }

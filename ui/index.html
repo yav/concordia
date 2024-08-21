@@ -10,13 +10,19 @@
 <script src="resource.js"></script>
 <script src="player.js"></script>
 <script src="market.js"></script>
+<script src="board.js"></script>
 <script src="gui.js"></script>
 <link rel="stylesheet" href="style.css">
 </head>
 <body id="body" onload="main()">
-<div id="players"></div>
-<div id="hand"></div>
-<div id="market"></div>
+<div id="board">
+  <div id="market"></div>
+</div>
+<div id="RHS">
+  <div id="players"></div>
+  <div id="hand"></div>
+  
+</div>
 
 <div style="display: none;">
 
@@ -33,9 +39,9 @@
      title="Any resource">?</div>
 
 <div id="market-spot" class="market-spot">
-  <div id="market_card"></div>
+  <div id="market_card" class="market-card"></div>
   <div class="spot_cost">
-    <div id="card_cost" class="cost"></div>&nbsp;+&nbsp;
+    <div id="card_cost" class="cost"></div>&nbsp;&nbsp;
     <div id="spot_cost" class="cost"></div>
   </div>
 </div>
