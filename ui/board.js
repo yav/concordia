@@ -59,8 +59,8 @@ class BoardMap {
       this.imgResolve = resolve
     })
 
-    const tmp = "Corsica"
-    this.img.src = "maps/" + tmp/*this.name*/ + ".jpg"
+    const tmp = this.name
+    this.img.src = "maps/" + tmp + ".jpg"
 
     const jsonWait = async () => {
       const result = await fetch("maps/" + this.name + ".json")
@@ -77,8 +77,20 @@ class BoardMap {
     const w = this.img.width
     const h = this.img.height
     const r = w/h
-    console.log(r)
-    this.img.style.height="950px"
-    
+    const bo = document.body
+    const rhs = document.getElementById("controls")
+    const bow = bo.clientWidth
+    const boh = bo.clientHeight
+    const is = this.img.style
+  /*
+    let w1 = 0.8 * bow
+    let h1 = w1 / r
+    if (h1 > 
+  
+    // boh*r = bow
+    is.width = w1 + "px"
+    //is.height = h1 + "px"
+    */
+   is.width = "100%"
   }
 }
