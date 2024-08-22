@@ -35,6 +35,25 @@
   padding: 0.5em;
 }
 
+.market {
+  width: 30px;
+  height: 30px;
+  background-color: greenyellow;
+  box-sizing: border-box;
+}
+
+#market_TL {
+  border-top: 2px solid black;
+  border-left: 2px solid black;
+}
+
+
+#market_BR {
+  border-bottom: 2px solid black;
+  border-right: 2px solid black;
+}
+
+
 .region {
   width:  32px;
   height: 32px;
@@ -96,7 +115,7 @@ let state = {
   next_city: 0,
   next_edge: 0,
   region: {}, city: {}, edge: {},
-  loc: { region: {}, city: {}, edge: {} }
+  loc: { region: {}, city: {}, edge: {}, market: {} }
 }
 
 function get(ty,i) {
@@ -186,6 +205,7 @@ function newComponent(id,ty) {
     clearQuestion(ty)
   })
 
+  if (state.loc[ty] === undefined) state.loc[ty] = {}
   const loc = state.loc[ty][id]
   if (loc === undefined) {
     const l = state.loc[ty][id - 1]
@@ -327,6 +347,11 @@ function download() {
   button.remove()
 }
 
+function setupMarket() {
+  newComponent("TL","market")
+  newComponent("BR","market")
+}
+
 function setupLoad() {
   const dom = document.getElementById("load")
   dom.addEventListener("change",() => {
@@ -337,6 +362,7 @@ function setupLoad() {
         state = JSON.parse(reader.result)
         document.getElementById("container").remove()
         newContainer()
+        setupMarket()
         for (const i in state.region) {
           newRegion(i)
         }
@@ -395,6 +421,7 @@ function setupMap() {
 setupLoad()
 setupMap()
 newContainer()
+setupMarket()
 </script>
 </body>
 </html>

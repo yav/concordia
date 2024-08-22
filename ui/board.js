@@ -10,8 +10,9 @@ class Board {
     this.market = null
   }
   async set(obj) {
-    this.market.set(obj.market)
     await this.board.set(obj.name)
+    this.market.set(obj.market)
+    
   }
 }
 
@@ -70,27 +71,33 @@ class BoardMap {
     await Promise.all([imgWait,jsonWait()])
   }
 
+  fromMapLoc([x,y]) { return [ x * this.scaleX, y * this.scaleY ] }
+
   async set(name) {
     if (this.name === name && this.json !== null) return
     this.name = name
     await this.load()
-    const w = this.img.width
-    const h = this.img.height
-    const r = w/h
-    const bo = document.body
-    const rhs = document.getElementById("controls")
-    const bow = bo.clientWidth
-    const boh = bo.clientHeight
-    const is = this.img.style
-  /*
-    let w1 = 0.8 * bow
-    let h1 = w1 / r
-    if (h1 > 
-  
-    // boh*r = bow
-    is.width = w1 + "px"
-    //is.height = h1 + "px"
-    */
-   is.width = "100%"
+    // The JSON data is on image which has been scaled
+    // to fit in 1920x1080
+    const r = this.img.width / this.img.height // r * h = w    
+    const normW1 = r * 1080
+    const normW = normW1 > 1920 ? 1920 : normW1
+    const normH = normW / r
+    console.log(normW,normH)
+
+    this.img.style.width = "100%"
+    this.scaleX = this.img.width / normW
+    this.scaleY = this.img.height / normH
+ 
+    const market = document.getElementById("market").style
+    const [tlx,tly] = this.fromMapLoc(this.json.loc.market.TL)
+    const [blx,bly] = this.fromMapLoc(this.json.loc.market.BR)
+    const marketW = 32 + blx - tlx
+    const marketH = 32 + bly - tly
+    market.left = tlx + "px"
+    market.top = tly + "px"
+    market.width = marketW + "px"
+    market.height = marketH + "px"
+
   }
 }
