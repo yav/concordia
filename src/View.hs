@@ -39,10 +39,10 @@ data BoardView = BoardView
   , market :: [MarketSpot]
   } deriving (Generic,ToJSON)
 
-data CityView = CityViw
+data CityView = CityView
   { city :: CityId
   , produces :: Resource
-  , memebrs :: Map PlayerId [CityMember]
+  , members :: Map PlayerId [CityMember]
   } deriving (Generic,ToJSON)
 
 data CityMember = CityWorker Worker | House
@@ -89,9 +89,22 @@ playerView pid s = PlayerView
 boardView :: BoardState -> BoardView
 boardView s = BoardView
   { name = s ^. mapLayout % mapName
-  , cities = [] -- XXX
+  , cities = cityView s
   , paths = [] -- XXX
   , regions = mempty -- XXX
   , market = zipWith MarketSpot (s ^. marketDeck) (s ^. marketLayout)
   }
 
+cityView :: BoardState -> [CityView]
+cityView s =
+  [ CityView { city = cid,
+               produces = p, 
+               members = Map.fromListWith (++)
+                            (Map.findWithDefault [] cid getMembers)
+             }
+  | (cid, p) <- Map.toList (s ^. mapProduces) ]
+  where
+  workers ws = [ (p, [CityWorker w]) | p :-> w <- bagToList ws ]
+  getHouses ps = [ (p, [House]) | p <- ps ]
+  getMembers = Map.unionWith (++) (workers <$> (s ^. mapCityWorkers))
+                                  (getHouses <$> (s ^. mapHouses)) 

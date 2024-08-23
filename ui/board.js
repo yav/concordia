@@ -3,6 +3,7 @@ class Board {
     const marketContainer = uiGet("market")
     this.market = new List(() => new MarketSpot(marketContainer))
     this.board = new BoardMap()
+    this.cities = new List(() => new City(this.board))
   }
   destroy() {
     this.board.destroy()
@@ -12,6 +13,7 @@ class Board {
   async set(obj) {
     await this.board.set(obj.name)
     this.market.set(obj.market)
+    this.cities.set(obj.cities)
     
   }
 }
@@ -83,7 +85,6 @@ class BoardMap {
     const normW1 = r * 1080
     const normW = normW1 > 1920 ? 1920 : normW1
     const normH = normW / r
-    console.log(normW,normH)
 
     this.img.style.width = "100%"
     this.scaleX = this.img.width / normW
@@ -99,5 +100,24 @@ class BoardMap {
     market.width = marketW + "px"
     market.height = marketH + "px"
 
+  }
+}
+
+class City {
+  constructor(board) {
+    this.board = board
+    this.produce = new BoardResource()
+  }
+
+  destroy() {
+    this.produce.destroy()
+    this.board = null
+  }
+
+  set(obj) {
+    const loc = this.board.json.loc.city[obj.city]
+    const [x,y] = this.board.fromMapLoc(loc)
+    this.produce.setPos(x,y) // XXX: don't set every time
+    this.produce.set(obj.produces)
   }
 }

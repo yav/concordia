@@ -130,6 +130,15 @@ body {
   text-align: center;
 }
 
+.board-resource {
+  width: 2em;
+  height: 2em;
+  display: inline-block;
+  position: absolute;
+  text-align: center;
+  background-color: white;
+}
+
 .card-element.card-cost {
   text-align: right;
   border: 0;
