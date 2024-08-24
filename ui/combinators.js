@@ -5,7 +5,7 @@ class List {
     this.els = []
   }
 
-  getLengt() { return this.els.length }
+  getElements() { return this.els }
 
   set(xs) {
     const oldLen = this.els.length

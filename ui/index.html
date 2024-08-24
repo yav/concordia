@@ -10,6 +10,7 @@
 <script src="resource.js"></script>
 <script src="player.js"></script>
 <script src="market.js"></script>
+<script src="city.js"></script>
 <script src="board.js"></script>
 <script src="gui.js"></script>
 <link rel="stylesheet" href="style.css">
@@ -22,13 +23,14 @@
     ><div id="hand"></div
     ><div id="log"></div
   ></div
-  
+
+
 ><div style="display: none;">
 
-<div id="card-template" class="card">
-  <div id="card_header" class="card-header"></div>
-  <div id="card_footer" class="card-footer"></div>
-</div>
+<div id="card-template" class="card"
+  ><div id="card_header" class="card-header"></div
+  ><div id="card_footer" class="card-footer"></div
+></div>
 
 <div id="card-element" class="card-element"></div>
 
@@ -37,19 +39,24 @@
    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <use id="img" />
 </svg>
-<div id="board-resource" class="board-resource"></div>
+
+<div id="city" class="city"
+  ><div id="produces"></div
+  ><div id="houses"></div
+  ><div id="workers"></div
+></div>
 
 <div id="available-spot" class="resource-icon blank"></div>
 <div id="wild-resource" class="resource-icon blank"
      title="Any resource">?</div>
 
-<div id="market-spot" class="market-spot">
-  <div id="market_card" class="market-card"></div>
-  <div class="spot_cost">
-    <div id="card_cost" class="cost"></div> + 
-    <div id="spot_cost" class="cost"></div>
-  </div>
-</div>
+<div id="market-spot" class="market-spot"
+  ><div id="market_card" class="market-card"></div
+  ><div class="spot_cost"
+    ><div id="card_cost" class="cost"></div> +
+     <div id="spot_cost" class="cost"></div
+  ></div
+></div>
 
 <table id="player" class="player">
 <tr>

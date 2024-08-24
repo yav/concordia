@@ -1,20 +1,21 @@
 class Board {
   constructor() {
-    const marketContainer = uiGet("market")
-    this.market = new List(() => new MarketSpot(marketContainer))
     this.board = new BoardMap()
+    this.market = new Market(this.board)
     this.cities = new List(() => new City(this.board))
   }
   destroy() {
     this.board.destroy()
     this.market.destroy()
-    this.market = null
+    this.cities.destroy()
   }
   async set(obj) {
-    await this.board.set(obj.name)
+    if (await this.board.set(obj.name)) {
+      for (city of this.cities.getElements()) city.setPos()
+      this.market.setPos()
+    }
     this.market.set(obj.market)
     this.cities.set(obj.cities)
-    
   }
 }
 
@@ -56,7 +57,7 @@ class BoardMap {
 
   async load() {
     this.json = null
-    
+
     const imgWait = new Promise((resolve, reject) => {
       this.imgReject = reject
       this.imgResolve = resolve
@@ -76,7 +77,7 @@ class BoardMap {
   fromMapLoc([x,y]) { return [ x * this.scaleX, y * this.scaleY ] }
 
   async set(name) {
-    if (this.name === name && this.json !== null) return
+    if (this.name === name && this.json !== null) return false
     this.name = name
     await this.load()
     // The JSON data is on image which has been scaled
@@ -89,35 +90,8 @@ class BoardMap {
     this.img.style.width = "100%"
     this.scaleX = this.img.width / normW
     this.scaleY = this.img.height / normH
- 
-    const market = document.getElementById("market").style
-    const [tlx,tly] = this.fromMapLoc(this.json.loc.market.TL)
-    const [blx,bly] = this.fromMapLoc(this.json.loc.market.BR)
-    const marketW = 32 + blx - tlx
-    const marketH = 32 + bly - tly
-    market.left = tlx + "px"
-    market.top = tly + "px"
-    market.width = marketW + "px"
-    market.height = marketH + "px"
-
+    return true
   }
 }
 
-class City {
-  constructor(board) {
-    this.board = board
-    this.produce = new BoardResource()
-  }
 
-  destroy() {
-    this.produce.destroy()
-    this.board = null
-  }
-
-  set(obj) {
-    const loc = this.board.json.loc.city[obj.city]
-    const [x,y] = this.board.fromMapLoc(loc)
-    this.produce.setPos(x,y) // XXX: don't set every time
-    this.produce.set(obj.produces)
-  }
-}

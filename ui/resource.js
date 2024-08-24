@@ -28,6 +28,7 @@ class ResourceCost extends Tagged {
   }
 }
 
+// Also houses
 class WorkerResource {
   constructor(owner) {
     const [dom,els] = uiFromTemplateNested("worker-icon")
@@ -69,26 +70,4 @@ class PlayerResource extends Tagged {
 }
 
 
-class BoardResource {
-  constructor() {
-    this.val = null
-    const dom = uiFromTemplate("board-resource")
-    this.dom = dom
-    uiGet("board").appendChild(dom)
-  }
-  destroy() { this.dom.remove() }
-  set(x) {
-    const xx = x.toLowerCase()
-    if (this.val === xx) return
-    if (this.val !== null) this.dom.classList.remove(this.val)
-    this.val = xx
-    this.dom.classList.add(this.val)
-    this.dom.setAttribute("title", x)
-  }
-  setPos(x,y) {
-    const sty = this.dom.style
-    sty.left = x + "px"
-    sty.top = y + "px"
-  }
-}
 
