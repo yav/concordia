@@ -6,15 +6,11 @@ class Market extends List {
 
   setPos() {
     const board = this.board
-    const market = uiGet("market").style
-    const [tlx,tly] = board.fromMapLoc(board.json.loc.market.TL)
-    const [blx,bly] = board.fromMapLoc(board.json.loc.market.BR)
-    const marketW = 32 + blx - tlx
-    const marketH = 32 + bly - tly
-    market.left = tlx + "px"
-    market.top = tly + "px"
-    market.width = marketW + "px"
-    market.height = marketH + "px"
+    const market = uiGet("market")
+    const tl = board.json.loc.market.TL
+    const br = board.json.loc.market.BR
+    board.setLoc(market, tl)
+    board.setDim(market, [ 32 + br[0] - tl[0], 32 + br[1] - tl[1] ]) 
   }
 }
 

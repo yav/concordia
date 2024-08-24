@@ -65,13 +65,14 @@ body {
 }
 
 #market {
-  display: inline-flex;
+  display: flex;
   flex-flow: column wrap;
   align-items: flex-start;
   position: absolute;
-  background-color: #cba;
+  background: linear-gradient(rgba(0,0,0,0.5),black);
   overflow: scroll;
   border: 2px solid black;
+  box-sizing: border-box;
 }
 
 
@@ -180,6 +181,8 @@ body {
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  background:#cbae;
+  border-radius: 4px;
 }
 
 .cost {
@@ -191,9 +194,9 @@ body {
 
 
 .city {
+  border-radius: 10px;
   display: inline-block;
   position: absolute;
-  width: 6em;
-  height: 6em;
   background-color: rgba(0,0,0,0.5);
+  color: white;
 }

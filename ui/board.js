@@ -76,6 +76,18 @@ class BoardMap {
 
   fromMapLoc([x,y]) { return [ x * this.scaleX, y * this.scaleY ] }
 
+  setLoc(dom,loc) {
+    const [a,b] = this.fromMapLoc(loc)
+    dom.style.left = a + "px"
+    dom.style.top  = b + "px"
+  }
+
+  setDim(dom,loc) {
+    const [a,b] = this.fromMapLoc(loc)
+    dom.style.width = a + "px"
+    dom.style.height = b + "px"
+  }
+
   async set(name) {
     if (this.name === name && this.json !== null) return false
     this.name = name
@@ -84,12 +96,24 @@ class BoardMap {
     // to fit in 1920x1080
     const r = this.img.width / this.img.height // r * h = w    
     const normW1 = r * 1080
-    const normW = normW1 > 1920 ? 1920 : normW1
-    const normH = normW / r
+    let normW = 0
+    let normH = 0
+    if (normW1 > 1920) {
+      normH = 1080
+      normW = r * normH
+    } else {
+      normW = normW1
+      normH = normW / r
+    }
+    const actualW = 0.8 * document.body.clientWidth
+    const actualH = actualW / r
+
+    console.log("norm", normW, normH)
+    console.log("actual", actualW, actualH)
 
     this.img.style.width = "100%"
-    this.scaleX = this.img.width / normW
-    this.scaleY = this.img.height / normH
+    this.scaleX = actualW / normW
+    this.scaleY = actualH / normH
     return true
   }
 }

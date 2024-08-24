@@ -23,13 +23,8 @@ class City {
   setPos() {
     if (this.city === null) return
     const loc = this.board.json.loc.city[this.city]
-    const [x,y] = this.board.fromMapLoc(loc)
-    const style = this.dom.style
-    style.left = x + "px"
-    style.top = y + "px"
-    const [w,h] = this.board.fromMapLoc([64,64])
-    style.width = w + "px"
-    style.height = h + "px"
+    this.board.setLoc(this.dom, loc)
+    this.board.setDim(this.dom, [64,72])
   }
 
   set(obj) {
