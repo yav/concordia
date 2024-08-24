@@ -125,8 +125,8 @@ body {
 
 
 .resource-icon {
-  width: 1em;
-  height: 1em;
+  width: 1.5em;
+  height: 1.5em;
   display: inline-block;
   text-align: center;
 }
@@ -139,7 +139,7 @@ body {
 .red { fill: #c30; }
 .yellow { fill: #fc0; }
 .blue { fill: #309; }
-.green { fill: #390 fc0; }
+.green { fill: #390; }
 .black { fill: #333; }
 
 .brick { background-image: url("icons/brick.svg"); }
@@ -193,7 +193,7 @@ body {
 .city {
   display: inline-block;
   position: absolute;
-  width: 2em;
-  height: 2em;
-  background-color: white;
+  width: 6em;
+  height: 6em;
+  background-color: rgba(0,0,0,0.5);
 }

@@ -6,9 +6,10 @@ class Player {
     this.els = els
     this.val = {}
     this.resources = []
+    this.houses_label = new PlayerResource(els.houses_label)
 
     for (let i = 0; i < 12; ++i) {
-      this.resources.push(new PlayerResource(this.els[i]))
+      this.resources.push(new StoredResource(this.els[i]))
     }
 
     owner.appendChild(dom)
@@ -21,6 +22,7 @@ class Player {
   }
 
   set(obj) {
+    this.houses_label.set({player: obj.player, thing: "House" })
     this.setText("name",    obj.player)
     this.setText("houses",  obj.houses)
     this.setText("cards",   obj.handSize)
@@ -28,7 +30,7 @@ class Player {
     for (let i = 0; i < 12; ++i) {
       const r = obj.resources[i]
       if (r.tag === "HasWorker")
-        r.contents = { color: playerColors[obj.player], worker: r.contents }
+        r.contents = { player: obj.player, thing: r.contents }
       this.resources[i].set(r)
     }
   }

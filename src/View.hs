@@ -41,9 +41,9 @@ data BoardView = BoardView
 
 data CityView = CityView
   { city :: CityId
-  , produces :: Maybe Resource
-  , houses :: [PlayerId]
-  , members :: [WithPlayerId Worker]
+  , produces      :: Maybe Resource
+  , playerHouses  :: [PlayerId]
+  , workers       :: [WithPlayer Worker]
   } deriving (Generic,ToJSON)
 
 data PathView = PathView
@@ -65,7 +65,7 @@ stateView :: PlayerId -> GameState -> View
 stateView pid s = View
   { hand = fromMaybe [] (s ^? players % ix pid % playerHand)
   , playerInfo =
-      [ playerView p (s ^. playerState p) | p <- s ^. after ++ bedore ]
+      [ playerView p (s ^. playerState p) | p <- after ++ before ]
   , boardInfo = boardView (s ^. board)
   }
   where
@@ -89,7 +89,7 @@ playerView pid s = PlayerView
 boardView :: BoardState -> BoardView
 boardView s = BoardView
   { name = s ^. mapLayout % mapName
-  , cities = cityView s
+  , cities = cityView s 
   , paths = [] -- XXX
   , regions = mempty -- XXX
   , market = zipWith MarketSpot (s ^. marketDeck) (s ^. marketLayout)
@@ -97,15 +97,12 @@ boardView s = BoardView
 
 cityView :: BoardState -> [CityView]
 cityView s =
-  [ CityView { city = cid,
-               produces = Map.lookup cid (s ^. mapProduces)
-               members = Map.fromListWith (++)
-                            (Map.findWithDefault [] cid getMembers)
+  [ CityView { city = cid
+             , produces = Map.lookup cid (s ^. mapProduces)
+             , playerHouses = Map.findWithDefault [] cid (s ^. mapHouses)
+             , workers =
+                bagToList
+                 (Map.findWithDefault bagEmpty cid (s ^. mapCityWorkers))
              }
   | cid <- Map.keys (s ^. mapLayout % mapCities)
   ]
-  where
-  workers ws = [ (p, [CityWorker w]) | p :-> w <- bagToList ws ]
-  getHouses ps = [ (p, [House]) | p <- ps ]
-  getMembers = Map.unionWith (++) (workers <$> (s ^. mapCityWorkers))
-                                  (getHouses <$> (s ^. mapHouses)) 

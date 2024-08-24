@@ -31,6 +31,34 @@ class List {
   }
 }
 
+class Optional {
+  constructor(mk) {
+    this.mk = mk
+    this.el = null
+  }
+
+  getElements() { return this.el === null? [] : [this.el] }
+
+  destroy() {
+    if (this.el !== null) this.el.destroy()
+    this.el = null
+  }
+
+  set(x) {
+    if (this.el === null) {
+      if (x !== null) {
+        this.el = this.mk()
+        this.el.set(x)
+      }
+    } else {
+      if (x === null) {
+        this.el.destroy()
+        this.el = null
+      } else this.el.set(x)
+    }
+  }
+}
+
 class Const {
   constructor(owner,dom) {
     this.dom = dom

@@ -28,13 +28,12 @@ class ResourceCost extends Tagged {
   }
 }
 
-// Also houses
-class WorkerResource {
+class PlayerResource {
   constructor(owner) {
     const [dom,els] = uiFromTemplateNested("worker-icon")
     this.dom = dom
     this.els = els
-    this.color = null
+    this.player = null
     this.worker = null
     owner.appendChild(dom)
   }
@@ -43,7 +42,7 @@ class WorkerResource {
     this.els = null
   }
   set(obj) {
-    const w = obj.worker
+    const w = obj.thing
     const ww = w.toLowerCase()
     if (ww !== this.worker) {
       this.els.img.setAttribute("href","icons/" + ww + ".svg#id")
@@ -51,19 +50,19 @@ class WorkerResource {
       this.dom.setAttribute("title",w)
     }
 
-    const p = obj.color
-    if (p !== this.color) {
-      if (this.color !== null) this.dom.classList.remove(this.color)
-      this.color = p
-      this.dom.classList.add(this.color)
+    const p = obj.player
+    if (p !== this.player) {
+      if (this.player !== null) this.dom.classList.remove(playerColors[this.player])
+      this.player = p
+      this.dom.classList.add(playerColors[this.player])
     }
   }
 }
 
-class PlayerResource extends Tagged {
+class StoredResource extends Tagged {
   constructor(owner) {
     super({ Available: () => new Const(owner,uiFromTemplate("available-spot"))
-          , HasWorker: () => new WorkerResource(owner)
+          , HasWorker: () => new PlayerResource(owner)
           , HasResource: () => new Resource(owner)
           })
   }
