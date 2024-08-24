@@ -26,7 +26,10 @@ class Player {
     this.setText("cards",   obj.handSize)
     this.setText("money",   obj.money)
     for (let i = 0; i < 12; ++i) {
-      this.resources[i].set(obj.resources[i])
+      const r = obj.resources[i]
+      if (r.tag === "HasWorker")
+        r.contents = { color: playerColors[obj.player], worker: r.contents }
+      this.resources[i].set(r)
     }
   }
 

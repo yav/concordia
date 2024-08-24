@@ -17,6 +17,7 @@ body {
   padding: 0;
   overflow: hidden;
   background-color: #cba;
+  font-size: 12px;
 }
 
 #board {
@@ -124,8 +125,8 @@ body {
 
 
 .resource-icon {
-  width: 2em;
-  height: 2em;
+  width: 1em;
+  height: 1em;
   display: inline-block;
   text-align: center;
 }
@@ -144,9 +145,11 @@ body {
   border: 0;
 }
 
-.red {
-  fill: red;
-}
+.red { fill: #c30; }
+.yellow { fill: #fc0; }
+.blue { fill: #309; }
+.green { fill: #390 fc0; }
+.black { fill: #333; }
 
 .brick { background-image: url("icons/brick.svg"); }
 .wheat { background-image: url("icons/wheat.svg"); }
