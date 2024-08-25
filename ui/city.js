@@ -24,7 +24,10 @@ class City {
     if (this.city === null) return
     const loc = this.board.json.loc.city[this.city]
     this.board.setLoc(this.dom, loc)
-    this.board.setDim(this.dom, [64,72])
+    const [w,h] = this.board.fromMapLoc([64,72])
+    this.dom.style.width = w + "px"
+    this.dom.style.minHeight = h + "px"
+    //this.board.setDim(this.dom, [64,72])
   }
 
   set(obj) {

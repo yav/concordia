@@ -126,8 +126,8 @@ body {
 
 
 .resource-icon {
-  width: 1.5em;
-  height: 1.5em;
+  width: 20px;
+  height: 20px;
   display: inline-block;
   text-align: center;
 }
@@ -137,11 +137,11 @@ body {
   border: 0;
 }
 
-.red { fill: #c30; }
+.red { fill: #f60; }
 .yellow { fill: #fc0; }
-.blue { fill: #309; }
-.green { fill: #390; }
-.black { fill: #333; }
+.blue { fill: #ccf; }
+.green { fill: #6c0; }
+.black { fill: #fcc; }
 
 .brick { background-image: url("icons/brick.svg"); }
 .wheat { background-image: url("icons/wheat.svg"); }
@@ -178,11 +178,8 @@ body {
 
 .spot_cost {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  background:#cbae;
-  border-radius: 4px;
 }
 
 .cost {
@@ -190,8 +187,13 @@ body {
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+  background-color: rgba(255,255,255,1);
+  border-radius: 4px;
 }
 
+.cost .resource-icon {
+  margin: 2px;
+}
 
 .city {
   border-radius: 10px;
@@ -199,4 +201,11 @@ body {
   position: absolute;
   background-color: rgba(0,0,0,0.5);
   color: white;
+}
+
+.city_produces {
+  background-color: white;
+  text-align: center;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
 }
