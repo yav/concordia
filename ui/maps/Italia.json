@@ -504,8 +504,8 @@
     "63": {
       "pathWorker": "Ship",
       "pathCanStop": true,
-      "pathFrom": "5",
-      "pathTo": "5"
+      "pathFrom": 5,
+      "pathTo": 5
     }
   },
   "loc": {

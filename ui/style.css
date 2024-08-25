@@ -172,13 +172,12 @@ body {
 
 
 .market-spot {
-  /*background-color: red;*/
   margin: 2px;
 }
 
 .spot_cost {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 }
 
@@ -189,6 +188,7 @@ body {
   align-items: center;
   background-color: rgba(255,255,255,1);
   border-radius: 4px;
+  margin-left: 2px;
 }
 
 .cost .resource-icon {
