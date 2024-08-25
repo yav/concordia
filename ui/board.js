@@ -3,6 +3,8 @@ class Board {
     this.board = new BoardMap()
     this.market = new Market(this.board)
     this.cities = new List(() => new City(this.board))
+    // paths
+    this.regions = new List(() => new this.regions(this.board))
   }
   destroy() {
     this.board.destroy()

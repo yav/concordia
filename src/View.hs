@@ -3,7 +3,6 @@ module View(View, stateView) where
 import GHC.Generics(Generic)
 import Data.Maybe(listToMaybe, fromMaybe)
 import Data.Text(Text)
-import Data.Map(Map)
 import Data.Map qualified as Map
 import Data.Aeson(ToJSON)
 import Optics
@@ -34,8 +33,8 @@ data ResourceSpot = Available | HasWorker Worker | HasResource Resource
 data BoardView = BoardView
   { name :: Text
   , cities :: [CityView]
-  , paths  :: [PathView]
-  , regions :: Map RegionId RegionState
+  , paths  :: [(PathId,WithPlayer Worker)]
+  , regions :: [ (RegionId, RegionState) ]
   , market :: [MarketSpot]
   } deriving (Generic,ToJSON)
 
@@ -46,13 +45,7 @@ data CityView = CityView
   , workers       :: [WithPlayer Worker]
   } deriving (Generic,ToJSON)
 
-data PathView = PathView
-  { path :: PathId
-  , owner :: PlayerId
-  , worker :: Worker
-  } deriving (Generic,ToJSON)
-
-data RegionState = Disabled | Produced Resource | Prefected Int
+data RegionState = NoBonus | Goods Resource | Money Int
   deriving (Generic,ToJSON)
 
 data MarketSpot = MarketSpot
@@ -90,8 +83,8 @@ boardView :: BoardState -> BoardView
 boardView s = BoardView
   { name = s ^. mapLayout % mapName
   , cities = cityView s 
-  , paths = [] -- XXX
-  , regions = mempty -- XXX
+  , paths = Map.toList (s ^. mapPathWorkers)
+  , regions = regionView s
   , market = zipWith MarketSpot (s ^. marketDeck) (s ^. marketLayout)
   }
 
@@ -106,3 +99,15 @@ cityView s =
              }
   | cid <- Map.keys (s ^. mapLayout % mapCities)
   ]
+
+regionView :: BoardState -> [ (RegionId, RegionState) ]
+regionView s =
+  [ (rid, rstate rid bonus) | (rid,bonus) <- Map.toList (s ^. mapRegionBonus) ]
+  where
+  pref = s ^. mapPrefected
+  rstate rid bon
+    | rid `elem` pref = Money (bon ^. rbMoney)
+    | otherwise = case bon ^. rbResource of
+                    Nothing -> NoBonus
+                    Just r  -> Goods r
+
