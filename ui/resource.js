@@ -24,9 +24,9 @@ class DOMNode {
 }
 
 class Resource {
-  constructor(owner,board) {
+  constructor(owner,dim,board) {
     this.val = null
-    const dom = new DOMNode(uiFromTemplate("resource-icon"), [20,20], board)
+    const dom = new DOMNode(uiFromTemplate("resource-icon"), dim, board)
     this.dom = dom
     dom.setOwner(owner)
   }
@@ -46,15 +46,28 @@ class Resource {
   setSize() { this.dom.setSize() }
 }
 
+
+class WildCost extends Const {
+  constructor(owner,board) {
+    const dom = new DOMNode(uiFromTemplate("wild-resource"),[32,32],board)
+    dom.setOwner(owner)
+    super(dom)
+    this.dom = dom
+  }
+
+  setSize() { this.dom.setSize() }
+}
+
+
 class ResourceCost extends Tagged {
   constructor(owner,board) {
-    super({ Any: () => {
-              const dom = new DOMNode(uiFromTemplate("wild-resource"),[20,20],board)
-              dom.setOwner(owner)
-              return new Const(dom)
-            }
-          , Resource: () => new Resource(owner,board)
+    super({ Any: () => new WildCost(owner,board) 
+          , Resource: () => new Resource(owner,[32,32],board)
           })
+  }
+
+  setSize() {
+    super.map((el) => el.setSize())
   }
 
 

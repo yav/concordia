@@ -5,7 +5,7 @@ class City {
     this.dom = dom
     this.els = els
     this.city = null
-    this.produce = new Optional(() => new Resource(els.produces, board))
+    this.produce = new Optional(() => new Resource(els.produces, [20,20], board))
     this.workers = new List(() => new PlayerResource(els.workers, board))
     this.houses = new List(() => new PlayerResource(els.houses, board))
     this.board = board

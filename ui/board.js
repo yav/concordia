@@ -111,10 +111,6 @@ class BoardMap {
     }
     const actualW = 0.8 * document.body.clientWidth
     const actualH = actualW / r
-
-    console.log("norm", normW, normH)
-    console.log("actual", actualW, actualH)
-
     this.img.style.width = "100%"
     this.scaleX = actualW / normW
     this.scaleY = actualH / normH
