@@ -3,21 +3,23 @@ class Board {
     this.board = new BoardMap()
     this.market = new Market(this.board)
     this.cities = new List(() => new City(this.board))
-    // paths
-    this.regions = new List(() => new this.regions(this.board))
+    this.regions = new List(() => new Region(this.board))
   }
   destroy() {
     this.board.destroy()
     this.market.destroy()
     this.cities.destroy()
+    this.regions.destroy()
   }
   async set(obj) {
     if (await this.board.set(obj.name)) {
       for (city of this.cities.getElements()) city.setPos()
+      for (region of this.regions.getElements()) region.setPos()
       this.market.setPos()
     }
     this.market.set(obj.market)
     this.cities.set(obj.cities)
+    this.regions.set(obj.regions)
   }
 }
 

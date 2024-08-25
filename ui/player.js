@@ -3,30 +3,25 @@ class Player {
   constructor(owner) {
     const [dom,els] = uiFromTemplateNested("player")
     this.dom = dom
-    this.els = els
-    this.val = {}
-    this.resources = []
+    this.val = new Record(
+      { player:   new Text(els.name, true)
+      , houses:   new Text(els.houses, true)
+      , handSize: new Text(els.cards, true)
+      , money:    new Text(els.money, true)
+      })
     this.houses_label = new PlayerResource(els.houses_label)
-
+    this.resources = []
     for (let i = 0; i < 12; ++i) {
-      this.resources.push(new StoredResource(this.els[i]))
+      this.resources.push(new StoredResource(els[i]))
     }
 
     owner.appendChild(dom)
   }
 
-  setText(key,x) {
-    if (this.val[key] === x) return
-    this.val[key]= x
-    this.els[key].textContent = x
-  }
 
   set(obj) {
     this.houses_label.set({player: obj.player, thing: "House" })
-    this.setText("name",    obj.player)
-    this.setText("houses",  obj.houses)
-    this.setText("cards",   obj.handSize)
-    this.setText("money",   obj.money)
+    this.val.set(obj)
     for (let i = 0; i < 12; ++i) {
       const r = obj.resources[i]
       if (r.tag === "HasWorker")
@@ -36,6 +31,10 @@ class Player {
   }
 
   destroy() {
+    this.houses_label.destroy()
+    for (let i = 0; i < 12; ++i) {
+      resources[i].destroy()
+    }
     this.dom.remove()
   }
 }

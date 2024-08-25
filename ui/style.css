@@ -209,3 +209,9 @@ body {
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
 }
+
+.region {
+  position: absolute;
+  background-color: white;
+  border-radius: 4px;
+}

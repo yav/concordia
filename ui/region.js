@@ -1,29 +1,51 @@
-class Region extends Tagged {
-    constructor(board) {
-      const owner = uiGet("board")
-      super({ NoBonus: () => new NoBonus(owner)
-            , Money: () => new Money(owner)
-            , Goods: () => new Resource(owner)
-            })
+class Region {
+  constructor(board) {
+    const dom = uiFromTemplate("region")
+    uiGet("board").appendChild(dom)
+    this.val = new Tagged(
+      { NoBonus: () => new NoBonus(dom)
+      , Money: () => new Money(dom)
+      , Goods: () => new Resource(dom)
+      })
+    this.region = null
+    this.board = board
+    this.dom = dom
+  }
 
-      this.board = board
+  set([r,s]) {
+    if (this.region !== r) {
+      this.region = r
+      this.setPosition()
     }
+    this.val.set(s)
+  }
 
-    setPosition() {
-    }
+  destroy() {
+    this.region = null
+    this.val.destroy()
+    this.dom.remove()
+  }
 
-
+  setPosition() {
+    const board = this.board
+    const loc = board.json.loc.region[this.region]
+    board.setLoc(this.dom, loc)
+    board.setDim(this.dom, [32,32])
+  }
 }
 
 class NoBonus extends Const {
-    constructor(owner) {
-        const dom = uiFromTemplate("resource-icon")
-        dom.classList.add("no-resource")
-        super(owner,dom)
-    }
+  constructor(owner) {
+    const dom = uiFromTemplate("resource-icon")
+    dom.classList.add("no-resource")
+    super(owner,dom)
+  }
 }
 
-class Money {
-    constructor(owner) {
-    }
+class Money extends Text {
+  constructor(owner) {
+    const dom = uiFromTemplate("gain-money")
+    super(dom,true)
+    owner.appendChild(dom)
+  }
 }

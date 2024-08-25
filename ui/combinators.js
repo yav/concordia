@@ -15,7 +15,7 @@ class List {
       this.els[i].set(xs[i])
     }
     for (let i = smaller; i < newLen; ++i) {
-      const v = this.mk()
+      const v = this.mk(i)
       v.set(xs[i])
       this.els.push()
     }
@@ -68,6 +68,37 @@ class Const {
   set() {}
 }
 
+class Text {
+  constructor(dom, own) {
+    this.own = own
+    this.dom = dom
+    this.val = null
+  }
+  destory() { if (this.own) this.dom.remove() }
+  set(x) {
+    if (this.val === x) return
+    this.val = x
+    this.dom.textContent = this.val
+  }
+
+}
+
+// Assumes the fields of the object are not changing
+class Record {
+  constructor(obj) {
+    this.obj = obj
+  }
+  set(obj) {
+    for (const i in this.obj) {
+      this.obj[i].set(obj[i])
+    }
+  }
+  destroy() {
+    for (const i in this.obj) {
+      this.obj[i].destroy()
+    }
+  }
+}
 
 class Tagged {
   constructor(mk) {
