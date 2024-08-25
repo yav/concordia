@@ -7,6 +7,8 @@ class List {
 
   getElements() { return this.els }
 
+  map(f) { for(el of this.els) f(el) }
+
   set(xs) {
     const oldLen = this.els.length
     const newLen = xs.length
@@ -37,6 +39,8 @@ class Optional {
     this.el = null
   }
 
+  map(f) { if (this.el !== null) f(e) }
+
   getElements() { return this.el === null? [] : [this.el] }
 
   destroy() {
@@ -60,12 +64,10 @@ class Optional {
 }
 
 class Const {
-  constructor(owner,dom) {
-    this.dom = dom
-    owner.appendChild(dom)
-  }
-  destroy() { this.dom.remove(); this.dom = null }
+  constructor(thing) { this.thing = thing }
+  destroy() { this.thing.destroy(); this.thing = null }
   set() {}
+  map(f) { f(this.thing) }
 }
 
 class Text {
@@ -98,7 +100,11 @@ class Record {
       this.obj[i].destroy()
     }
   }
+  
+  map(f) { for (const i of this.obj) f(this.obj[i]) }
 }
+
+
 
 class Tagged {
   constructor(mk) {
@@ -125,4 +131,6 @@ class Tagged {
       this.val = el
     }
   }
+
+  map(f) { if (this.val !== nul) f(this.val) } 
 }

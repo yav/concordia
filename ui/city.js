@@ -5,9 +5,9 @@ class City {
     this.dom = dom
     this.els = els
     this.city = null
-    this.produce = new Optional(() => new Resource(els.produces))
-    this.workers = new List(() => new PlayerResource(els.workers))
-    this.houses = new List(() => new PlayerResource(els.houses))
+    this.produce = new Optional(() => new Resource(els.produces, board))
+    this.workers = new List(() => new PlayerResource(els.workers, board))
+    this.houses = new List(() => new PlayerResource(els.houses, board))
     this.board = board
     uiGet("board").appendChild(dom)
   }
@@ -27,7 +27,9 @@ class City {
     const [w,h] = this.board.fromMapLoc([64,72])
     this.dom.style.width = w + "px"
     this.dom.style.minHeight = h + "px"
-    //this.board.setDim(this.dom, [64,72])
+    this.workers.map((el) => el.setSize())
+    this.produce.map((el) => el.setSize())
+    this.houses.map((el) => el.setSize()) 
   }
 
   set(obj) {
