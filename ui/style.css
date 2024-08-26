@@ -168,6 +168,10 @@ body {
   max-width: 8em;
 }
 
+.current {
+  border: 4px solid black;
+}
+
 
 
 

@@ -3,6 +3,7 @@ class Player {
   constructor(owner) {
     const [dom,els] = uiFromTemplateNested("player")
     this.dom = dom
+    this.cur = false
     this.val = new Record(
       { player:   new Text(els.name, true)
       , houses:   new Text(els.houses, true)
@@ -28,6 +29,13 @@ class Player {
         r.contents = { player: obj.player, thing: r.contents }
       this.resources[i].set(r)
     }
+    if (obj.isCurrent) {
+      if (!this.cur) { this.dom.classList.add("current")} 
+    }
+    else {
+      if (this.cur) { this.dom.classList.remove("current") }
+    }
+    this.cur = obj.isCurrent
   }
 
   destroy() {

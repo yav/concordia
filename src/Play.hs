@@ -47,7 +47,7 @@ doTakeTurn =
   do pid  <- the curPlayer
      hand <- the (playerState pid % playerHand)
      askInputs "Choose a card to play"
-       [ (pid :-> AskHand n, "Playe this card", doDiscardCard pid n)
+       [ (pid :-> AskHand n, "Play this card", doDiscardCard pid n)
              -- XXX: do action
        | (n,_) <- zip [ 0 .. ] hand
        ]

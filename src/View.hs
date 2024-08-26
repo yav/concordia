@@ -25,6 +25,7 @@ data PlayerView = PlayerView
   , houses :: Int
   , money :: Int
   , handSize :: Int
+  , isCurrent :: Bool
   } deriving (Generic,ToJSON)
 
 data ResourceSpot = Available | HasWorker Worker | HasResource Resource
@@ -58,15 +59,15 @@ stateView :: PlayerId -> GameState -> View
 stateView pid s = View
   { hand = fromMaybe [] (s ^? players % ix pid % playerHand)
   , playerInfo =
-      [ playerView p (s ^. playerState p) | p <- after ++ before ]
+      [ playerView p s (s ^. playerState p) | p <- after ++ before ]
   , boardInfo = boardView (s ^. board)
   }
   where
   (before,after) = break (== pid) (s ^. playerOrder)
 
 
-playerView :: PlayerId -> PlayerState -> PlayerView
-playerView pid s = PlayerView
+playerView :: PlayerId -> GameState -> PlayerState -> PlayerView
+playerView pid gs s = PlayerView
   { player = pid
   , discard = listToMaybe (s ^. playerDiscard)
   , houses = s ^. playerHousesToBuild
@@ -77,6 +78,7 @@ playerView pid s = PlayerView
         repeat Available)
   , money = s ^. playerMoney
   , handSize = length (s ^. playerHand)
+  , isCurrent = gs ^. curPlayer == pid
   }
 
 boardView :: BoardState -> BoardView

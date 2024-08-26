@@ -43,7 +43,7 @@ setupGame cfg0 =
        , _board        = brd
        , _curPlayer    = first
        , _playerOrder  = first : rest
-       , _gameStatus   = Finished -- InProgress
+       , _gameStatus   = InProgress
        , _playerDoubleBonus = last (first : rest)
        }
 

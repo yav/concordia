@@ -19,4 +19,18 @@ class GUI {
     this.board.destroy()
   }
 
+  setQuestion(q) {
+    const dom = uiFromTemplate("question-text")
+    dom.textContent = q
+    uiGet("log").appendChild(dom)
+  }
+
+  ask(q) {
+    const ch = q.chChoice
+    switch(ch.tag) {
+      case "AskHand": this.hand.getElements()[ch.contents].ask(q); break
+      default: console.log(q) 
+    }
+  }
+
 }

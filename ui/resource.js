@@ -96,6 +96,7 @@ class PlayerResource {
       this.els.img.setAttribute("href","icons/" + ww + ".svg#id")
       this.worker = ww
       this.dom.setTitle(w)
+      this.els.img.setAttribute("title",w)
     }
 
     const p = obj.player

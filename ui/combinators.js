@@ -19,7 +19,7 @@ class List {
     for (let i = smaller; i < newLen; ++i) {
       const v = this.mk(i)
       v.set(xs[i])
-      this.els.push()
+      this.els.push(v)
     }
     for (let i = smaller; i < oldLen; ++i) {
       this.els.pop().destroy()

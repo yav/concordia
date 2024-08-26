@@ -9,16 +9,17 @@ async function uiRedraw(s) {
   if (gui !== null) gui.destroy()
   gui = new GUI()
   await gui.set(s.game)
+  uiQuestions(s.questions)
 }
 
 function uiSetQuestion(q) {
-  console.log("uiSetQuestion",q)
+  gui.setQuestion(q)
 }
 
 function uiQuestion(q) {
-  console.log("uiQuestion",q)
+  gui.ask(q)
 }
 
-function uiUpdate(x) {
-  console.log("uiUpdate",x)
+function uiUpdate(s) {
+  gui.set(s)
 }

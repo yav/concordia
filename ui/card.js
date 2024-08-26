@@ -78,4 +78,8 @@ class Card {
     this.dom.remove()
   }
 
+  ask(q) {
+    console.log("card",q)
+  }
+
 }
