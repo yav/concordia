@@ -7,7 +7,7 @@ class List {
 
   getElements() { return this.els }
 
-  map(f) { for(el of this.els) f(el) }
+  map(f) { for(const el of this.els) f(el) }
 
   set(xs) {
     const oldLen = this.els.length
@@ -27,7 +27,7 @@ class List {
   }
 
   destroy() {
-    for (i of this.els) i.destroy()
+    for (const i of this.els) i.destroy()
     this.els = []
     this.mk = null
   }
@@ -122,7 +122,7 @@ class Tagged {
 
   set(v) {
     const tag = v.tag
-    if (this.tag === tag) this.val.set(this.contents)
+    if (this.tag === tag) this.val.set(v.contents)
     else {
       if (this.val !== null) this.val.destory()
       const el = this.mk[tag]()

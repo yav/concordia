@@ -14,6 +14,11 @@ import Types
 import Constants
 import Question
 
+sync :: Interact ()
+sync =
+  do s <- getState
+     update (SetState s)
+
 -- | Assumes the player is in the list of players.
 playerAfter :: Eq a => [a] -> a -> a
 playerAfter order pid =

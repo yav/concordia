@@ -226,3 +226,7 @@ body {
   height: 100%;
 }
 
+.clickable {
+  cursor: pointer;
+  outline: 1px solid red;
+}

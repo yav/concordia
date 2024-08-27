@@ -79,7 +79,7 @@ class Card {
   }
 
   ask(q) {
-    console.log("card",q)
+    quest.existing(this.dom,q)
   }
 
 }

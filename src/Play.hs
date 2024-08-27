@@ -4,7 +4,7 @@ import Control.Monad(when,forM,guard)
 import Data.Maybe(fromMaybe,catMaybes)
 import Data.Map qualified as Map
 import Data.Set qualified as Set
-import Data.List(foldl',nub)
+import Data.List(nub)
 import Optics
 import KOI.Basics
 import KOI.Bag
@@ -44,10 +44,12 @@ nextPlayer =
 -- XXX
 doTakeTurn :: Interact ()
 doTakeTurn =
-  do pid  <- the curPlayer
+  do pid@(PlayerId txt)  <- the curPlayer
      hand <- the (playerState pid % playerHand)
-     askInputs "Choose a card to play"
-       [ (pid :-> AskHand n, "Play this card", doDiscardCard pid n)
+     askInputs (txt <> ": Choose a card to play.")
+       [ (pid :-> AskHand n, "Play this card",
+           do doDiscardCard pid n
+              sync)
              -- XXX: do action
        | (n,_) <- zip [ 0 .. ] hand
        ]

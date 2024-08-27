@@ -1,5 +1,6 @@
 let conn = null
 let gui = null
+const quest = new Question()
 
 function main() {
   conn = srvConnect()
@@ -7,6 +8,7 @@ function main() {
 
 async function uiRedraw(s) {
   if (gui !== null) gui.destroy()
+  quest.reset()
   gui = new GUI()
   await gui.set(s.game)
   uiQuestions(s.questions)
