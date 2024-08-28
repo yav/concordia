@@ -9,6 +9,7 @@ class Player {
       , houses:   new Text(els.houses, true)
       , handSize: new Text(els.cards, true)
       , money:    new Text(els.money, true)
+      , discard:  new Optional(() => new Card(els.top_card))
       })
     this.houses_label = new PlayerResource(els.houses_label)
     this.resources = []
