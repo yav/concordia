@@ -69,6 +69,7 @@ body {
   background-color: white;
   padding: 2px;
   border-bottom: 2px solid black;
+  text-align: middle;
 }
 
 #log {
@@ -244,4 +245,16 @@ body {
   cursor: pointer;
   /*outline: 1px solid red;*/
   box-shadow: 0px 0px 2px 2px #c66;
+}
+
+
+.question-text {
+  background: linear-gradient(#cba,#eee 10%, #cba 90%);
+  color: black;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  height: 20px;
+  width: 64px;
+  margin: 8px;
 }

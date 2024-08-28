@@ -16,4 +16,17 @@ class Question {
     dom.addEventListener("click",h)
     dom.classList.add("clickable")
   }
+  temporary(dom,q) {
+    this.register(() => dom.remove())
+    dom.addEventListener("click",() => this.resolve(q))
+    dom.classList.add("clickable")
+  }
+
+  button(q) {
+    const dom = uiFromTemplate("question-text")
+    dom.textContent = q.chChoice.contents
+    this.temporary(dom,q)
+    return dom
+  }
+
 }

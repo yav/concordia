@@ -37,6 +37,9 @@ class GUI {
       case "AskResource":
         this.players.getElements()[0].askResource(ch.contents,q)
         break
+      case "AskText":
+        uiGet("question").appendChild(quest.button(q))
+        break
       default: console.log(q) 
     }
   }
