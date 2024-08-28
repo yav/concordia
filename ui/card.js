@@ -23,6 +23,7 @@ class CardAction {
   actionLabel(act) {
     switch (act.tag) {
       case "Mercator": return act.tag + " (" + act.contents + ")"
+      case "Colonist": return act.tag + " " + act.contents
       case "Specialist":
         switch (act.contents) {
           case "Brick": return "Mason"
@@ -34,6 +35,10 @@ class CardAction {
         }
     }
     return act.tag
+  }
+
+  ask(q) {
+    quest.existing(this.dom,q)
   }
 
 }
@@ -76,6 +81,10 @@ class Card {
     this.acts.destroy()
     this.gods.destroy()
     this.dom.remove()
+  }
+
+  askAct(act,q) {
+    this.acts.getElements()[act].ask(q)
   }
 
   ask(q) {

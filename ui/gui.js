@@ -28,7 +28,12 @@ class GUI {
   ask(q) {
     const ch = q.chChoice
     switch(ch.tag) {
-      case "AskHand": this.hand.getElements()[ch.contents].ask(q); break
+      case "AskHand":
+        const [card,act] = ch.contents
+        this.hand.getElements()[card].askAct(act,q); break
+      case "AskMarket":
+        this.board.askMarket(ch.contents,q)
+        break
       default: console.log(q) 
     }
   }

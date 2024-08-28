@@ -21,6 +21,8 @@ class Board {
     this.cities.set(obj.cities)
     this.regions.set(obj.regions)
   }
+
+  askMarket(n,q) { this.market.ask(n,q) }
 }
 
 class BoardMap {

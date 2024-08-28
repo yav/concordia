@@ -16,9 +16,12 @@ data CityTile = A | B | C | D | X
   deriving (Eq,Ord,Generic,FromJSON)
 
 data Action   = Architect | Senator | Prefect | Diplomat | Tribune
-              | Colonist
+              | Colonist ColonistAction
               | Mercator Int | Specialist Resource
               | Magister | Consul
+  deriving (Generic,ToJSON)
+
+data ColonistAction = Settle | Tax
   deriving (Generic,ToJSON)
 
 data God      = Vesta | Jupiter | Saturnus | Venus | Mercurius | Mars | Minerva

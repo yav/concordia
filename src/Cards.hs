@@ -58,12 +58,12 @@ consul :: Card
 consul = Card [Consul] [Cloth] [Jupiter]
 
 colonist :: Card
-colonist = Card [Colonist] [Wheat] [Mars]
+colonist = Card [Colonist Settle, Colonist Tax] [Wheat] [Mars]
 
 startDeck, deck1, deck2, deck3, deck4, deck5 :: [Card]
 startDeck =
   [tribune, basicPrefect, basicPrefect, diplomat,
-    basicArchitect, basicMercator, senator]
+    basicArchitect, basicMercator, senator,colonist]
 
 deck1 = [ advMercator, architect, colonist, prefect, diplomat1,
           specialistMason, specialistFarmer, specialistSmith]

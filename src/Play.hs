@@ -4,7 +4,7 @@ import Control.Monad(when,forM,guard)
 import Data.Maybe(fromMaybe,catMaybes)
 import Data.Map qualified as Map
 import Data.Set qualified as Set
-import Data.List(nub)
+import Data.List(nub,foldl')
 import Optics
 import KOI.Basics
 import KOI.Bag
@@ -47,13 +47,31 @@ doTakeTurn =
   do pid@(PlayerId txt)  <- the curPlayer
      hand <- the (playerState pid % playerHand)
      askInputs (txt <> ": Choose a card to play.")
-       [ (pid :-> AskHand n, "Play this card",
+       [ (pid :-> AskHand n a, "Play this card",
            do doDiscardCard pid n
-              sync)
-             -- XXX: do action
-       | (n,_) <- zip [ 0 .. ] hand
+              sync
+              action act pid)
+       | (n,c) <- zip [ 0 .. ] hand
+       , (a,act) <- zip [0..] (cardActions c)
        ]
 
+
+action :: Action -> PlayerId ->  Interact ()
+action act =
+  case act of
+    Architect -> actArchitect
+    Senator -> actSenator
+    Prefect -> actPrefect
+    Diplomat -> const (pure ()) -- XXX
+    Tribune -> actTribune
+    Colonist co ->
+      case co of
+        Settle -> actColonistSettle
+        Tax    -> actColonistTax
+    Mercator _n -> const (pure ()) -- XXX
+    Specialist r -> actSpecialist r
+    Magister -> const (pure ()) -- XX
+    Consul -> actConsul
 
 actTribune :: PlayerId -> Interact ()
 actTribune pid =
@@ -70,11 +88,18 @@ actTribune pid =
         ]
 
 
-actColonist :: PlayerId -> Interact ()
-actColonist pid =
+actColonistTax :: PlayerId -> Interact ()
+actColonistTax pid =
+  do n <- countWorkersOnBoard pid
+     doChangeMoney pid (5 + n)
+     sync
+
+
+actColonistSettle :: PlayerId -> Interact ()
+actColonistSettle pid =
   do ws   <- canBuildWorker pid
      tgts <- getBuildTargets
-     doAction tgts ws getMoney
+     doAction tgts ws pass
   where
   getBuildTargets =
     do brd <- the board
@@ -82,13 +107,6 @@ actColonist pid =
        let ours = [ city | (city,ps) <- Map.toList (brd ^. mapHouses)
                          , pid `elem` ps ]
        pure (capital : ours)
-
-  getMoney =
-    ( pid :-> AskText "Gain money."
-    , "Gain money: 5 + deployed workers."
-    , do n <- countWorkersOnBoard pid
-         doChangeMoney pid (5 + n)
-    )
 
   pass =
     ( pid :-> AskText "End turn."
@@ -162,8 +180,8 @@ actPrefect pid =
        mapM_ (uncurry doGainResources) (Map.toList (foldl' doCity bonus cities))
 
 
-actSpecialist :: PlayerId -> Resource -> Interact ()
-actSpecialist pid r =
+actSpecialist :: Resource -> PlayerId -> Interact ()
+actSpecialist r pid =
   do allHouses <- the (board % mapHouses)
      let ourCities = Map.keysSet (Map.filter (pid `elem`) allHouses)
      prod <- the (board % mapProduces)

@@ -13,6 +13,10 @@ class Market extends List {
     board.setDim(market, [ 32 + br[0] - tl[0], 32 + br[1] - tl[1] ]) 
     super.map((el) => el.setSize())
   }
+
+  ask(n,q) {
+    super.getElements()[n].ask(q)
+  }
 }
 
 
@@ -42,4 +46,6 @@ class MarketSpot {
     this.spotCost.set(obj.cost)
     this.cardCost.set(obj.card.cardCost)
   }
+
+  ask(q) { this.card.ask(q) }
 }
