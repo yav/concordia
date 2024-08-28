@@ -1,5 +1,6 @@
 module HelperActions where
 
+import Data.Text qualified as Text
 import Data.Maybe(fromMaybe)
 import Data.List(nub,partition)
 import Data.Map qualified as Map
@@ -179,7 +180,7 @@ doGetMarketCards withBoardCost =
      pure (zipWith cost cards spotCosts)
 
 doPickCards :: PlayerId -> Int -> Bool -> Interact ()
-doPickCards pid howMany extraCost =
+doPickCards pid@(PlayerId name) howMany extraCost =
   do avail <- zip [ 0 .. ] <$> doGetMarketCards extraCost
      let marketLen = length avail
      picked <- pickCard []  avail
@@ -197,7 +198,10 @@ doPickCards pid howMany extraCost =
                          | ((n,_),opt) <- zip avail opts
                          , not (null opt)
                          ]
-       askInputs "Select a card." $
+       let num x = Text.pack (show x)
+       let q = name <> ": Select a market card " <> num (length picked + 1)
+               <> "/" <> num howMany
+       askInputs q $
           ( pid :-> AskText "End Turn", "No more cards.", pure picked) :
           [ ( pid :-> AskMarket n, "Get this card."
             , do doPayCost pid opt

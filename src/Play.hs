@@ -76,8 +76,9 @@ action act =
 actTribune :: PlayerId -> Interact ()
 actTribune pid =
   do discard <- updateThe (playerState pid % playerDiscard) (\d -> (d, []))
-     doChangeMoney pid (length discard - 3)
+     doChangeMoney pid (max 0 (length discard - 3))
      doAddCards pid discard
+     sync
      ws <- canBuildWorker pid
      capital <- the (board % mapLayout % mapStartCity)
      askInputsMaybe_ "Would you like to build a worker?" $
