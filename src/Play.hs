@@ -46,7 +46,7 @@ doTakeTurn :: Interact ()
 doTakeTurn =
   do pid@(PlayerId txt)  <- the curPlayer
      hand <- the (playerState pid % playerHand)
-     askInputs (txt <> ": Choose a card to play.")
+     askInputs (txt <> ": Choose a card action")
        [ (pid :-> AskHand n a, "Play this card",
            do doDiscardCard pid n
               sync
@@ -74,16 +74,16 @@ action act =
     Consul -> actConsul
 
 actTribune :: PlayerId -> Interact ()
-actTribune pid =
+actTribune pid@(PlayerId name) =
   do discard <- updateThe (playerState pid % playerDiscard) (\d -> (d, []))
      doChangeMoney pid (max 0 (length discard - 3))
      doAddCards pid discard
      sync
      ws <- canBuildWorker pid
      capital <- the (board % mapLayout % mapStartCity)
-     askInputsMaybe_ "Would you like to build a worker?" $
-        (pid :-> AskText "End turn.", "Do not build worker.", pure ())
-      : [ (pid :-> AskWorker w, "Build a worker.",
+     askInputsMaybe_ (name <> ": Deploy a worker?") $
+        (pid :-> AskText "End Turn", "Do not deploy worker.", pure ())
+      : [ (pid :-> AskWorker w, "Deploy this worker.",
            doBuildWorker pid w capital)
         | w <- ws
         ]
@@ -116,7 +116,7 @@ actColonistSettle pid =
     )
 
   doAction tgts ws otherOpt =
-     askInputsMaybe_ "Choose COLONIST actoin." $
+     askInputsMaybe_ "Choose a worker to deploy" $
        [ (pid :-> AskWorker w, "Deploy this worker.", buildWorker tgts w)
        | w <- ws ] ++ [otherOpt]
 

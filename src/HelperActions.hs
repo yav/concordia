@@ -65,6 +65,7 @@ doBuildWorker pid w city =
                 (bagChange (-1) w)
      updateThe_ (board % mapCityWorkers % at city)
                 (Just . bagChange 1 (pid :-> w) . fromMaybe bagEmpty)
+     sync
 
 -- | Gain some reasource and ask which, if not enough space.
 doGainResources :: PlayerId -> Bag Resource -> Interact ()
@@ -140,7 +141,7 @@ doPayCost pid opts0
   | otherwise = go opts0
   where
   go opts
-    | any bagIsEmpty opts = pure ()
+    | any bagIsEmpty opts = sync
     | otherwise =
     do let allRs = nub [ r | opt <- opts, (r,_) <- bagToNumList opt ]
            inAll r = all ((> 0) . bagContains r) opts
@@ -154,6 +155,7 @@ doPayCost pid opts0
        case filter inAll allRs of
          r : _ -> doPick r
          [] ->
+           sync >>
            askInputs "How would would like to pay?"
               [ (pid :-> AskResource r, "Pay with this.", doPick r)
               | r <- allRs
@@ -189,6 +191,7 @@ doPickCards pid@(PlayerId name) howMany extraCost =
      doAddCards pid (map (fst . snd) pickedCards)
      updateThe_ (board % marketDeck)
                 ((map (fst . snd) otherCards ++) . drop marketLen)
+     sync
   where
   pickCard picked avail
     | length picked >= howMany = pure picked

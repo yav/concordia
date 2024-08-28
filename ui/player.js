@@ -41,9 +41,22 @@ class Player {
   destroy() {
     this.houses_label.destroy()
     for (let i = 0; i < 12; ++i) {
-      resources[i].destroy()
+      this.resources[i].destroy()
     }
     this.dom.remove()
+  }
+
+  askWorker(ty,q) {
+    for (let i = 0; i < 12; ++i) {
+      const r = this.resources[i]
+      if (r.isWorker(ty)) { r.ask(q); break }
+    }
+  }
+  askResource(ty,q) {
+    for (let i = 0; i < 12; ++i) {
+      const r = this.resources[i]
+      if (r.isResource(ty)) { r.ask(q); break }
+    }
   }
 }
 

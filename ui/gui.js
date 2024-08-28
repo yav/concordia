@@ -2,6 +2,7 @@ class GUI {
   constructor() {
     const playerContainer = uiGet("players")
     const handContainer   = uiGet("hand")
+    this.question         = new Text(uiGet("question"),false)
     this.players          = new List(() => new Player(playerContainer))
     this.hand             = new List(() => new Card(handContainer))
     this.board            = new Board()
@@ -19,11 +20,7 @@ class GUI {
     this.board.destroy()
   }
 
-  setQuestion(q) {
-    const dom = uiFromTemplate("question-text")
-    dom.textContent = q
-    uiGet("log").appendChild(dom)
-  }
+  setQuestion(q) { this.question.set(q) }
 
   ask(q) {
     const ch = q.chChoice
@@ -33,6 +30,12 @@ class GUI {
         this.hand.getElements()[card].askAct(act,q); break
       case "AskMarket":
         this.board.askMarket(ch.contents,q)
+        break
+      case "AskWorker":
+        this.players.getElements()[0].askWorker(ch.contents,q)
+        break
+      case "AskResource":
+        this.players.getElements()[0].askResource(ch.contents,q)
         break
       default: console.log(q) 
     }

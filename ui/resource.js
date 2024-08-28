@@ -21,6 +21,7 @@ class DOMNode {
   setTitle(txt) { this.dom.setAttribute("title",txt) }
 
   destroy() { this.dom.remove() }
+  ask(q) { quest.existing(this.dom,q) }
 }
 
 class Resource {
@@ -44,6 +45,9 @@ class Resource {
   }
 
   setSize() { this.dom.setSize() }
+
+  is(val) { return this.val === val.toLowerCase() }
+  ask(q) { this.dom.ask(q) }
 }
 
 
@@ -106,6 +110,9 @@ class PlayerResource {
       this.dom.addClass(playerColors[this.player])
     }
   }
+
+  is(val) { return val.toLowerCase() == this.worker }
+  ask(q) { this.dom.ask(q) }
 }
 
 class StoredResource extends Tagged {
@@ -118,6 +125,12 @@ class StoredResource extends Tagged {
           , HasWorker: () => new PlayerResource(owner)
           , HasResource: () => new Resource(owner)
           })
+  }
+
+  isWorker(ty) { return this.tag === "HasWorker" && this.val.is(ty) }
+  isResource(ty) { return this.tag === "HasResource" && this.val.is(ty) }
+  ask(q) {
+    this.val.ask(q)
   }
 }
 

@@ -76,7 +76,7 @@ class Text {
     this.dom = dom
     this.val = null
   }
-  destory() { if (this.own) this.dom.remove() }
+  destory() { if (this.own) { this.dom.remove() } else { this.dom.textContent = "" } }
   set(x) {
     if (this.val === x) return
     this.val = x
@@ -124,7 +124,7 @@ class Tagged {
     const tag = v.tag
     if (this.tag === tag) this.val.set(v.contents)
     else {
-      if (this.val !== null) this.val.destory()
+      if (this.val !== null) this.val.destroy()
       const el = this.mk[tag]()
       el.set(v.contents)
       this.tag = tag
