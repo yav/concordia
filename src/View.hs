@@ -35,7 +35,7 @@ data ResourceSpot = Available | HasWorker Worker | HasResource Resource
 data BoardView = BoardView
   { name :: Text
   , cities :: [CityView]
-  , paths  :: [(PathId,WithPlayer Worker)]
+  , paths  :: [(PathId,Maybe (WithPlayer Worker))]
   , regions :: [ (RegionId, RegionState) ]
   , market :: [MarketSpot]
   } deriving (Generic,ToJSON)
@@ -87,10 +87,16 @@ boardView :: BoardState -> BoardView
 boardView s = BoardView
   { name = s ^. mapLayout % mapName
   , cities = cityView s 
-  , paths = Map.toList (s ^. mapPathWorkers)
+  , paths = pathView s
   , regions = regionView s
   , market = zipWith MarketSpot (s ^. marketDeck) (s ^. marketLayout)
   }
+
+pathView :: BoardState -> [ (PathId, Maybe (WithPlayer Worker)) ]
+pathView s =
+  [ (eid, Map.lookup eid (s ^. mapPathWorkers))
+  | eid <- Map.keys (s ^. mapLayout % mapPaths)
+  ]
 
 cityView :: BoardState -> [CityView]
 cityView s =

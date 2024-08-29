@@ -197,7 +197,7 @@ actConsul :: PlayerId -> Interact ()
 actConsul pid = doPickCards pid 1 False
 
 actArchitect :: PlayerId -> Interact ()
-actArchitect pid =
+actArchitect pid@(PlayerId name) =
   do move <- countWorkersOnBoard pid
      doMoves move
      buildHouses
@@ -216,17 +216,18 @@ actArchitect pid =
              | otherwise = rest
        pure (Map.foldrWithKey fromPath cities (brd ^. mapPathWorkers))
 
-  endMove = (pid :-> AskText "Build", "No more moves.", pure ())
+  endMove = (pid :-> AskText "Build", "No more moves", pure ())
 
   moveCityWorker steps w cid tgts =
     ( pid :-> AskCityWorker cid w
-    , "Move this worker."
-    , askInputs "Choose where to move."
+    , "Move this worker"
+    , askInputs (name <> ": Move to")
         [ ( pid :-> AskPath eid
-          , "Move here."
+          , "Move here"
           , do updateThe_ (board % mapCityWorkers % ix cid)
                           (bagChange (-1) (pid :-> w))
-               setThe (board % mapPathWorkers % ix eid) (pid :-> w)
+               setThe (board % mapPathWorkers % at eid) (Just (pid :-> w))
+               sync
                doMoves (steps - takenSteps)
           )
         | (eid, takenSteps) <- tgts
@@ -235,12 +236,13 @@ actArchitect pid =
 
   movePathWorker steps w from tgts =
     ( pid :-> AskPath from
-    , "Move this worker."
-    , askInputs "Choose where to move."
+    , "Move this worker"
+    , askInputs (name <> ": Move to")
         [ ( pid :-> AskPath tgt
-          , "Move here."
+          , "Move here"
           , do setThe (board % mapPathWorkers % at from) Nothing
-               setThe (board % mapPathWorkers % ix tgt) (pid :-> w)
+               setThe (board % mapPathWorkers % at tgt) (Just (pid :-> w))
+               sync
                doMoves (steps - takenSteps)
           )
         | (tgt, takenSteps) <- tgts
@@ -255,7 +257,7 @@ actArchitect pid =
               then pure Nothing
               else pure (Just (w,loc,opts))
 
-       askInputsMaybe_ "Choose a worker to move." $
+       askInputsMaybe_ (name <> ": Move worker") $
          endMove :
          [ case loc of
              Left cid  -> moveCityWorker steps w cid tgts
@@ -298,9 +300,11 @@ actArchitect pid =
          endBuild :
          [ ( pid :-> AskCity cid
            , "Build house here."
-           , do doPayCost pid cost
+           , do doChangeMoney pid (- moneyCost)
+                doPayCost pid cost
                 updateThe_ (players % ix pid % playerHousesToBuild) (subtract 1)
-                updateThe_ (board % mapHouses % ix cid) (pid :)
+                updateThe_ (board % mapHouses % at cid) (Just . (pid :) . fromMaybe [])
+                sync
                 buildHouse cityOpts
            )
          | houses >= 1

@@ -3,6 +3,7 @@ class Board {
     this.board = new BoardMap()
     this.market = new Market(this.board)
     this.cities = new List(() => new City(this.board))
+    this.paths = new List(() => new Path(this.board))
     this.regions = new List(() => new Region(this.board))
   }
   destroy() {
@@ -19,13 +20,21 @@ class Board {
     }
     this.market.set(obj.market)
     this.cities.set(obj.cities)
+    this.paths.set(obj.paths)
     this.regions.set(obj.regions)
   }
 
   askMarket(n,q) { this.market.ask(n,q) }
   askCityWorker(city,ty,q) { this.cities.getElements()[city].askWorker(ty,q) }
   askPath(path,q) {
-    console.log(q) // XXX
+    for(const el of this.paths.getElements()) {
+      if (el.is(path)) { el.ask(q); break }
+    }
+  }
+  askCity(city,q) {
+    for(const el of this.cities.getElements()) {
+      if (el.is(city)) { el.ask(q); break }
+    }
   }
 }
 

@@ -34,12 +34,6 @@ class List {
 }
 
 
-// Similar to list but identfy things by id rather than by position
-class Map {
-  constructor() {
-  }
-}
-
 class Optional {
   constructor(mk) {
     this.mk = mk

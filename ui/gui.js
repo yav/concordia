@@ -53,6 +53,9 @@ class GUI {
       case "AskPath":
         this.board.askPath(ch.contents,q)
         break
+      case "AskCity":
+        this.board.askCity(ch.contents,q)
+        break
       default: console.log(q) 
     }
   }

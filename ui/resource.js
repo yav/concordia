@@ -92,6 +92,8 @@ class PlayerResource {
   destroy() {
     this.dom.destroy()
     this.els = null
+    this.player = null
+    this.wolrker = null
   }
   set(obj) {
     const w = obj.thing
@@ -105,7 +107,7 @@ class PlayerResource {
 
     const p = obj.player
     if (p !== this.player) {
-      if (this.player !== null) this.dom.classList.remove(playerColors[this.player])
+      if (this.player !== null) this.dom.removeClass(playerColors[this.player])
       this.player = p
       this.dom.addClass(playerColors[this.player])
     }

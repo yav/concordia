@@ -261,3 +261,8 @@ body {
   width: 64px;
   margin: 8px;
 }
+
+.path-spot {
+  position: absolute;
+  display: inline-block;
+}

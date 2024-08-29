@@ -39,7 +39,7 @@ class City {
     this.produce.set(obj.produces)
     this.workers.set(obj.workers)
     const hs = []
-    for (const p in obj.houses) {
+    for (const p of obj.playerHouses) {
       hs.push({ player: p, thing: "House" })
     }
     this.houses.set(hs)
@@ -50,6 +50,12 @@ class City {
       if (w.is(ty)) { w.ask(q); break }
     }
   }
+
+  ask(q) {
+    quest.existing(this.dom,q)
+  }
+
+  is(city) { return this.city === city }
 
 }
 
