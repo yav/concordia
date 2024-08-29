@@ -46,6 +46,13 @@ class GUI {
       case "AskText":
         uiGet("question").appendChild(quest.button(q))
         break
+      case "AskCityWorker":
+        const [city,ty] = ch.contents
+        this.board.askCityWorker(city,ty,q)
+        break
+      case "AskPath":
+        this.board.askPath(ch.contents,q)
+        break
       default: console.log(q) 
     }
   }

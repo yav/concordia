@@ -33,6 +33,13 @@ class List {
   }
 }
 
+
+// Similar to list but identfy things by id rather than by position
+class Map {
+  constructor() {
+  }
+}
+
 class Optional {
   constructor(mk) {
     this.mk = mk
@@ -103,6 +110,7 @@ class Record {
   
   map(f) { for (const i of this.obj) f(this.obj[i]) }
 }
+
 
 
 

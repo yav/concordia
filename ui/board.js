@@ -23,6 +23,10 @@ class Board {
   }
 
   askMarket(n,q) { this.market.ask(n,q) }
+  askCityWorker(city,ty,q) { this.cities.getElements()[city].askWorker(ty,q) }
+  askPath(path,q) {
+    console.log(q) // XXX
+  }
 }
 
 class BoardMap {

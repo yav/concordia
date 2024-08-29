@@ -247,6 +247,9 @@ body {
   box-shadow: 0px 0px 2px 2px #c66;
 }
 
+.clickable.resource-icon {
+  background-color: #c66;
+}
 
 .question-text {
   background: linear-gradient(#cba,#eee 10%, #cba 90%);

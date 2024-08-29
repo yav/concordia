@@ -250,8 +250,7 @@ actArchitect pid =
   doMoves steps =
     do ws <- getWorkers
        opts <- catMaybes <$> forM ws \(w,loc) ->
-         do doPrint (w,loc)
-            opts <- canMoveWorker w loc steps
+         do opts <- canMoveWorker w loc steps
             if null opts
               then pure Nothing
               else pure (Just (w,loc,opts))

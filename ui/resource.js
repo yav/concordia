@@ -111,7 +111,8 @@ class PlayerResource {
     }
   }
 
-  is(val) { return val.toLowerCase() == this.worker }
+  is(val) { return this.player === conn.playerId &&
+                   val.toLowerCase() === this.worker }
   ask(q) { this.dom.ask(q) }
 }
 

@@ -45,5 +45,11 @@ class City {
     this.houses.set(hs)
   }
 
+  askWorker(ty,q) {
+    for (const w of this.workers.getElements()) {
+      if (w.is(ty)) { w.ask(q); break }
+    }
+  }
+
 }
 
