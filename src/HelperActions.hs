@@ -1,5 +1,6 @@
 module HelperActions where
 
+import Data.Text(Text)
 import Data.Text qualified as Text
 import Data.Maybe(fromMaybe)
 import Data.List(nub,partition)
@@ -19,6 +20,14 @@ sync :: Interact ()
 sync =
   do s <- getState
      update (SetState s)
+
+doLog :: Text -> Interact ()
+doLog x =
+  do updateThe_ gameLog (x :)
+     sync
+
+doPrint :: Show a => a -> Interact ()
+doPrint x = doLog (Text.pack (show x))
 
 -- | Assumes the player is in the list of players.
 playerAfter :: Eq a => [a] -> a -> a
@@ -227,7 +236,7 @@ canMoveWorker w loc0 steps =
          isBlocked eid =
             eid `Map.member` onPaths ||
             case Map.lookup eid (layout ^. mapPaths) of
-              Just path -> path ^. pathCanStop
+              Just path -> not (path ^. pathCanStop)
               Nothing -> True
 
      let search visited reachable todo moreTodo =

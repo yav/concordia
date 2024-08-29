@@ -1,5 +1,6 @@
 module State where
 
+import Data.Text(Text)
 import Data.Map(Map)
 import Data.Map qualified as Map
 
@@ -17,6 +18,7 @@ data GameState = GameState
   , _playerOrder  :: ![PlayerId]
   , _playerDoubleBonus :: !PlayerId
   , _gameStatus   :: !GameStatus
+  , _gameLog      :: ![Text]
   }
 
 data PlayerState = PlayerState

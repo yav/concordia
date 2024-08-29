@@ -45,6 +45,7 @@ setupGame cfg0 =
        , _playerOrder  = first : rest
        , _gameStatus   = InProgress
        , _playerDoubleBonus = last (first : rest)
+       , _gameLog      = []
        }
 
 

@@ -16,6 +16,7 @@ data View = View
   { hand :: [Card]
   , playerInfo :: [PlayerView]
   , boardInfo :: BoardView
+  , logMessages :: [Text]
   } deriving (Generic,ToJSON)
 
 data PlayerView = PlayerView
@@ -61,6 +62,7 @@ stateView pid s = View
   , playerInfo =
       [ playerView p s (s ^. playerState p) | p <- after ++ before ]
   , boardInfo = boardView (s ^. board)
+  , logMessages = s ^. gameLog
   }
   where
   (before,after) = break (== pid) (s ^. playerOrder)

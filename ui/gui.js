@@ -6,12 +6,18 @@ class GUI {
     this.players          = new List(() => new Player(playerContainer))
     this.hand             = new List(() => new Card(handContainer))
     this.board            = new Board()
+    this.log              = new List(() => {
+      const d = uiFromTemplate("log-entry")
+      uiGet("log-entries").appendChild(d)
+      return new Text(d, true)
+    })
   }
 
   async set(obj) {
+    await this.board.set(obj.boardInfo)
     this.players.set(obj.playerInfo)
     this.hand.set(obj.hand)
-    await this.board.set(obj.boardInfo)
+    this.log.set(obj.logMessages)
   }
 
   destroy() {

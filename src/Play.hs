@@ -82,7 +82,7 @@ actTribune pid@(PlayerId name) =
      ws <- canBuildWorker pid
      capital <- the (board % mapLayout % mapStartCity)
      askInputsMaybe_ (name <> ": Deploy a worker?") $
-        (pid :-> AskText "End Turn", "Do not deploy worker.", pure ())
+      (pid :-> AskText "End Turn", "Do not deploy worker.", pure ())
       : [ (pid :-> AskWorker w, "Deploy this worker.",
            doBuildWorker pid w capital)
         | w <- ws
@@ -216,7 +216,7 @@ actArchitect pid =
              | otherwise = rest
        pure (Map.foldrWithKey fromPath cities (brd ^. mapPathWorkers))
 
-  endMove = (pid :-> AskText "End Movement", "No more moves.", pure ())
+  endMove = (pid :-> AskText "Build", "No more moves.", pure ())
 
   moveCityWorker steps w cid tgts =
     ( pid :-> AskCityWorker cid w
@@ -250,10 +250,12 @@ actArchitect pid =
   doMoves steps =
     do ws <- getWorkers
        opts <- catMaybes <$> forM ws \(w,loc) ->
-         do opts <- canMoveWorker w loc steps
+         do doPrint (w,loc)
+            opts <- canMoveWorker w loc steps
             if null opts
               then pure Nothing
               else pure (Just (w,loc,opts))
+
        askInputsMaybe_ "Choose a worker to move." $
          endMove :
          [ case loc of
