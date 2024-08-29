@@ -327,6 +327,15 @@ function newEdge(ty, from, to, exist) {
   changeTo.textContent = "Change City 2"
   changeTo.addEventListener("click", () => ask("city", update("pathTo")))
   controls.appendChild(changeTo)
+
+  const del = document.createElement("button")
+  del.textContent = "Delete"
+  del.addEventListener("click", () => {
+    delete state.edge[id]
+    delete state.loc.edge[id]
+    dom.remove()
+  })
+  controls.appendChild(del)
 }
 
 function download() {
