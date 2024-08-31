@@ -93,7 +93,17 @@ body {
 
 .log-word {
   display: inline-block;
-  margin-right: 2px;
+  margin-right: 4px;
+}
+
+#log .resource-icon {
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.log-line {
+  border-bottom: 1px solid black;
+  height: 8px;
 }
 
 .log-ref {

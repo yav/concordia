@@ -7,6 +7,7 @@ class Tooltip {
     this.dom.style.display = "none"
     el.addEventListener("mouseenter", () => this.show())
     el.addEventListener("mouseleave", () => this.hide())
+    this.dom.addEventListener("mouseleave", () => this.hide())
   }
 
   clear() { this.dom.innerHTML = "" }

@@ -29,4 +29,15 @@ class Question {
     return dom
   }
 
+  buttonResource(q) {
+    const dom = uiFromTemplate("question-text")
+    const [txt,r] = q.chChoice.contents
+    dom.textContent = txt
+    const icon = new Resource(dom,[14,14])
+    icon.set(r)
+    this.temporary(dom,q)
+    return dom
+  
+  }
+
 }

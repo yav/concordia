@@ -10,6 +10,7 @@ data Question =
     AskWorker Worker
   | AskCityWorker CityId Worker
   | AskResource Resource
+  | AskTextResource Text Resource
   | AskCity CityId
   | AskRegion RegionId
   | AskPath PathId

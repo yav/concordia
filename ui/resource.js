@@ -11,6 +11,7 @@ class DOMNode {
 
   setSize() {
     if (this.board === undefined) {
+      if (this.dim === undefined) return
       const [w,h] = this.dim
       this.dom.style.width = w + "px"
       this.dom.style.height = h + "px"

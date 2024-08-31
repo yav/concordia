@@ -56,6 +56,9 @@ class GUI {
       case "AskRegion":
         this.board.askThing("regions", ch.contents,q)
         break
+      case "AskTextResource":
+        uiGet("question").appendChild(quest.buttonResource(q))
+        break
       default: console.log(q) 
     }
   }

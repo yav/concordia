@@ -90,15 +90,19 @@ doGainResources pid new =
          free  = limit - haveR - haveW
          need  = bagSize new
      if need <= free
-       then updateThe_ (playerState pid % playerResources) (bagUnion new)
+       then 
+          do updateThe_ (playerState pid % playerResources) (bagUnion new)
+             doLogBy' pid (T "Gained" : [ w | (r,n) <- bagToNumList new,
+                                              w <- [ tSh n, G r ] ])
        else askWhich new free
   where
   askWhich todo free
     | free == 0 = pure ()
     | otherwise =
-      askInputsMaybe_ pid "Gain resource"
-        [ (AskResource r, "Gain resource.",
+      askInputsMaybe_ pid "Not enough space, choose resource:"
+        [ (AskTextResource "Gain" r, "Gain resource.",
           do updateThe_ (playerState pid % playerResources) (bagChange 1 r)
+             doLogBy' pid [T "Gained", G r]
              askWhich (bagChange (-1) r todo) (free - 1)
           )
         | (r,_) <- bagToNumList todo
@@ -271,3 +275,4 @@ canMoveWorker w loc0 steps =
 
 
 
+  

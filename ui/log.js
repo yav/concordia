@@ -47,10 +47,17 @@ class LogWord extends Tagged {
           return new Text(w,true)
         }
       , G: () => new Resource(own,[14,14])
+      , M: () => { const r = new Resource(own,[14,14]); r.set("Money")
+                   return new Const(r) }
       , W: () => new PlayerResource(own,[14,14])
       , C: () => new Pointer(own, "cities", "this city", board)
       , P: () => new Pointer(own, "paths", "this path", board)
       , R: () => new Pointer(own, "regions", "this region", board)
+      , L: () => {
+              const w = new DOMNode(uiFromTemplate("log-line"))
+              w.setOwner(own)
+              return new Const(w)
+           }
       })
   }
 }

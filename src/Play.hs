@@ -1,7 +1,8 @@
 module Play where
 
+import Data.Text qualified as Text
 import Control.Monad(when,forM,guard)
-import Data.Maybe(fromMaybe,catMaybes)
+import Data.Maybe(fromMaybe,catMaybes,mapMaybe)
 import Data.Map qualified as Map
 import Data.Set qualified as Set
 import Data.List(nub,foldl')
@@ -40,6 +41,7 @@ nextPlayer :: Interact ()
 nextPlayer =
   do order <- the playerOrder
      updateThe_ curPlayer (playerAfter order)
+     doLog' [L]
 
 doTakeTurn :: Interact ()
 doTakeTurn =
@@ -66,7 +68,7 @@ action act =
       case co of
         Settle -> actColonistSettle
         Tax    -> actColonistTax
-    Mercator _n -> const (pure ()) -- XXX
+    Mercator n -> actMercator n
     Specialist r -> actSpecialist r
     Magister -> const (pure ()) -- XX
     Consul -> actConsul
@@ -131,12 +133,12 @@ actColonistSettle pid =
 
 actPrefect :: PlayerId -> Interact ()
 actPrefect pid =
-  do doLogBy pid "Prefect"
-     regs <- the (board % mapLayout % mapRegions)
+  do regs <- the (board % mapLayout % mapRegions)
      askInputsMaybe_ pid "Prefect region"
         [ ( AskRegion r
           , "Prefect this region"
-          , do done <- the (board % mapPrefected)
+          , do doLogBy' pid [ T "Prefected", R r ]
+               done <- the (board % mapPrefected)
                if r `elem` done then getMoney done else getGoods r
           )
         | r <- Set.toList regs
@@ -163,12 +165,10 @@ actPrefect pid =
                                setThe playerDoubleBonus (playerBefore order pid)
                                pure 2
                           else pure 1
-              doLogBy' pid [T "Gained", tSh amt, G rsr]
               pure (Map.singleton pid (bagFromList (replicate amt rsr)))
 
   getGoods r =
-    do doLogBy' pid [T "Prefect in", R r]
-       bonus <- getPrefectBonus r
+    do bonus <- getPrefectBonus r
        brd <- the board
        let cities = Map.findWithDefault [] r (citiesInRegion (brd ^. mapLayout))
        let doCity tot cid =
@@ -313,3 +313,71 @@ actArchitect pid =
          ]
 
 
+actMercator :: Int -> PlayerId -> Interact ()
+actMercator n pid =
+  do doChangeMoney pid n
+     doLogBy' pid [ T "Gained", tSh n, M, T "from Mercator" ]
+     trade []
+
+  where
+  end = (AskText "End Turn", "Done trading", pure ())
+
+  resources = Map.keys resourceCost
+
+  trade as =
+    do s <- the (playerState pid)
+       askInputs pid "Trade" $
+         end : mapMaybe (buyOpt as s) resources ++
+               mapMaybe (sellOpt as s) resources  
+
+
+  canBuy s r = guard haveSpace >> haveMoney
+    where
+    haveSpace = bagSize (s ^. playerResources) < s ^. playerResourceLimit
+    haveMoney =
+      do c <- Map.lookup r resourceCost
+         guard (c <= s ^. playerMoney)
+         pure c
+
+  canSell s r =
+    do c <- Map.lookup r resourceCost
+       guard (bagContains r (s ^. playerResources) > 0)
+       pure c
+
+  -- XXX: offer to convert salt
+
+  doBuy as (r,c) =
+    (AskTextResource "Buy" r, "Buy for " <> Text.pack (show c),
+       do doChangeMoney pid (- c)
+          updateThe_ (playerState pid % playerResources) (bagChange 1 r)
+          doLogBy' pid [T "Bought", G r]
+          trade as
+
+    )
+
+  doSell as (r,c) =
+    (AskResource r, "Sell for " <> Text.pack (show c),
+      do updateThe_ (playerState pid % playerResources) (bagChange (-1) r)
+         doChangeMoney pid c
+         doLogBy' pid [T "Sold", G r]
+         trade as)
+        
+
+  actOk a@(_,r) as
+    | a `elem` as = Just as  -- We already did this
+    | r `elem` map snd as = Nothing -- Don't buy and sell the same thing
+    | length as < 2 = Just (a : as) -- We have available action
+    | otherwise = Nothing -- No more resource actions
+
+  buyOpt as s r =
+    do as' <- actOk (Buy,r) as
+       c <- canBuy s r
+       pure (doBuy as' (r,c))
+
+  sellOpt as s r =
+    do as' <- actOk (Sell,r) as
+       c   <- canSell s r
+       pure (doSell as' (r,c))
+ 
+data TradeAct = Buy | Sell
+  deriving Eq
