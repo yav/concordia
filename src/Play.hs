@@ -23,8 +23,7 @@ play =
      case s ^. gameStatus of
        Finished {} -> pure ()
        EndTriggeredBy pid
-         | pid == s ^. curPlayer ->
-           setThe gameStatus Finished
+         | pid == s ^. curPlayer -> setThe gameStatus Finished >> sync
          | otherwise -> doTakeTurn >> nextPlayer >> play
        InProgress -> doTakeTurn >> checkEndGame >> nextPlayer >> play
 
@@ -42,15 +41,13 @@ nextPlayer =
   do order <- the playerOrder
      updateThe_ curPlayer (playerAfter order)
 
--- XXX
 doTakeTurn :: Interact ()
 doTakeTurn =
-  do pid@(PlayerId txt)  <- the curPlayer
+  do pid <- the curPlayer
      hand <- the (playerState pid % playerHand)
-     askInputs (txt <> ": Choose a card action")
-       [ (pid :-> AskHand n a, "Play this card",
+     askInputs pid "Choose a card action"
+       [ (AskHand n a, "Play this card",
            do doDiscardCard pid n
-              sync
               action act pid)
        | (n,c) <- zip [ 0 .. ] hand
        , (a,act) <- zip [0..] (cardActions c)
@@ -80,7 +77,6 @@ actTribune pid =
      discard <- updateThe (playerState pid % playerDiscard) (\d -> (d, []))
      doChangeMoney pid (max 0 (length discard - 3))
      doAddCards pid discard
-     sync
      ws <- canBuildWorker pid
      capital <- the (board % mapLayout % mapStartCity)
      askInputsMaybe_ pid "Deploy a worker to the capital" $
@@ -95,8 +91,6 @@ actColonistTax pid =
   do doLogBy pid "Tax Colonists"
      n <- countWorkersOnBoard pid
      doChangeMoney pid (5 + n)
-     sync
-
 
 actColonistSettle :: PlayerId -> Interact ()
 actColonistSettle pid =
@@ -128,7 +122,6 @@ actColonistSettle pid =
        [ ( AskCity city
          , "Deploy here"
          , do doBuildWorker pid w city
-              sync
               newWs <- canBuildWorker pid
               doAction tgts newWs pass
          )
@@ -205,7 +198,7 @@ actConsul :: PlayerId -> Interact ()
 actConsul pid = doPickCards pid 1 False
 
 actArchitect :: PlayerId -> Interact ()
-actArchitect pid@(PlayerId name) =
+actArchitect pid =
   do move <- countWorkersOnBoard pid
      doMoves move
      buildHouses
@@ -229,13 +222,12 @@ actArchitect pid@(PlayerId name) =
   moveCityWorker steps w cid tgts =
     ( AskCityWorker cid w
     , "Move this worker"
-    , askInputs (name <> ": Move to")
-        [ ( pid :-> AskPath eid
+    , askInputs pid "Move to"
+        [ ( AskPath eid
           , "Move here"
           , do updateThe_ (board % mapCityWorkers % ix cid)
                           (bagChange (-1) (pid :-> w))
                setThe (board % mapPathWorkers % at eid) (Just (pid :-> w))
-               sync
                doMoves (steps - takenSteps)
           )
         | (eid, takenSteps) <- tgts
@@ -245,12 +237,11 @@ actArchitect pid@(PlayerId name) =
   movePathWorker steps w from tgts =
     ( AskPath from
     , "Move this worker"
-    , askInputs (name <> ": Move to")
-        [ ( pid :-> AskPath tgt
+    , askInputs pid "Move to"
+        [ ( AskPath tgt
           , "Move here"
           , do setThe (board % mapPathWorkers % at from) Nothing
                setThe (board % mapPathWorkers % at tgt) (Just (pid :-> w))
-               sync
                doMoves (steps - takenSteps)
           )
         | (tgt, takenSteps) <- tgts
@@ -296,7 +287,7 @@ actArchitect pid@(PlayerId name) =
        buildHouse cityOpts
 
 
-  endBuild = (pid :-> AskText "End Turn", "No more houses.", pure ())
+  endBuild = (AskText "End Turn", "No more houses", pure ())
 
   buildHouse cityOpts =
     do houses    <- the (playerState pid % playerHousesToBuild)
@@ -304,15 +295,14 @@ actArchitect pid@(PlayerId name) =
        resources <- the (playerState pid % playerResources)
        money     <- the (playerState pid % playerMoney)
 
-       askInputs "Build houses." $
+       askInputs pid "Build houses" $
          endBuild :
-         [ ( pid :-> AskCity cid
+         [ ( AskCity cid
            , "Build house here."
            , do doChangeMoney pid (- moneyCost)
                 doPayCost pid cost
                 updateThe_ (players % ix pid % playerHousesToBuild) (subtract 1)
                 updateThe_ (board % mapHouses % at cid) (Just . (pid :) . fromMaybe [])
-                sync
                 buildHouse cityOpts
            )
          | houses >= 1

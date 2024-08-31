@@ -17,15 +17,10 @@ import Constants
 import Question
 import Log
 
-sync :: Interact ()
-sync =
-  do s <- getState
-     update (SetState s)
+
 
 doLog' :: [LogWord] -> Interact ()
-doLog' x = 
-  do updateThe_ gameLog (x :)
-     sync
+doLog' x = updateThe_ gameLog (x :)
 
 doLog :: Text -> Interact ()
 doLog x = doLog' [T x]
@@ -84,7 +79,6 @@ doBuildWorker pid w city =
                 (bagChange (-1) w)
      updateThe_ (board % mapCityWorkers % at city)
                 (Just . bagChange 1 (pid :-> w) . fromMaybe bagEmpty)
-     sync
 
 -- | Gain some reasource and ask which, if not enough space.
 doGainResources :: PlayerId -> Bag Resource -> Interact ()
@@ -105,7 +99,6 @@ doGainResources pid new =
       askInputsMaybe_ pid "Gain resource"
         [ (AskResource r, "Gain resource.",
           do updateThe_ (playerState pid % playerResources) (bagChange 1 r)
-             sync
              askWhich (bagChange (-1) r todo) (free - 1)
           )
         | (r,_) <- bagToNumList todo
@@ -161,7 +154,7 @@ doPayCost pid opts0
   | otherwise = go opts0
   where
   go opts
-    | any bagIsEmpty opts = sync
+    | any bagIsEmpty opts = pure ()
     | otherwise =
     do let allRs = nub [ r | opt <- opts, (r,_) <- bagToNumList opt ]
            inAll r = all ((> 0) . bagContains r) opts
@@ -175,9 +168,8 @@ doPayCost pid opts0
        case filter inAll allRs of
          r : _ -> doPick r
          [] ->
-           sync >>
-           askInputs "How would would like to pay?"
-              [ (pid :-> AskResource r, "Pay with this.", doPick r)
+           askInputs pid "Pay resource"
+              [ (AskResource r, "Pay with this.", doPick r)
               | r <- allRs
               ]
 
@@ -202,7 +194,7 @@ doGetMarketCards withBoardCost =
      pure (zipWith cost cards spotCosts)
 
 doPickCards :: PlayerId -> Int -> Bool -> Interact ()
-doPickCards pid@(PlayerId name) howMany extraCost =
+doPickCards pid howMany extraCost =
   do avail <- zip [ 0 .. ] <$> doGetMarketCards extraCost
      let marketLen = length avail
      picked <- pickCard []  avail
@@ -211,7 +203,6 @@ doPickCards pid@(PlayerId name) howMany extraCost =
      doAddCards pid (map (fst . snd) pickedCards)
      updateThe_ (board % marketDeck)
                 ((map (fst . snd) otherCards ++) . drop marketLen)
-     sync
   where
   pickCard picked avail
     | length picked >= howMany = pure picked
@@ -222,11 +213,11 @@ doPickCards pid@(PlayerId name) howMany extraCost =
                          , not (null opt)
                          ]
        let num x = Text.pack (show x)
-       let q = name <> ": Select a market card " <> num (length picked + 1)
+       let q = "Select a market card " <> num (length picked + 1)
                <> "/" <> num howMany
-       askInputs q $
-          ( pid :-> AskText "End Turn", "No more cards.", pure picked) :
-          [ ( pid :-> AskMarket n, "Get this card."
+       askInputs pid q $
+          ( AskText "End Turn", "No more cards.", pure picked) :
+          [ ( AskMarket n, "Get this card."
             , do doPayCost pid opt
                  pickCard (n : picked) (filter ((/= n) . fst) avail)
             )
