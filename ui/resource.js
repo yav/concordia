@@ -3,15 +3,19 @@
 class DOMNode {
   constructor(dom,dim,board) {
     this.dom = dom
-    if (board === undefined) return
     this.dim = dim
     this.board = board
     this.setSize()
   }
 
   setSize() {
-    if (this.board === undefined) return
-    this.board.setDim(this.dom,this.dim)
+    if (this.board === undefined) {
+      const [w,h] = this.dim
+      this.dom.style.width = w + "px"
+      this.dom.style.height = h + "px"
+    } else {
+      this.board.setDim(this.dom,this.dim)
+    }
   }
 
   addClass(c) { this.dom.classList.add(c) }
@@ -78,9 +82,9 @@ class ResourceCost extends Tagged {
 }
 
 class PlayerResource {
-  constructor(owner, board) {
+  constructor(owner, dim, board) {
     const [dom,els] = uiFromTemplateNested("player-resource")
-    this.dom = new DOMNode(dom,[32,32],board)
+    this.dom = new DOMNode(dom,dim,board)
     this.els = els
     this.player = null
     this.worker = null
@@ -120,12 +124,12 @@ class PlayerResource {
 class StoredResource extends Tagged {
   constructor(owner) {
     super({ Available: () => {
-              const dom = new DOMNode(uiFromTemplate("available-spot"))
+              const dom = new DOMNode(uiFromTemplate("available-spot"),[20,20])
               dom.setOwner(owner)
               return new Const(dom)
             }
-          , HasWorker: () => new PlayerResource(owner)
-          , HasResource: () => new Resource(owner)
+          , HasWorker: () => new PlayerResource(owner,[20,20])
+          , HasResource: () => new Resource(owner,[20,20])
           })
   }
 

@@ -6,7 +6,7 @@ class Region {
       {
         NoBonus: () => new NoBonus(dom)
         , Money: () => new Money(dom)
-        , Goods: () => new Resource(dom)
+        , Goods: () => new Resource(dom,[32,32])
       })
     this.region = null
     this.board = board
@@ -37,6 +37,11 @@ class Region {
   is(r) { return this.region === r }
 
   ask(q) { quest.existing(this.dom,q) }
+
+  select(yes) {
+    if (yes) { this.dom.classList.add("selected") }
+    else { this.dom.classList.remove("selected") }
+  }
 }
 
 class NoBonus extends Const {

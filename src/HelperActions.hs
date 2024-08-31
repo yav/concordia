@@ -15,16 +15,26 @@ import State
 import Types
 import Constants
 import Question
+import Log
 
 sync :: Interact ()
 sync =
   do s <- getState
      update (SetState s)
 
-doLog :: Text -> Interact ()
-doLog x =
+doLog' :: [LogWord] -> Interact ()
+doLog' x = 
   do updateThe_ gameLog (x :)
      sync
+
+doLog :: Text -> Interact ()
+doLog x = doLog' [T x]
+
+doLogBy :: PlayerId -> Text -> Interact ()
+doLogBy pid txt = doLogBy' pid [T txt]
+
+doLogBy' :: PlayerId -> [LogWord] -> Interact ()
+doLogBy' (PlayerId p) ws = doLog' (T p : T ": " : ws)
 
 doPrint :: Show a => a -> Interact ()
 doPrint x = doLog (Text.pack (show x))
@@ -92,9 +102,10 @@ doGainResources pid new =
   askWhich todo free
     | free == 0 = pure ()
     | otherwise =
-      askInputsMaybe_ "Choose resource to gain."
-        [ (pid :-> AskResource r, "Gain resource.",
+      askInputsMaybe_ pid "Gain resource"
+        [ (AskResource r, "Gain resource.",
           do updateThe_ (playerState pid % playerResources) (bagChange 1 r)
+             sync
              askWhich (bagChange (-1) r todo) (free - 1)
           )
         | (r,_) <- bagToNumList todo

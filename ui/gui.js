@@ -6,11 +6,7 @@ class GUI {
     this.players          = new List(() => new Player(playerContainer))
     this.hand             = new List(() => new Card(handContainer))
     this.board            = new Board()
-    this.log              = new List(() => {
-      const d = uiFromTemplate("log-entry")
-      uiGet("log-entries").appendChild(d)
-      return new Text(d, true)
-    })
+    this.log              = new List(() => new LogEntry(this.board))
   }
 
   async set(obj) {
@@ -24,6 +20,7 @@ class GUI {
     this.players.destroy()
     this.hand.destroy()
     this.board.destroy()
+    this.log.destroy()
   }
 
   setQuestion(q) { this.question.set(q) }
@@ -51,13 +48,13 @@ class GUI {
         this.board.askCityWorker(city,ty,q)
         break
       case "AskPath":
-        this.board.askPath(ch.contents,q)
+        this.board.askThing("paths", ch.contents,q)
         break
       case "AskCity":
-        this.board.askCity(ch.contents,q)
+        this.board.askThings("cities", ch.contents,q)
         break
       case "AskRegion":
-        this.board.askRegion(ch.contents,q)
+        this.board.askThing("regions", ch.contents,q)
         break
       default: console.log(q) 
     }

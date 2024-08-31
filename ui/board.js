@@ -26,21 +26,19 @@ class Board {
 
   askMarket(n,q) { this.market.ask(n,q) }
   askCityWorker(city,ty,q) { this.cities.getElements()[city].askWorker(ty,q) }
-  askPath(path,q) {
-    for(const el of this.paths.getElements()) {
-      if (el.is(path)) { el.ask(q); break }
+
+  getThing(ty,id) {
+    for(const el of this[ty].getElements()) {
+      if (el.is(id)) return el
     }
+    return null
   }
-  askCity(city,q) {
-    for(const el of this.cities.getElements()) {
-      if (el.is(city)) { el.ask(q); break }
-    }
+
+  askThing(ty,id,q) {
+    const t = this.getThing(ty,id)
+    if (t !== null) t.ask(q)
   }
-  askRegion(region,q) {
-    for(const el of this.regions.getElements()) {
-      if (el.is(region)) { el.ask(q); break }
-    }
-  }
+
 }
 
 class BoardMap {

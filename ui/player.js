@@ -13,7 +13,7 @@ class Player {
       , money:    new Text(els.money, true)
       , discard:  new Optional(() => new Card(els.top_card))
       })
-    this.houses_label = new PlayerResource(els.houses_label)
+    this.houses_label = new PlayerResource(els.houses_label,[20,20])
     this.resources = []
     for (let i = 0; i < 12; ++i) {
       this.resources.push(new StoredResource(els[i]))

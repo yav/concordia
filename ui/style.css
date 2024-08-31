@@ -79,6 +79,28 @@ body {
   overflow: scroll;
 }
 
+#log-entries {
+  display: flex;
+  flex-direction: column-reverse;
+  overflow: scroll;
+}
+
+#log-entry {
+  display: flex;
+  align-items: baseline;
+  
+}
+
+.log-word {
+  display: inline-block;
+  margin-right: 2px;
+}
+
+.log-ref {
+  text-decoration: underline;
+}
+
+
 #market {
   display: flex;
   /*flex-flow: column wrap;*/
@@ -278,6 +300,12 @@ body {
   box-shadow: 0 0 4px 4px #936;
   background: linear-gradient(white 50% ,#f9c);
 }
+
+.selected.region {
+  box-shadow: 0 0 4px 4px #936;
+  background: linear-gradient(white 50% ,#f9c);
+}
+
 
 .question-text {
   background: linear-gradient(#cba,#eee 10%, #cba 90%);

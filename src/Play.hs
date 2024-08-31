@@ -15,6 +15,7 @@ import State
 import Types
 import Question
 import HelperActions
+import Log
 
 play :: Interact ()
 play =
@@ -74,31 +75,33 @@ action act =
     Consul -> actConsul
 
 actTribune :: PlayerId -> Interact ()
-actTribune pid@(PlayerId name) =
-  do discard <- updateThe (playerState pid % playerDiscard) (\d -> (d, []))
+actTribune pid =
+  do doLogBy pid "Tribune"
+     discard <- updateThe (playerState pid % playerDiscard) (\d -> (d, []))
      doChangeMoney pid (max 0 (length discard - 3))
      doAddCards pid discard
      sync
      ws <- canBuildWorker pid
      capital <- the (board % mapLayout % mapStartCity)
-     askInputsMaybe_ (name <> ": Deploy a worker?") $
-      (pid :-> AskText "End Turn", "Do not deploy worker.", pure ())
-      : [ (pid :-> AskWorker w, "Deploy this worker.",
-           doBuildWorker pid w capital)
-        | w <- ws
-        ]
+     askInputsMaybe_ pid "Deploy a worker to the capital" $
+      (AskText "End Turn", "Do not deploy worker", pure ()) : 
+      [ (AskWorker w, "Deploy this worker", doBuildWorker pid w capital)
+      | w <- ws
+      ]
 
 
 actColonistTax :: PlayerId -> Interact ()
 actColonistTax pid =
-  do n <- countWorkersOnBoard pid
+  do doLogBy pid "Tax Colonists"
+     n <- countWorkersOnBoard pid
      doChangeMoney pid (5 + n)
      sync
 
 
 actColonistSettle :: PlayerId -> Interact ()
 actColonistSettle pid =
-  do ws   <- canBuildWorker pid
+  do doLogBy pid "Settle Colonist"
+     ws   <- canBuildWorker pid
      tgts <- getBuildTargets
      doAction tgts ws pass
   where
@@ -110,21 +113,22 @@ actColonistSettle pid =
        pure (capital : ours)
 
   pass =
-    ( pid :-> AskText "End turn."
-    , "No more deployments."
+    ( AskText "End turn"
+    , "No more deployments"
     , pure ()
     )
 
   doAction tgts ws otherOpt =
-     askInputsMaybe_ "Choose a worker to deploy" $
-       [ (pid :-> AskWorker w, "Deploy this worker.", buildWorker tgts w)
+     askInputsMaybe_ pid "Deploy worker" $
+       [ (AskWorker w, "Deploy worker", buildWorker tgts w)
        | w <- ws ] ++ [otherOpt]
 
   buildWorker tgts w =
-    askInputsMaybe_ "Choose where to deploy worker."
-       [ ( pid :-> AskCity city
-         , "Deploy here."
+    askInputsMaybe_ pid "Deployment city"
+       [ ( AskCity city
+         , "Deploy here"
          , do doBuildWorker pid w city
+              sync
               newWs <- canBuildWorker pid
               doAction tgts newWs pass
          )
@@ -134,10 +138,11 @@ actColonistSettle pid =
 
 actPrefect :: PlayerId -> Interact ()
 actPrefect pid =
-  do regs <- the (board % mapLayout % mapRegions)
-     askInputsMaybe_ "Choose a region to prefect."
-        [ ( pid :-> AskRegion r
-          , "Prefect this region."
+  do doLogBy pid "Prefect"
+     regs <- the (board % mapLayout % mapRegions)
+     askInputsMaybe_ pid "Prefect region"
+        [ ( AskRegion r
+          , "Prefect this region"
           , do done <- the (board % mapPrefected)
                if r `elem` done then getMoney done else getGoods r
           )
@@ -165,10 +170,12 @@ actPrefect pid =
                                setThe playerDoubleBonus (playerBefore order pid)
                                pure 2
                           else pure 1
+              doLogBy' pid [T "Gained", tSh amt, G rsr]
               pure (Map.singleton pid (bagFromList (replicate amt rsr)))
 
   getGoods r =
-    do bonus <- getPrefectBonus r
+    do doLogBy' pid [T "Prefect in", R r]
+       bonus <- getPrefectBonus r
        brd <- the board
        let cities = Map.findWithDefault [] r (citiesInRegion (brd ^. mapLayout))
        let doCity tot cid =
@@ -217,10 +224,10 @@ actArchitect pid@(PlayerId name) =
              | otherwise = rest
        pure (Map.foldrWithKey fromPath cities (brd ^. mapPathWorkers))
 
-  endMove = (pid :-> AskText "Build", "No more moves", pure ())
+  endMove = (AskText "Build", "No more moves", pure ())
 
   moveCityWorker steps w cid tgts =
-    ( pid :-> AskCityWorker cid w
+    ( AskCityWorker cid w
     , "Move this worker"
     , askInputs (name <> ": Move to")
         [ ( pid :-> AskPath eid
@@ -236,7 +243,7 @@ actArchitect pid@(PlayerId name) =
     )
 
   movePathWorker steps w from tgts =
-    ( pid :-> AskPath from
+    ( AskPath from
     , "Move this worker"
     , askInputs (name <> ": Move to")
         [ ( pid :-> AskPath tgt
@@ -258,7 +265,7 @@ actArchitect pid@(PlayerId name) =
               then pure Nothing
               else pure (Just (w,loc,opts))
 
-       askInputsMaybe_ (name <> ": Move worker") $
+       askInputsMaybe_ pid "Move worker" $
          endMove :
          [ case loc of
              Left cid  -> moveCityWorker steps w cid tgts

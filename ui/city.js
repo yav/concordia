@@ -6,8 +6,8 @@ class City {
     this.els = els
     this.city = null
     this.produce = new Optional(() => new Resource(els.produces, [20,20], board))
-    this.workers = new List(() => new PlayerResource(els.workers, board))
-    this.houses = new List(() => new PlayerResource(els.houses, board))
+    this.workers = new List(() => new PlayerResource(els.workers, [32,32], board))
+    this.houses = new List(() => new PlayerResource(els.houses, [32,32], board))
     this.board = board
     uiGet("board").appendChild(dom)
   }
@@ -56,6 +56,11 @@ class City {
   }
 
   is(city) { return this.city === city }
+
+  select(yes) {
+    if (yes) { this.dom.classList.add("selected") }
+    else { this.dom.classList.remove("selected") }
+  }
 
 }
 

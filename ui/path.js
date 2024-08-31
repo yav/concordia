@@ -3,7 +3,7 @@ class Path {
     this.path = null
     this.board = board
     this.dom = uiFromTemplate("path-spot")
-    this.worker = new Optional(() => new PlayerResource(this.dom,board))
+    this.worker = new Optional(() => new PlayerResource(this.dom,[32,32],board))
     uiGet("board").appendChild(this.dom)
   }
   destroy() { this.worker.destroy(); this.dom.remove(); this.board = null }
@@ -26,5 +26,10 @@ class Path {
 
   ask(q) {
     quest.existing(this.dom, q)
+  }
+
+  select(yes) {
+    if (yes) { this.dom.classList.add("selected") }
+    else { this.dom.classList.remove("selected") }
   }
 }
