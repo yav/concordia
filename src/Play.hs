@@ -179,6 +179,7 @@ actPrefect pid =
                 let addP mp p = Map.insertWith bagUnion p earn mp
                 pure (foldl' addP tot houses)
        mapM_ (uncurry doGainResources) (Map.toList (foldl' doCity bonus cities))
+       updateThe_ (board % mapPrefected) (r :)
 
 
 actSpecialist :: Resource -> PlayerId -> Interact ()
