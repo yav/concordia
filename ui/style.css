@@ -322,3 +322,16 @@ body {
   position: absolute;
   display: inline-block;
 }
+
+.tooltip-container {
+  position: fixed;
+  z-index: 10;
+}
+.tooltip-entry {
+  background-color: white;
+  color: black;
+  border-radius: 4px;
+  border: 1px solid black;
+  padding: 2px;
+  max-width: 15em;
+}

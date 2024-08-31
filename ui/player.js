@@ -6,6 +6,13 @@ class Player {
     this.cur = false
     this.magnus = new Optional(() => new Resource(els.magnus, [20,20]))
 
+    new TextTooltip(els.name,"Player name")
+    new TextTooltip(els.houses, "Available houses")
+    new TextTooltip(els.cards, "Hand size")
+    new TextTooltip(els.money, "Money")
+    new TextTooltip(els.top_card, "Last card played")
+
+
     this.val = new Record(
       { player:   new Text(els.name, true)
       , houses:   new Text(els.houses, true)

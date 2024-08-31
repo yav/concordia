@@ -3,6 +3,7 @@
 class DOMNode {
   constructor(dom,dim,board) {
     this.dom = dom
+    this.desc = new TextTooltip(this.dom,"")
     this.dim = dim
     this.board = board
     this.setSize()
@@ -22,9 +23,9 @@ class DOMNode {
   removeClass(c) { this.dom.classList.remove(c) }
   setOwner(owner) { owner.appendChild(this.dom) }
   setText(txt) { this.dom.textContent = txt }
-  setTitle(txt) { this.dom.setAttribute("title",txt) }
+  setTitle(txt) { this.desc.set(txt) }
 
-  destroy() { this.dom.remove() }
+  destroy() { this.dom.remove(); this.desc.destroy() }
   ask(q) { quest.existing(this.dom,q) }
 }
 
@@ -44,8 +45,8 @@ class Resource {
     if (this.val !== null) this.dom.removeClass(this.val)
     this.val = xx
     this.dom.addClass(this.val)
-    this.dom.setTitle(x === "magnus"? "Prefectus Magnus" : x)
-    this.dom.setText(x === "Any"? "?" : "")
+    const tip = x === "magnus"? "Prefectus Magnus": x
+    this.dom.setTitle(tip)
   }
 
   setSize() { this.dom.setSize() }
@@ -61,6 +62,8 @@ class WildCost extends Const {
     dom.setOwner(owner)
     super(dom)
     this.dom = dom
+    dom.textContent = "?"
+    dom.setTitle("Any resource")
   }
 
   setSize() { this.dom.setSize() }
@@ -126,6 +129,7 @@ class StoredResource extends Tagged {
     super({ Available: () => {
               const dom = new DOMNode(uiFromTemplate("available-spot"),[20,20])
               dom.setOwner(owner)
+              dom.setTitle("Available")
               return new Const(dom)
             }
           , HasWorker: () => new PlayerResource(owner,[20,20])

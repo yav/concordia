@@ -3,6 +3,7 @@
 <head>
 <script src="template.js"></script>
 <script src="combinators.js"></script>
+<script src="tooltip.js"></script>
 <script src="dynamic.js"></script>
 <script src="connect.js"></script>
 <script src="question.js"></script>
@@ -31,7 +32,6 @@
     ></div></div
   ></div
 
-
 ><div style="display: none;">
 
 <div id="card-template" class="card"
@@ -58,8 +58,7 @@
 <div id="no-bonus" class="resource-icon">X</div>
 
 <div id="available-spot" class="resource-icon blank"></div>
-<div id="wild-resource" class="resource-icon blank"
-     title="Any resource">?</div>
+<div id="wild-resource" class="resource-icon blank">?</div>
 
 <div id="market-spot" class="market-spot"
   ><div id="market_card" class="market-card"></div
@@ -81,11 +80,11 @@
   <td id="top_card" rowspan="2"></td>
 </tr>
 <tr>
-  <td id="houses_label" title="Available houses"></div
+  <td id="houses_label"></div
     ></td><td id="houses"></td>
-  <td title="Cards in hand"><div class="resource-icon cards"></div
+  <td><div class="resource-icon cards"></div
     ></td><td id="cards"></td>
-  <td><div title="Money" class="resource-icon money"></div
+  <td><div class="resource-icon money"></div
     ></td><td id="money"></td>
   <td id="1"></td>
   <td id="3"></td>
@@ -103,6 +102,8 @@
 <div id="log-word" class="log-word"></div>
 <div id="log-ref" class="log-word log-ref"></div>
 
+<div id="tooltip-container" class="tooltip-container"></div>
+<div id="tooltip-entry" class="tooltip-entry"></div>
 </div>
 </body>
 </html>
