@@ -247,8 +247,17 @@ body {
   box-shadow: 0px 0px 2px 2px #c66;
 }
 
-.clickable.resource-icon {
-  background-color: #c66;
+.clickable.path-spot {
+  background-color: #0008;
+}
+
+.city .clickable.resource-icon {
+  background: linear-gradient(white 50% ,#936);
+}
+
+.clickable.region {
+  box-shadow: 0 0 4px 4px #936;
+  background: linear-gradient(white 50% ,#f9c);
 }
 
 .question-text {

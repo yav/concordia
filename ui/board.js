@@ -36,6 +36,11 @@ class Board {
       if (el.is(city)) { el.ask(q); break }
     }
   }
+  askRegion(region,q) {
+    for(const el of this.regions.getElements()) {
+      if (el.is(region)) { el.ask(q); break }
+    }
+  }
 }
 
 class BoardMap {

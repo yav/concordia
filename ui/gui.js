@@ -56,6 +56,9 @@ class GUI {
       case "AskCity":
         this.board.askCity(ch.contents,q)
         break
+      case "AskRegion":
+        this.board.askRegion(ch.contents,q)
+        break
       default: console.log(q) 
     }
   }

@@ -33,6 +33,10 @@ class Region {
     board.setLoc(this.dom, loc)
     board.setDim(this.dom, [32, 32])
   }
+
+  is(r) { return this.region === r }
+
+  ask(q) { quest.existing(this.dom,q) }
 }
 
 class NoBonus extends Const {
