@@ -1,8 +1,12 @@
-class Market extends List {
+class Market {
   constructor(board) {
-    super(() => new MarketSpot(uiGet("market"), board))
+    this.spots = new List(() => new MarketSpot(uiGet("market"), board))
+    this.count = new Text(uiGet("card-count"), false)
     this.board = board
   }
+
+  destroy() { this.spots.destroy(); this.count.destroy() }
+  set([count,cards]) { this.spots.set(cards); this.count.set(count.toString()) }
 
   setPos() {
     const board = this.board
@@ -11,11 +15,11 @@ class Market extends List {
     const br = board.json.loc.market.BR
     board.setLoc(market, tl)
     board.setDim(market, [ 32 + br[0] - tl[0], 32 + br[1] - tl[1] ]) 
-    super.map((el) => el.setSize())
+    this.spots.map((el) => el.setSize())
   }
 
   ask(n,q) {
-    super.getElements()[n].ask(q)
+    this.spots.getElements()[n].ask(q)
   }
 }
 

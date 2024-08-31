@@ -40,7 +40,7 @@ class Resource {
     if (this.val !== null) this.dom.removeClass(this.val)
     this.val = xx
     this.dom.addClass(this.val)
-    this.dom.setTitle(x)
+    this.dom.setTitle(x === "magnus"? "Prefectus Magnus" : x)
     this.dom.setText(x === "Any"? "?" : "")
   }
 
@@ -102,7 +102,6 @@ class PlayerResource {
       this.els.img.setAttribute("href","icons/" + ww + ".svg#id")
       this.worker = ww
       this.dom.setTitle(w)
-      this.els.img.setAttribute("title",w)
     }
 
     const p = obj.player

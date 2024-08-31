@@ -27,6 +27,7 @@ data PlayerView = PlayerView
   , money :: Int
   , handSize :: Int
   , isCurrent :: Bool
+  , isDouble :: Bool
   } deriving (Generic,ToJSON)
 
 data ResourceSpot = Available | HasWorker Worker | HasResource Resource
@@ -37,7 +38,7 @@ data BoardView = BoardView
   , cities :: [CityView]
   , paths  :: [(PathId,Maybe (WithPlayer Worker))]
   , regions :: [ (RegionId, RegionState) ]
-  , market :: [MarketSpot]
+  , market :: (Int, [MarketSpot])
   } deriving (Generic,ToJSON)
 
 data CityView = CityView
@@ -81,6 +82,7 @@ playerView pid gs s = PlayerView
   , money = s ^. playerMoney
   , handSize = length (s ^. playerHand)
   , isCurrent = gs ^. curPlayer == pid
+  , isDouble = gs ^. playerDoubleBonus == pid
   }
 
 boardView :: BoardState -> BoardView
@@ -89,7 +91,8 @@ boardView s = BoardView
   , cities = cityView s 
   , paths = pathView s
   , regions = regionView s
-  , market = zipWith MarketSpot (s ^. marketDeck) (s ^. marketLayout)
+  , market = let m = s ^. marketDeck
+             in (length m, zipWith MarketSpot m (s ^. marketLayout))
   }
 
 pathView :: BoardState -> [ (PathId, Maybe (WithPlayer Worker)) ]

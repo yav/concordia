@@ -169,6 +169,7 @@ body {
 .ship  { background-image: url("icons/ship.svg"); }
 .person { background-image: url("icons/person.svg"); }
 .blank { background-image: url("icons/blank.svg"); }
+.magnus { background-image: url("icons/magnus.svg"); }
 .any   { background-image: url("icons/blank.svg"); }
 
 
@@ -179,8 +180,15 @@ body {
   border-bottom: 1px solid black;
 }
 
+
+.mag-name {
+  display: flex;
+}
+
 .player .name {
+  display: inline-block;
   max-width: 8em;
+  padding-left: 2px;
 }
 
 .current {
@@ -188,7 +196,18 @@ body {
 }
 
 
+.card-count {
+  background-color: black;
+  color: white;
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 2px;
+}
 
+#card-count {
+  display: inline-block;
+}
 
 .market-spot {
   margin: 2px;

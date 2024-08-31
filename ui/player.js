@@ -4,6 +4,8 @@ class Player {
     const [dom,els] = uiFromTemplateNested("player")
     this.dom = dom
     this.cur = false
+    this.magnus = new Optional(() => new Resource(els.magnus, [20,20]))
+
     this.val = new Record(
       { player:   new Text(els.name, true)
       , houses:   new Text(els.houses, true)
@@ -23,6 +25,7 @@ class Player {
 
   set(obj) {
     this.houses_label.set({player: obj.player, thing: "House" })
+    this.magnus.set(obj.isDouble? "magnus" : null)
     this.val.set(obj)
     for (let i = 0; i < 12; ++i) {
       const r = obj.resources[i]
