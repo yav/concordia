@@ -51,7 +51,7 @@ class GUI {
         this.board.askThing("paths", ch.contents,q)
         break
       case "AskCity":
-        this.board.askThings("cities", ch.contents,q)
+        this.board.askThing("cities", ch.contents,q)
         break
       case "AskRegion":
         this.board.askThing("regions", ch.contents,q)

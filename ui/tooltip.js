@@ -38,5 +38,5 @@ class TextTooltip extends Tooltip {
   }
 
   set(txt) { this.desc.set(txt) }
-  destroy() { this.desc.destroy(); this.destroy() }
+  destroy() { this.desc.destroy(); super.destroy() }
 }

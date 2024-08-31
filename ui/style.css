@@ -293,7 +293,8 @@ body {
 }
 
 .city .clickable.resource-icon {
-  background: linear-gradient(white 50% ,#936);
+  box-shadow: 0 0 0 0 #000;
+  background: radial-gradient(white 50% ,#603);
 }
 
 .clickable.region {

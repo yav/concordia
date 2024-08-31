@@ -77,7 +77,7 @@ class Text {
     this.dom = dom
     this.val = null
   }
-  destory() { if (this.own) { this.dom.remove() } else { this.dom.textContent = "" } }
+  destroy() { if (this.own) { this.dom.remove() } else { this.dom.textContent = "" } }
   set(x) {
     if (this.val === x) return
     this.val = x

@@ -25,7 +25,7 @@ class DOMNode {
   setText(txt) { this.dom.textContent = txt }
   setTitle(txt) { this.desc.set(txt) }
 
-  destroy() { this.dom.remove(); this.desc.destroy() }
+  destroy() { this.desc.destroy(); this.dom.remove() }
   ask(q) { quest.existing(this.dom,q) }
 }
 

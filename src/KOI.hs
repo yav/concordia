@@ -5,7 +5,7 @@ module KOI (module I, Interact, Concordia(..), Update(..)
 import Data.Text(Text)
 import Optics ( (^.) )
 import KOI.Basics(PlayerId(..),WithPlayer(..))
-import KOI.Interact hiding (Interact,askInputsMaybe_,askInputs)
+import KOI.Interact hiding (Interact,askInputsMaybe_,askInputs,askInputsMaybe,choose,chooseMaybe)
 import KOI.Interact qualified as I
 import State ( gameStatus, GameState, GameStatus(Finished) )
 import Question ( Question )
