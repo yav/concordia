@@ -169,6 +169,10 @@ body {
   text-align: center;
 }
 
+.path-spot .resource-icon {
+  background: radial-gradient(#000f, #0000 90%)
+}
+
 .card-element.card-cost {
   text-align: right;
   border: 0;
