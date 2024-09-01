@@ -42,7 +42,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: start;
   width: 100%;
   height: 20%;
   overflow: scroll;
@@ -212,6 +212,7 @@ body {
 .person { background-image: url("icons/person.svg"); }
 .blank { background-image: url("icons/blank.svg"); }
 .magnus { background-image: url("icons/magnus.svg"); }
+.concordia { background-image: url("icons/concordia.svg"); }
 .any   { background-image: url("icons/blank.svg"); }
 
 
@@ -231,6 +232,34 @@ body {
   display: inline-block;
   max-width: 8em;
   padding-left: 2px;
+}
+
+.player .discard_cell {
+  position: relative;
+}
+
+.player .view_discard {
+  z-index: 2;
+  width: 20px;
+  height: 20px;
+  background-image: url("icons/discard.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-color: white;
+  position: absolute;
+  left: 0;
+  top: 0;
+  border: 1px solid black;
+  cursor: pointer;
+}
+
+.player .discard {
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: none;
+  flex-direction: column;
+  background-color: white;
 }
 
 .current {

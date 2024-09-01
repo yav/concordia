@@ -25,6 +25,8 @@ play =
        Finished {} -> pure ()
        EndTriggeredBy pid
          | pid == s ^. curPlayer -> setThe gameStatus Finished >> sync
+         -- XXX: In team play we finish when it becomes our partner's turn.
+
          | otherwise -> doTakeTurn >> nextPlayer >> play
        InProgress -> doTakeTurn >> checkEndGame >> nextPlayer >> play
 
@@ -34,7 +36,13 @@ checkEndGame =
   do s <- getState
      let playerDone p = p ^. playerHousesToBuild == 0
      when (null (s ^. board % marketDeck) || any playerDone (s ^. players))
-          (setThe gameStatus (EndTriggeredBy (s ^. curPlayer))) -- Get points
+       do let pid = s ^. curPlayer
+          setThe gameStatus (EndTriggeredBy pid)
+          -- Note in team play it might be an action of the team mate
+          -- that triggered the end game, but we still attribute it to
+          -- to the current player.  This doesn't matter because teams
+          -- score jointly.
+          doLogBy' pid [T "Triggered the end game"]
 
 
 nextPlayer :: Interact ()

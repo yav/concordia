@@ -22,13 +22,15 @@ data View = View
 
 data PlayerView = PlayerView
   { player :: PlayerId
-  , discard :: Maybe Card
+  , discardTop :: Maybe Card
+  , discard :: [Card]
   , resources :: [ResourceSpot]
   , houses :: Int
   , money :: Int
   , handSize :: Int
   , isCurrent :: Bool
   , isDouble :: Bool
+  , triggeredEndGame :: Bool
   } deriving (Generic,ToJSON)
 
 data ResourceSpot = Available | HasWorker Worker | HasResource Resource
@@ -62,7 +64,7 @@ stateView :: PlayerId -> GameState -> View
 stateView pid s = View
   { hand = fromMaybe [] (s ^? players % ix pid % playerHand)
   , playerInfo =
-      [ playerView p s (s ^. playerState p) | p <- after ++ before ]
+      [ playerView pid p s (s ^. playerState p) | p <- after ++ before ]
   , boardInfo = boardView (s ^. board)
   , logMessages = reverse (s ^. gameLog)
   }
@@ -70,10 +72,11 @@ stateView pid s = View
   (before,after) = break (== pid) (s ^. playerOrder)
 
 
-playerView :: PlayerId -> GameState -> PlayerState -> PlayerView
-playerView pid gs s = PlayerView
+playerView :: PlayerId -> PlayerId -> GameState -> PlayerState -> PlayerView
+playerView viewBy pid gs s = PlayerView
   { player = pid
-  , discard = listToMaybe (s ^. playerDiscard)
+  , discardTop = listToMaybe (s ^. playerDiscard)
+  , discard = [ c | pid == viewBy, c <- s ^. playerDiscard ]
   , houses = s ^. playerHousesToBuild
   , resources =
     take (s ^. playerResourceLimit)
@@ -84,6 +87,10 @@ playerView pid gs s = PlayerView
   , handSize = length (s ^. playerHand)
   , isCurrent = gs ^. curPlayer == pid
   , isDouble = gs ^. playerDoubleBonus == pid
+  , triggeredEndGame =
+    case gs ^. gameStatus of
+      EndTriggeredBy p -> p == pid
+      _ -> False
   }
 
 boardView :: BoardState -> BoardView
