@@ -31,6 +31,12 @@ class GUI {
       case "AskHand":
         const [card,act] = ch.contents
         this.hand.getElements()[card].askAct(act,q); break
+      case "AskDiscard":
+        const [p,a] = ch.contents
+        for (const el of this.players.getElements()) {
+          if (el.is(p)) el.askDiscardAction(a,q)
+        }
+        break
       case "AskMarket":
         this.board.askMarket(ch.contents,q)
         break

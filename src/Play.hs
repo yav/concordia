@@ -62,7 +62,7 @@ action act =
     Architect -> actArchitect
     Senator -> actSenator
     Prefect -> actPrefect
-    Diplomat -> const (pure ()) -- XXX
+    Diplomat -> actDiplomat
     Tribune -> actTribune
     Colonist co ->
       case co of
@@ -70,8 +70,9 @@ action act =
         Tax    -> actColonistTax
     Mercator n -> actMercator n
     Specialist r -> actSpecialist r
-    Magister -> const (pure ()) -- XX
+    Magister -> actMagister
     Consul -> actConsul
+    Legatus -> const (pure ()) -- XXX
 
 actTribune :: PlayerId -> Interact ()
 actTribune pid =
@@ -381,3 +382,33 @@ actMercator n pid =
  
 data TradeAct = Buy | Sell
   deriving Eq
+
+actDiplomat :: PlayerId -> Interact ()
+actDiplomat pid =
+  do ps <- the players
+     case concatMap getTop (Map.toList ps) of
+       [] -> doLogBy' pid [T "used Diplomat without an effect"] 
+       opts -> askInputsMaybe_ pid "Choose action to copy" opts
+  where
+  getTop (i,s) =
+    case s ^. playerDiscard of
+      c : _
+        | i /= pid ->
+          [ (AskDiscard i n, "Perform this action",
+              do doLogBy' pid [ T "Chose", T (actionText a), T "via Diplomat" ]
+                 action a pid)
+          | (n,a) <- zip [0..] (cardActions c), a /= Diplomat ] 
+      _ -> []
+
+actMagister :: PlayerId -> Interact ()
+actMagister pid =
+  do cs <- the (playerState pid % playerDiscard)
+     case cs of
+       _ : c : _
+         | let opts = [ ( AskText (actionText a), "Perform this action"
+                        , action a pid )
+                      | a <- cardActions c, a /= Senator && a /= Magister
+                      ]
+         , not (null opts) ->
+          askInputsMaybe_ pid "Choose Magister action" opts 
+       _ -> doLogBy' pid [T "used Magister without an effect"]

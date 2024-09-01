@@ -46,8 +46,8 @@ getConfig mp _opts ps = Config
   , cfgStartMoney         = 5
   , cfgStartHouses        = 15
   , cfgMarket             = marketCosts
-  , cfgPlayerCards        = startDeck
-  , cfgMarketCards        = marketDeck
+  , cfgPlayerCards        = startDeckVenus
+  , cfgMarketCards        = marketDeck False
   }
 
 

@@ -103,6 +103,8 @@ class Record {
   }
   
   map(f) { for (const i of this.obj) f(this.obj[i]) }
+
+  getElement(i) { return this.obj[i] }
 }
 
 

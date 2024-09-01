@@ -3,6 +3,7 @@ class Player {
   constructor(owner) {
     const [dom,els] = uiFromTemplateNested("player")
     this.dom = dom
+    this.player = null
     this.cur = false
     this.magnus = new Optional(() => new Resource(els.magnus, [20,20]))
 
@@ -31,6 +32,7 @@ class Player {
 
 
   set(obj) {
+    this.player = obj.player
     this.houses_label.set({player: obj.player, thing: "House" })
     this.magnus.set(obj.isDouble? "magnus" : null)
     this.val.set(obj)
@@ -57,6 +59,8 @@ class Player {
     this.dom.remove()
   }
 
+  is(p) { return this.player === p }
+
   askWorker(ty,q) {
     for (let i = 0; i < 12; ++i) {
       const r = this.resources[i]
@@ -67,6 +71,11 @@ class Player {
     for (let i = 0; i < 12; ++i) {
       const r = this.resources[i]
       if (r.isResource(ty)) { r.ask(q); break }
+    }
+  }
+  askDiscardAction(a,q) {
+    for (const el of this.val.getElement("discard").getElements()) {
+      el.askAct(a,q)
     }
   }
 }
