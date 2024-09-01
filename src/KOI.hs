@@ -1,5 +1,5 @@
 module KOI (module I, Interact, Concordia(..), Update(..)
-  , askInputsMaybe_, askInputs, sync
+  , askInputsMaybe, askInputsMaybe_, askInputs, sync
   ) where
 
 import Data.Text(Text)
@@ -25,6 +25,14 @@ askInputsMaybe_ pid@(PlayerId name) txt opts =
   sync >>
   I.askInputsMaybe_ (name <> ": " <> txt)
     [ (pid :-> q,lab,act) | (q,lab,act) <- opts ] 
+
+askInputsMaybe ::
+  PlayerId -> Text -> [(Question,Text,Interact a)] -> Interact (Maybe a)
+askInputsMaybe pid@(PlayerId name) txt opts =
+  sync >>
+  I.askInputsMaybe (name <> ": " <> txt)
+    [ (pid :-> q,lab,act) | (q,lab,act) <- opts ] 
+
 
 askInputs ::
   PlayerId -> Text -> [(Question,Text,Interact a)] -> Interact a

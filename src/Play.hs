@@ -47,7 +47,7 @@ doTakeTurn :: Interact ()
 doTakeTurn =
   do pid <- the curPlayer
      hand <- the (playerState pid % playerHand)
-     askInputs pid "Choose a card action"
+     askInputs pid "Choose an action"
        [ (AskHand n a, "Play this card",
            do doDiscardCard pid n
               action act pid)
@@ -76,9 +76,11 @@ action act =
 
 actTribune :: PlayerId -> Interact ()
 actTribune pid =
-  do doLogBy pid "Tribune"
-     discard <- updateThe (playerState pid % playerDiscard) (\d -> (d, []))
-     doChangeMoney pid (max 0 (length discard - 3))
+  do discard <- updateThe (playerState pid % playerDiscard) (\d -> (d, []))
+     let amt = max 0 (length discard - 3)
+     doChangeMoney pid amt
+     doLogBy' pid [T "Gained", tSh amt, M, T "for Tribune"] 
+
      doAddCards pid discard
      ws <- canBuildWorker pid
      capital <- the (board % mapLayout % mapStartCity)
@@ -91,15 +93,20 @@ actTribune pid =
 
 actColonistTax :: PlayerId -> Interact ()
 actColonistTax pid =
-  do doLogBy pid "Tax Colonists"
-     n <- countWorkersOnBoard pid
-     doChangeMoney pid (5 + n)
+  do n <- countWorkersOnBoard pid
+     let amt = 5 + n
+     doChangeMoney pid amt
+     doLogBy' pid [T "Gained", tSh amt, M, T "for Colonist"]
 
 actColonistSettle :: PlayerId -> Interact ()
 actColonistSettle pid =
   do doLogBy pid "Settle Colonist"
      ws   <- canBuildWorker pid
      tgts <- getBuildTargets
+     case (ws,tgts) of
+       ([],_) -> doLogBy' pid [T "Has on workers they can afford"]
+       (_,[]) -> doLogBy' pid [T "Has no cities they can deploy in"]
+       _ -> pure ()
      doAction tgts ws pass
   where
   getBuildTargets =
@@ -116,12 +123,12 @@ actColonistSettle pid =
     )
 
   doAction tgts ws otherOpt =
-     askInputsMaybe_ pid "Deploy worker" $
+     askInputsMaybe_ pid "Choose worker to deploy" $
        [ (AskWorker w, "Deploy worker", buildWorker tgts w)
        | w <- ws ] ++ [otherOpt]
 
   buildWorker tgts w =
-    askInputsMaybe_ pid "Deployment city"
+    askInputsMaybe_ pid "Choose deployment city"
        [ ( AskCity city
          , "Deploy here"
          , do doBuildWorker pid w city
@@ -135,11 +142,10 @@ actColonistSettle pid =
 actPrefect :: PlayerId -> Interact ()
 actPrefect pid =
   do regs <- the (board % mapLayout % mapRegions)
-     askInputsMaybe_ pid "Prefect region"
+     askInputsMaybe_ pid "Choose a region to Prefect"
         [ ( AskRegion r
           , "Prefect this region"
-          , do doLogBy' pid [ T "Prefected", R r ]
-               done <- the (board % mapPrefected)
+          , do done <- the (board % mapPrefected)
                if r `elem` done then getMoney done else getGoods r
           )
         | r <- Set.toList regs
@@ -151,7 +157,9 @@ actPrefect pid =
              fromMaybe 0
              do bonus <- Map.lookup r bonuses
                 pure (bonus ^. rbMoney)
-       doChangeMoney pid (sum (map fromRegion done))
+       let amt = sum (map fromRegion done)
+       doChangeMoney pid amt
+       doLogBy' pid [T "Gained", tSh amt, M, T "from Prefect"] 
        setThe (board % mapPrefected) []
 
   getPrefectBonus r =
@@ -169,7 +177,8 @@ actPrefect pid =
               pure (Map.singleton pid (bagFromList (replicate amt rsr)))
 
   getGoods r =
-    do bonus <- getPrefectBonus r
+    do doLogBy' pid [T "Prfect in", RID r]
+       bonus <- getPrefectBonus r
        brd <- the board
        let cities = Map.findWithDefault [] r (citiesInRegion (brd ^. mapLayout))
        let doCity tot cid =
@@ -179,7 +188,8 @@ actPrefect pid =
                 houses <- Map.lookup cid (brd ^. mapHouses)
                 let addP mp p = Map.insertWith bagUnion p earn mp
                 pure (foldl' addP tot houses)
-       mapM_ (uncurry doGainResources) (Map.toList (foldl' doCity bonus cities))
+       mapM_ (uncurry (doGainResources Nothing)) 
+             (Map.toList (foldl' doCity bonus cities))
        updateThe_ (board % mapPrefected) (r :)
 
 
@@ -190,17 +200,29 @@ actSpecialist r pid =
      prod <- the (board % mapProduces)
      let thisResource = Map.keysSet (Map.filter (== r) prod)
      let amt = Set.size (Set.intersection ourCities thisResource)
-     doGainResources pid (bagFromNumList [(r,amt)])
+     let name = case r of
+                  Brick -> "Mason"
+                  Wheat -> "Farmer"
+                  Tool  -> "Smith"
+                  Wine  -> "Vinter"
+                  Cloth -> "Taylor"
+                  Salt  -> "Chef"
+     doGainResources (Just name) pid (bagFromNumList [(r,amt)])
 
 actSenator :: PlayerId -> Interact ()
-actSenator pid = doPickCards pid 2 True
+actSenator pid = 
+  do doLogBy' pid [T "Senator"]
+     doPickCards pid 2 True
 
 actConsul :: PlayerId -> Interact ()
-actConsul pid = doPickCards pid 1 False
+actConsul pid =
+  do doLogBy' pid [T "Consul"]
+     doPickCards pid 1 False
 
 actArchitect :: PlayerId -> Interact ()
 actArchitect pid =
-  do move <- countWorkersOnBoard pid
+  do doLogBy' pid [T "Architect"]
+     move <- countWorkersOnBoard pid
      doMoves move
      buildHouses
 
@@ -229,6 +251,7 @@ actArchitect pid =
           , do updateThe_ (board % mapCityWorkers % ix cid)
                           (bagChange (-1) (pid :-> w))
                setThe (board % mapPathWorkers % at eid) (Just (pid :-> w))
+               doLogBy' pid [T "Moved", W (pid :-> w), T "from", CID cid, T "to", PID eid]
                doMoves (steps - takenSteps)
           )
         | (eid, takenSteps) <- tgts
@@ -243,6 +266,7 @@ actArchitect pid =
           , "Move here"
           , do setThe (board % mapPathWorkers % at from) Nothing
                setThe (board % mapPathWorkers % at tgt) (Just (pid :-> w))
+               doLogBy' pid [T "Moved", W (pid :-> w), T "from", PID from, T "to", PID tgt]
                doMoves (steps - takenSteps)
           )
         | (tgt, takenSteps) <- tgts
@@ -304,6 +328,7 @@ actArchitect pid =
                 doPayCost pid cost
                 updateThe_ (players % ix pid % playerHousesToBuild) (subtract 1)
                 updateThe_ (board % mapHouses % at cid) (Just . (pid :) . fromMaybe [])
+                doLogBy' pid [T "Built in", CID cid]
                 buildHouse cityOpts
            )
          | houses >= 1

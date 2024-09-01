@@ -6,7 +6,7 @@ class Region {
       {
         NoBonus: () => new NoBonus(dom)
         , Money: () => new Money(dom)
-        , Goods: () => new Resource(dom,[32,32])
+        , Goods: () => new Resource(dom,[32,32],board)
       })
     this.region = null
     this.board = board

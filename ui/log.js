@@ -19,8 +19,8 @@ class Pointer {
     let sel = null
     dom.addEventListener("mouseenter",() => {
         if (this.tgt === null) return
-        console.log(this.tgt)
         const tgt = board.getThing(ty,this.tgt,board)
+        console.log(tgt)
         if (tgt === null) return
         sel = tgt
         sel.select(true)
@@ -50,9 +50,9 @@ class LogWord extends Tagged {
       , M: () => { const r = new Resource(own,[14,14]); r.set("Money")
                    return new Const(r) }
       , W: () => new PlayerResource(own,[14,14])
-      , C: () => new Pointer(own, "cities", "this city", board)
-      , P: () => new Pointer(own, "paths", "this path", board)
-      , R: () => new Pointer(own, "regions", "this region", board)
+      , CID: () => new Pointer(own, "cities", "this city", board)
+      , PID: () => new Pointer(own, "paths", "this path", board)
+      , RID: () => new Pointer(own, "regions", "this region", board)
       , L: () => {
               const w = new DOMNode(uiFromTemplate("log-line"))
               w.setOwner(own)

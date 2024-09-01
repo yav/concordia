@@ -79,33 +79,36 @@ doBuildWorker pid w city =
                 (bagChange (-1) w)
      updateThe_ (board % mapCityWorkers % at city)
                 (Just . bagChange 1 (pid :-> w) . fromMaybe bagEmpty)
+     doLogBy' pid [T "Deployed", W (pid :-> w), T "to", CID city]
 
 -- | Gain some reasource and ask which, if not enough space.
-doGainResources :: PlayerId -> Bag Resource -> Interact ()
-doGainResources pid new =
+doGainResources :: Maybe Text -> PlayerId -> Bag Resource  -> Interact ()
+doGainResources src pid new =
   do s <- the (playerState pid)
      let limit = s ^. playerResourceLimit
          haveR = bagSize (s ^. playerResources)
          haveW = bagSize (s ^. playerWorkersForHire)
          free  = limit - haveR - haveW
          need  = bagSize new
-     if need <= free
-       then 
-          do updateThe_ (playerState pid % playerResources) (bagUnion new)
-             doLogBy' pid (T "Gained" : [ w | (r,n) <- bagToNumList new,
-                                              w <- [ tSh n, G r ] ])
-       else askWhich new free
+
+     let rs = case [ w | (r,n) <- bagToNumList new, w <- [ tSh n, G r ] ] of
+                [] -> [T "nothing"]
+                yes -> yes
+     doLogBy' pid (T (fromMaybe "Gained" src) : rs)
+     actual <- discard 1 (max 0 (need - free)) new
+     updateThe_ (playerState pid % playerResources) (bagUnion actual) 
   where
-  askWhich todo free
-    | free == 0 = pure ()
+  sh = Text.pack . show
+  discard num total rs
+    | num > total = pure rs
     | otherwise =
-      askInputsMaybe_ pid "Not enough space, choose resource:"
-        [ (AskTextResource "Gain" r, "Gain resource.",
-          do updateThe_ (playerState pid % playerResources) (bagChange 1 r)
-             doLogBy' pid [T "Gained", G r]
-             askWhich (bagChange (-1) r todo) (free - 1)
+      fromMaybe bagEmpty <$>
+      askInputsMaybe pid ("Choose a resource to discard (" <> sh num <> "/" <> sh total <> ")")
+        [ (AskTextResource "Discard" r, "Discard resource.",
+          do doLogBy' pid [T "Discarded", G r]
+             discard (num+1) total (bagChange (-1) r rs)
           )
-        | (r,_) <- bagToNumList todo
+        | (r,_) <- bagToNumList rs
         ]
 
 -- | What kind of worker can this player build at the moment

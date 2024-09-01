@@ -181,6 +181,8 @@ body {
   height: 20px;
   display: inline-block;
   text-align: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .path-spot .resource-icon {
@@ -320,7 +322,7 @@ body {
   background: linear-gradient(white 50% ,#f9c);
 }
 
-.selected.region {
+.selected {
   box-shadow: 0 0 4px 4px #936;
   background: linear-gradient(white 50% ,#f9c);
 }
@@ -333,7 +335,7 @@ body {
   justify-content: center;
   align-items: center;
   height: 20px;
-  width: 64px;
+  width: 7em;
   margin: 8px;
 }
 
