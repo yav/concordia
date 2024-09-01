@@ -17,7 +17,7 @@ class Tooltip {
   show() {
     const loc = this.el.getBoundingClientRect();
     const sty = this.dom.style
-    sty.left = (loc.right + 5) + "px"
+    sty.left = (loc.left - 5) + "px"
     sty.top  = (loc.bottom + 5) + "px"
     sty.display = "inline-block"
   }

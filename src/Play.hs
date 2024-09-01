@@ -200,13 +200,7 @@ actSpecialist r pid =
      prod <- the (board % mapProduces)
      let thisResource = Map.keysSet (Map.filter (== r) prod)
      let amt = Set.size (Set.intersection ourCities thisResource)
-     let name = case r of
-                  Brick -> "Mason"
-                  Wheat -> "Farmer"
-                  Tool  -> "Smith"
-                  Wine  -> "Vinter"
-                  Cloth -> "Taylor"
-                  Salt  -> "Chef"
+     let name = specialistName r
      doGainResources (Just name) pid (bagFromNumList [(r,amt)])
 
 actSenator :: PlayerId -> Interact ()

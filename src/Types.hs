@@ -36,7 +36,22 @@ actionText act =
       case c of
         Settle -> "Colonist Settle"
         Tax    -> "Colonist Tax"
+    Specialist r -> specialistName r
     _ -> Text.pack (show act)
+
+specialistName :: Resource -> Text
+specialistName r =
+  case r of
+    Brick -> "Mason"
+    Wheat -> "Farmer"
+    Tool  -> "Smith"
+    Wine  -> "Vinter"
+    Cloth -> "Taylor"
+    Salt  -> "Chef"
+
+cardName :: Card -> Text
+cardName = Text.intercalate "/" . map actionText . cardActions
+
 
 data ColonistAction = Settle | Tax
   deriving (Eq,Show,Generic,ToJSON)

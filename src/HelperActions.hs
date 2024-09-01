@@ -22,6 +22,12 @@ import Log
 doLog' :: [LogWord] -> Interact ()
 doLog' x = updateThe_ gameLog (x :)
 
+doLog'' :: [LogWord] -> Interact ()
+doLog'' x = updateThe_ gameLog \xs ->
+  case xs of
+    a : as -> (a ++ x) : as
+    _ -> [x]
+
 doLog :: Text -> Interact ()
 doLog x = doLog' [T x]
 
@@ -158,7 +164,9 @@ canAfford' need0 have0 = nub (map bagFromList ans)
 doPayCost :: PlayerId -> [Bag Resource] -> Interact ()
 doPayCost pid opts0
   | null opts0 = pure ()  -- they can't afford it, give it for free :-)
-  | otherwise = go opts0
+  | otherwise = 
+    do doLogBy' pid [T "Paid"]
+       go opts0
   where
   go opts
     | any bagIsEmpty opts = pure ()
@@ -168,6 +176,7 @@ doPayCost pid opts0
            doPick r =
              do updateThe_ (playerState pid % playerResources)
                            (bagChange (-1) r)
+                doLog'' [G r]
                 go [ b1
                    | opt <- opts
                    , Just b1 <- [bagChangeMaybe (-1) r opt]
@@ -175,7 +184,7 @@ doPayCost pid opts0
        case filter inAll allRs of
          r : _ -> doPick r
          [] ->
-           askInputs pid "Pay resource"
+           askInputs pid "Choose payment resource"
               [ (AskResource r, "Pay with this.", doPick r)
               | r <- allRs
               ]
@@ -215,8 +224,8 @@ doPickCards pid howMany extraCost =
     | length picked >= howMany = pure picked
     | otherwise =
     do opts <- mapM (canAfford pid . snd . snd) avail
-       let indexedOpts = [ (n,opt)
-                         | ((n,_),opt) <- zip avail opts
+       let indexedOpts = [ (n,opt,c)
+                         | ((n,(c,_)),opt) <- zip avail opts
                          , not (null opt)
                          ]
        let num x = Text.pack (show x)
@@ -225,10 +234,11 @@ doPickCards pid howMany extraCost =
        askInputs pid q $
           ( AskText "End Turn", "No more cards.", pure picked) :
           [ ( AskMarket n, "Get this card."
-            , do doPayCost pid opt
+            , do doLogBy' pid [T "Selected", T (cardName c)]
+                 doPayCost pid opt
                  pickCard (n : picked) (filter ((/= n) . fst) avail)
             )
-          | (n,opt) <- indexedOpts
+          | (n,opt,c) <- indexedOpts
           ]
 
 -- | What paths can a worker reach with the given amount of work.
