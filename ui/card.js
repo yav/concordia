@@ -6,18 +6,24 @@ class CardAction {
     this.val = null
     this.dom = dom
     this.dom.classList.add("action")
+    this.tooltip = new Tooltip(this.dom)
+    this.help = new TextEntry(this.tooltip)
+    this.act = null
     owner.appendChild(dom)
   }
 
   destroy() {
     this.dom.remove()
+    this.tooltip.destroy()
   }
 
   set(x) {
     const lab = this.actionLabel(x)
     if (this.val === lab) return
+    this.act = x
     this.dom.textContent = lab
     this.text = lab
+    this.setHelp()
   }
 
   actionLabel(act) {
@@ -37,11 +43,30 @@ class CardAction {
     return act.tag
   }
 
+  setHelp() {
+    if (this.act === null) return
+    let msg = "TOD"
+    switch (this.act.tag) {
+      case "Magister":
+        msg = "Activate the top card of your discard pile." +
+          "<p>The action has <u>no effect</u> if the top card is <u>Senator</u>, <u>Magister</u>, " + 
+          "or there is no top card.</p>"
+        break
+      case "Diplomat":
+        msg = "Activate the top card another player's discard pile."
+        msg += "<p>May not choose another <u>Diplomat</u>. "
+        msg += "The action has no effect if there are no valid targets."
+        break
+ 
+    }
+    this.help.setHTML(msg)
+  }
+
   ask(q) {
     quest.existing(this.dom,q)
   }
-
 }
+
 
 class CardType {
   constructor(owner) {

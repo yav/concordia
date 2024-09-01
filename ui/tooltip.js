@@ -29,6 +29,17 @@ class Tooltip {
   destroy() { this.dom.remove() }
 }
 
+class TextEntry  {
+  constructor(tp) {
+    const dom = uiFromTemplate("tooltip-entry")
+    tp.add(dom)
+    this.dom = dom
+  }
+  setHTML(x) {
+    this.dom.innerHTML = x
+  }
+}
+
 class TextTooltip extends Tooltip {
   constructor(el,txt) {
     super(el)
