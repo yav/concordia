@@ -31,6 +31,6 @@ executable concordia
       LambdaCase
 
     build-depends:    base, containers, text, aeson,
-                      optics, KOI-interact, KOI-utils
+                      optics, KOI,
     hs-source-dirs:   src
     default-language: Haskell2010

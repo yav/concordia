@@ -1,6 +1,5 @@
 packages:
   .
-  KOI/utils
-  KOI/interact
+  KOI
 
 documentation: false
