@@ -17,7 +17,7 @@ import Cards
 main :: IO ()
 main = startApp App
   { appId = Concordia
-  , appOptions = [ optMap ]
+  , appOptions = [ optMap, optSalt ]
   , appColors = [ "yellow", "red", "green", "blue", "black" ]
   , appJS = $(jsHandlers [])
   , appInitialState = \rng opts ps ->
@@ -37,11 +37,12 @@ getConfig opts ps =
      pure Config
        { cfgPlayerOrder        = ps
        , cfgMap                = mp
-       , cfgCityTiles          = cityTiles
+       , cfgCityTiles          = if getSalt opts then cityTilesWithSalt
+                                                 else cityTiles
        , cfgResourceLimit      = 12
        , cfgStartHireWorkers   = bagFromNumList [(Person,2), (Ship,2)]
        , cfgStartBoardWorkers  = bagFromList [Person,Ship]
-       , cfgStartResources     = bagFromList [Brick,Wheat,Wheat,Tool,Wine,Cloth]
+       , cfgStartResources     = bagFromList [Brick,Wheat,if getSalt opts then Salt else Wheat,Tool,Wine,Cloth]
        , cfgStartMoney         = 5
        , cfgStartHouses        = 15
        , cfgMarket             = marketCosts
@@ -54,3 +55,7 @@ getConfig opts ps =
 optMap :: Option
 getMap :: Options -> String
 (optMap, getMap) = optionString "map" "PATH" Nothing "Path to map.json"
+
+optSalt :: Option
+getSalt :: Options -> Bool
+(optSalt, getSalt) = flag "salt" (Just False) "Use salt"

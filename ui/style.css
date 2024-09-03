@@ -224,6 +224,7 @@ body {
 .tool  { background-image: url("icons/tool.svg"); }
 .wine  { background-image: url("icons/wine.svg"); }
 .cloth { background-image: url("icons/cloth.svg"); }
+.salt  { background-image: url("icons/salt.svg");  }
 .money { background-image: url("icons/money.svg"); }
 .cards { background-image: url("icons/cards.svg"); }
 .house { background-image: url("icons/house.svg"); }
