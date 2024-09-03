@@ -71,13 +71,17 @@ class Const {
   map(f) { f(this.thing) }
 }
 
+
 class Text {
   constructor(dom, own) {
     this.own = own
     this.dom = dom
     this.val = null
   }
-  destroy() { if (this.own) { this.dom.remove() } else { this.dom.textContent = "" } }
+  destroy() {
+    if (this.own) { this.dom.remove(); }
+    else { this.dom.textContent = "" }
+  }
   set(x) {
     if (this.val === x) return
     this.val = x

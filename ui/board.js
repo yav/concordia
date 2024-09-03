@@ -10,6 +10,7 @@ class Board {
     this.board.destroy()
     this.market.destroy()
     this.cities.destroy()
+    this.paths.destroy()
     this.regions.destroy()
   }
   async set(obj) {
@@ -72,8 +73,8 @@ class BoardMap {
     this.imgResolve = null
     this.imgReject = null
     this.json = null
+    this.img.remove()
     this.img = null
-    this.conatiner.innerHTML = ""
   }
 
 

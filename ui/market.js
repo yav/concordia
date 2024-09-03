@@ -27,6 +27,7 @@ class Market {
 class MarketSpot {
   constructor(owner,board) {
     const [dom,els] = uiFromTemplateNested("market-spot")
+    this.dom = dom
     this.card     = new Card(els.market_card)
     this.cardCost = new List(() => new Resource(els.card_cost, [32,32], board))
     this.spotCost = new List(() => new ResourceCost(els.spot_cost, board))
@@ -53,3 +54,4 @@ class MarketSpot {
 
   ask(q) { this.card.ask(q) }
 }
+

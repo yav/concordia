@@ -7,6 +7,7 @@ class GUI {
     this.hand             = new List(() => new Card(handContainer))
     this.board            = new Board()
     this.log              = new List(() => new LogEntry(this.board))
+    this.undo             = new UndoButton()
   }
 
   async set(obj) {
@@ -21,6 +22,7 @@ class GUI {
     this.hand.destroy()
     this.board.destroy()
     this.log.destroy()
+    this.undo.destroy()
   }
 
   setQuestion(q) { this.question.set(q) }

@@ -7,9 +7,8 @@ function main() {
 }
 
 async function uiRedraw(s) {
-  if (gui !== null) gui.destroy()
+  if (gui === null) gui = new GUI()
   quest.reset()
-  gui = new GUI()
   await gui.set(s.game)
   uiQuestions(s.questions)
 }

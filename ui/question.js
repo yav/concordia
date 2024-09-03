@@ -7,6 +7,11 @@ class Question {
     this.reset()
     conn.sendJSON(q)
   }
+  undo() {
+    console.log("UNDO")
+    for (const f of this.cleanup) f()
+    conn.sendJSON({tag: "undo"})
+  } 
   existing(dom,q) {
     const h = () => this.resolve(q)
     this.register(() => {
@@ -39,5 +44,6 @@ class Question {
     return dom
   
   }
+
 
 }

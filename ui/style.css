@@ -69,11 +69,30 @@ body {
   align-items: center;
 }
 
-#question {
+.question-box {
   background-color: white;
   padding: 2px;
   border-bottom: 2px solid black;
   text-align: middle;
+  display: flex;
+  align-items: center;
+}
+
+#undo {
+  display: inline-block;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  background-image: url("icons/undo.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+#question {
+  display: inline-block;
+  margin-left: 4px;
 }
 
 #log {
@@ -367,6 +386,8 @@ body {
   width: 7em;
   margin: 8px;
 }
+
+.question-text .resource-icon { margin-left: 4px; }
 
 .path-spot {
   position: absolute;
