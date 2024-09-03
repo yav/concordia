@@ -150,9 +150,9 @@ actColonistSettle pid =
 actPrefect :: PlayerId -> Interact ()
 actPrefect pid =
   do regs <- the (board % mapLayout % mapRegions)
-     askInputsMaybe_ pid "Choose a region to Prefect"
+     askInputsMaybe_ pid "Choose a province to Prefect"
         [ ( AskRegion r
-          , "Prefect this region"
+          , "Prefect this province"
           , do done <- the (board % mapPrefected)
                if r `elem` done then getMoney done else getGoods r
           )

@@ -53,7 +53,7 @@ class CardAction {
           "or there is no top card.</p>"
         break
       case "Diplomat":
-        msg = "Activate the top card another player's discard pile."
+        msg = "Activate the top card of another player's discard pile."
         msg += "<p>May not choose another <u>Diplomat</u>. "
         msg += "The action has no effect if there are no valid targets."
         break
@@ -73,6 +73,8 @@ class CardType {
     const dom = uiFromTemplate("card-element")
     this.val = null
     this.dom = dom
+    this.tooltip = new Tooltip(dom)
+    this.help = new TextEntry(this.tooltip)
     owner.appendChild(dom)
   }
   destroy() {
@@ -85,7 +87,47 @@ class CardType {
     this.val = x
     dom.classList.add(x.toLowerCase())
     dom.textContent = x.replaceAll("u","v")
+    this.setHelp()
   }
+
+  setHelp() {
+    const dom = this.help.getDOM()
+    function text(t) { dom.appendChild(document.createTextNode(t)) }
+    function res(r) { new Resource(dom,[14,14]).set(r) }
+    function pres(r) { new PlayerResource(dom,[14,14]).set({player: conn.playerId,thing:r})}
+    dom.innerHTML = ""
+    switch (this.val) {
+      case "Vesta":
+        dom.textContent = "1 VP per 10 "; res("money")
+        break
+      case "Jupiter":
+        dom.textContent = "1 VP for each "
+        pres("house")
+        text(" in a non ")
+        res("brick")
+        text(" city")
+        break
+        /*
+      case "Saturnus":
+        lab = "1 VP for each province with at least 1 house"
+        break
+      case "Mercurius":
+        lab = "2 VP for each type of good production, excluding salt"
+        break
+      case "Mars":
+        lab = "2 VP for each worker on the board"
+        break
+      case "Minerva":
+        lab = "Scoring is listed in the the action"
+        break
+      case "Venus":
+        lab = "2 VP for each province with 2 houses (or 1 house for each team member)"
+*/
+    }
+    
+  }
+
+
 }
 
 class Card {

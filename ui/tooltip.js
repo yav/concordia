@@ -38,6 +38,7 @@ class TextEntry  {
   setHTML(x) {
     this.dom.innerHTML = x
   }
+  getDOM() { return this.dom }
 }
 
 class TextTooltip extends Tooltip {
