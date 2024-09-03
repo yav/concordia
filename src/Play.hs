@@ -355,7 +355,8 @@ actMercator n pid =
   trade as =
     do s <- the (playerState pid)
        askInputs pid "Trade" $
-         end : mapMaybe (buyOpt as s) resources ++
+         end : cvtSalt as s ++
+               mapMaybe (buyOpt as s) resources ++
                mapMaybe (sellOpt as s) resources  
 
 
@@ -372,7 +373,19 @@ actMercator n pid =
        guard (bagContains r (s ^. playerResources) > 0)
        pure c
 
-  -- XXX: offer to convert salt
+  cvtSalt as s =
+    [ ( AskResource Salt, "Convert Salt"
+      , askInputsMaybe_ pid "Convert Salt"
+        [ (AskTextResource "To" r, "Conver to this resource",
+           do updateThe_ (playerState pid % playerResources)
+                         (bagChange (-1) Salt . bagChange 1 r)
+              doLogBy' pid [T "Converted", G Salt, T "to", G r]
+              trade as)
+        | r <- resources
+        ]
+      )
+    | bagContains Salt (s ^. playerResources) > 0
+    ]
 
   doBuy as (r,c) =
     (AskTextResource "Buy" r, "Buy for " <> Text.pack (show c),
