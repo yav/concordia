@@ -56,7 +56,7 @@ cardName = Text.intercalate "/" . map actionText . cardActions
 data ColonistAction = Settle | Tax
   deriving (Eq,Show,Generic,ToJSON)
 
-data God      = Vesta | Jupiter | Saturnus | Venus | Mercurius | Mars | Minerva
+data God      = Vesta | Jupiter | Saturnus | Venus | Mercurius | Mars | Minerva Resource
   deriving (Generic,ToJSON)
 
 data Card     = Card { cardActions :: [Action]

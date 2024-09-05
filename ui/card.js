@@ -81,12 +81,12 @@ class CardType {
     this.dom.remove()
   }
   set(x) {
-    if (this.val === x) return
+    if (this.val !== null && this.val.tag === x.tag && this.val.content == x.content) return
     const dom = this.dom
-    if (this.val !== null) dom.classList.remove(this.val.toLowerCase())
+    if (this.val !== null) dom.classList.remove(this.val.tag.toLowerCase())
     this.val = x
-    dom.classList.add(x.toLowerCase())
-    dom.textContent = x.replaceAll("u","v")
+    dom.classList.add(x.tag.toLowerCase())
+    dom.textContent = x.tag.replaceAll("u","v")
     this.setHelp()
   }
 
@@ -96,33 +96,43 @@ class CardType {
     function res(r) { new Resource(dom,[14,14]).set(r) }
     function pres(r) { new PlayerResource(dom,[14,14]).set({player: conn.playerId,thing:r})}
     dom.innerHTML = ""
-    switch (this.val) {
+    switch (this.val.tag) {
       case "Vesta":
         dom.textContent = "1 VP per 10 "; res("money")
         break
       case "Jupiter":
-        dom.textContent = "1 VP for each "
+        dom.textContent = "1 VP per "
         pres("house")
         text(" in a non ")
         res("brick")
         text(" city")
         break
-        /*
       case "Saturnus":
-        lab = "1 VP for each province with at least 1 house"
+        dom.textContent = "1 VP per province with a "
+        pres("house")
         break
       case "Mercurius":
-        lab = "2 VP for each type of good production, excluding salt"
+        dom.textContent = "2 VP for each type of good production, excluding salt"
         break
       case "Mars":
-        lab = "2 VP for each worker on the board"
+        dom.textContent = "2 VP per deployed "
+        pres("person")
+        text(" / ")
+        pres("ship")
         break
       case "Minerva":
-        lab = "Scoring is listed in the the action"
+        const r = this.val.contents
+        const amt = (r === "Wine" || r === "Cloth")? "4" : "3"
+        dom.textContent = amt + " VP per"
+        pres("house")
+        text(" in ")
+        res(r)
+        text(" city")
         break
       case "Venus":
-        lab = "2 VP for each province with 2 houses (or 1 house for each team member)"
-*/
+        dom.textContent = "2 VP per province with "
+        pres("house")
+        pres("house")
     }
     
   }

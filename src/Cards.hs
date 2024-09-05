@@ -36,21 +36,21 @@ senator = Card [Senator] [] [Vesta]
 
 
 specialistMason :: Card
-specialistMason = Card [Specialist Brick] [Wheat] [Minerva]
+specialistMason = Card [Specialist Brick] [Wheat] [Minerva Brick]
 
 specialistFarmer :: Card
 specialistFarmer =
-  Card [Specialist Wheat] [Brick, Wheat] [Minerva]
+  Card [Specialist Wheat] [Brick, Wheat] [Minerva Wheat]
 
 specialistSmith :: Card
 specialistSmith =
-  Card [Specialist Tool] [Brick, Tool] [Minerva]
+  Card [Specialist Tool] [Brick, Tool] [Minerva Tool]
 
 specialistVintner :: Card
-specialistVintner = Card [Specialist Wine] [Brick, Wine] [Minerva]
+specialistVintner = Card [Specialist Wine] [Brick, Wine] [Minerva Wine]
 
 specialistWeaver :: Card
-specialistWeaver = Card [Specialist Cloth] [Brick, Cloth] [Minerva]
+specialistWeaver = Card [Specialist Cloth] [Brick, Cloth] [Minerva Cloth]
 
 consul :: Card
 consul = Card [Consul] [Cloth] [Jupiter]
