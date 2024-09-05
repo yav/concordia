@@ -57,7 +57,7 @@ data ColonistAction = Settle | Tax
   deriving (Eq,Show,Generic,ToJSON)
 
 data God      = Vesta | Jupiter | Saturnus | Venus | Mercurius | Mars | Minerva Resource
-  deriving (Generic,ToJSON)
+  deriving (Eq,Ord,Generic,ToJSON)
 
 data Card     = Card { cardActions :: [Action]
                      , cardCost    :: [Resource]

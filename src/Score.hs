@@ -11,6 +11,22 @@ import Static
 import Constants
 
 
+godValue :: PlayerId -> GameState -> God -> Int
+godValue pid gs god =
+  let ps = gs ^. playerState pid
+      brd = gs ^. board
+      team = Nothing
+      have = [ r | c <- ps ^. playerHand ++ ps ^. playerDiscard 
+                 , Minerva r <- cardColor c ]
+  in
+  case god of
+    Vesta -> vesta ps
+    Jupiter -> jupiter pid brd
+    Saturnus -> saturnus pid brd
+    Mercurius -> mercurious pid brd
+    Mars -> mars pid brd
+    Minerva r -> specialist have r pid brd
+    Venus -> venus pid team brd
 
 vesta :: PlayerState -> Int
 vesta ps = div (goods + ps ^. playerMoney) 10
