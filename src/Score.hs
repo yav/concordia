@@ -1,7 +1,8 @@
 module Score where
 
-import Data.Set qualified as Set
+import Data.Map(Map)
 import Data.Map qualified as Map
+import Data.Maybe(listToMaybe)
 import Optics
 import KOI.Basics(PlayerId, WithPlayer(..))
 import KOI.Bag
@@ -11,22 +12,56 @@ import Static
 import Constants
 
 
-godValue :: PlayerId -> GameState -> God -> Int
-godValue pid gs god =
+
+
+
+godValue :: PlayerId -> Maybe PlayerId -> GameState -> [Resource] -> God -> Int
+godValue pid mbTeam gs =
   let ps = gs ^. playerState pid
       brd = gs ^. board
-      team = Nothing
-      have = [ r | c <- ps ^. playerHand ++ ps ^. playerDiscard 
-                 , Minerva r <- cardColor c ]
-  in
+      team = (`countRegions` brd) <$> mbTeam
+      cities = countCities pid brd
+      provinces = countRegions pid brd
+  in \rs god ->
+  let
+    salt = saltSpecialist 
+               (rs ++ [ r | c <- ps ^. playerHand ++ ps ^. playerDiscard 
+                          , Minerva r <- cardColor c ])
+  in              
   case god of
     Vesta -> vesta ps
-    Jupiter -> jupiter pid brd
-    Saturnus -> saturnus pid brd
-    Mercurius -> mercurious pid brd
+    Jupiter -> jupiter cities
+    Saturnus -> saturnus provinces
+    Mercurius -> mercurious cities
     Mars -> mars pid brd
-    Minerva r -> specialist have r pid brd
-    Venus -> venus pid team brd
+    Minerva r -> specialist r salt cities
+    Venus -> venus provinces team
+
+
+-- | How many cities we have for various resource types. Note that it is
+-- possible to miss a resource entry (meaning 0) or have an entry with 0.
+countCities :: PlayerId -> BoardState -> Map Resource Int
+countCities pid b = Map.fromListWith (+) (Map.elems resources)
+  where
+  resources = Map.intersectionWith mk (b ^. mapProduces) (b ^. mapHouses)
+  mk r hs = (r, if pid `elem` hs then 1 else 0)
+
+-- | How many houses we have in each region
+countRegions :: PlayerId -> BoardState -> Map RegionId Int
+countRegions pid b = sum . map presentIn <$> citiesInRegion (b ^. mapLayout)
+  where
+  presentIn c =
+    case Map.lookup c (b ^. mapHouses) of
+      Just ps | pid `elem` ps -> 1
+      _ -> 0
+
+
+
+-- | What resource to count salt 
+saltSpecialist :: [Resource] -> Maybe Resource
+saltSpecialist have = listToMaybe [ r | r <- rs, r `elem` have ]
+  where
+  rs = [ Cloth, Wine, Tool, Wheat, Brick ]
 
 vesta :: PlayerState -> Int
 vesta ps = div (goods + ps ^. playerMoney) 10
@@ -37,25 +72,14 @@ vesta ps = div (goods + ps ^. playerMoney) 10
               , let c = Map.findWithDefault 0 r cost
               ]
 
-jupiter :: PlayerId -> BoardState -> Int
-jupiter pid b = Map.size (Map.filterWithKey isOurs (b ^. mapHouses))
-  where
-  isOurs c ps = not (isBrick c) && pid `elem` ps
-  isBrick c = Map.lookup c (b ^. mapProduces) == Just Brick
+jupiter :: Map Resource Int -> Int
+jupiter = sum . Map.delete Brick
 
-saturnus :: PlayerId -> BoardState -> Int
-saturnus pid b = Map.size (Map.filter (any present) regions) 
-  where
-  present c = c `Map.member` cities
-  cities    = Map.filter (pid `elem`) (b ^. mapHouses)
-  regions   = citiesInRegion (b ^. mapLayout)
+saturnus :: Map RegionId Int -> Int
+saturnus = Map.size . Map.filter (> 0) 
 
-mercurious :: PlayerId -> BoardState -> Int
-mercurious  pid b = 2 * Set.size tys
-  where
-  cities = Map.filter (pid `elem`) (b ^. mapHouses)
-  prod   = Map.intersectionWith (\_ p -> p) cities (b ^. mapProduces)
-  tys    = Set.delete Salt (Set.fromList (Map.elems prod))
+mercurious :: Map Resource Int -> Int
+mercurious = (2*) . Map.size . Map.filter (> 0) . Map.delete Salt
 
 mars :: PlayerId -> BoardState -> Int
 mars pid b = 2 * (inCities + onPaths)
@@ -65,33 +89,20 @@ mars pid b = 2 * (inCities + onPaths)
   inCities = sum (count <$> b ^. mapCityWorkers)
   count ba = sum [ n | (p,n) <- bagToNumList ba, isUs p ]
 
-specialist :: [Resource] -> Resource -> PlayerId -> BoardState -> Int
-specialist allSpecialists r pid b = val * Map.size prod
+specialist :: Resource -> Maybe Resource -> Map Resource Int -> Int
+specialist r withSalt cities = val * (res r + fromSalt)
   where
-  ours      = Map.filter (pid `elem`) (b ^. mapHouses)
-  match r1  = r1 == r || countSalt && r1 == Salt
-  resource  = Map.filter match (b ^. mapProduces)
-  prod      = Map.intersectionWith (\_ _ -> ()) ours resource
-  val       = if r == Cloth || r == Wine then 4 else 3
-  countSalt = foldr (\r1 no -> if r1 `elem` allSpecialists then r == r1 else no)
-                    False
-                    [Cloth,Wine,Tool,Wheat,Brick]
+  res x    = Map.findWithDefault 0 x cities
+  fromSalt = if withSalt == Just r then res Salt else 0
 
-venus :: PlayerId -> Maybe PlayerId -> BoardState -> Int
-venus pid team b = val * Map.size (Map.filter consider regions) 
-  where
-  consider cs = let ourH = filter (`Map.member` ours) cs
-                    theirH = filter (`Map.member` theirs) cs
-                in case team of
-                     Nothing -> length ourH >= 2
-                     Just _  -> not (null ourH) && not (null theirH)
-  ours      = Map.filter (pid `elem`) (b ^. mapHouses)
-  theirs    = case team of
-                Just partner -> Map.filter (partner `elem`) (b ^. mapHouses)
-                Nothing -> mempty
-  regions   = citiesInRegion (b ^. mapLayout)
-  val       = case team of
-                Just _  -> 1
-                Nothing -> 2
+  val = if r `elem` [Cloth,Wine] then 4 else 4
+
+venus :: Map RegionId Int -> Maybe (Map RegionId Int) -> Int
+venus ours mbTeam =
+  case mbTeam of
+    Nothing -> 2 * Map.size (Map.filter (>= 2) ours)
+    Just team ->
+      Map.size (Map.filter id (Map.intersectionWith (\a b -> a > 0 && b > 0) ours team))
+
 
 
