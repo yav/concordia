@@ -15,18 +15,21 @@ import Constants
 
 
 
-godValue :: PlayerId -> Maybe PlayerId -> GameState -> [Resource] -> God -> Int
+godValue :: PlayerId -> Maybe PlayerId -> GameState -> Bool -> God -> Int
 godValue pid mbTeam gs =
   let ps = gs ^. playerState pid
       brd = gs ^. board
+      specs = [ r | c <- ps ^. playerHand ++ ps ^. playerDiscard 
+                          , Minerva r <- cardColor c ]
       team = (`countRegions` brd) <$> mbTeam
       cities = countCities pid brd
       provinces = countRegions pid brd
-  in \rs god ->
+  in \inMarket god ->
   let
-    salt = saltSpecialist 
-               (rs ++ [ r | c <- ps ^. playerHand ++ ps ^. playerDiscard 
-                          , Minerva r <- cardColor c ])
+    salt = saltSpecialist
+           case god of
+             Minerva r | inMarket -> r : specs
+             _ -> specs
   in              
   case god of
     Vesta -> vesta ps
@@ -95,7 +98,7 @@ specialist r withSalt cities = val * (res r + fromSalt)
   res x    = Map.findWithDefault 0 x cities
   fromSalt = if withSalt == Just r then res Salt else 0
 
-  val = if r `elem` [Cloth,Wine] then 4 else 4
+  val = if r `elem` [Cloth,Wine] then 4 else 3
 
 venus :: Map RegionId Int -> Maybe (Map RegionId Int) -> Int
 venus ours mbTeam =

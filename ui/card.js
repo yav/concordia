@@ -70,23 +70,29 @@ class CardAction {
 
 class CardType {
   constructor(owner) {
-    const dom = uiFromTemplate("card-element")
-    this.val = null
-    this.dom = dom
-    this.tooltip = new Tooltip(dom)
-    this.help = new TextEntry(this.tooltip)
+    const [dom,els] = uiFromTemplateNested("card-type")
+    this.val      = null
+    this.dom      = dom
+    this.score    = new Text(els.card_score, true)
+    this.lab      = els.card_type_name
+    this.tooltip  = new Tooltip(dom)
+    this.help     = new TextEntry(this.tooltip)
     owner.appendChild(dom)
   }
   destroy() {
     this.dom.remove()
+    this.tooltip.destory()
   }
-  set(x) {
+  set([x,v]) {
+    const vv = v < 0? "?" : v.toString()
+    this.score.set(vv)
     if (this.val !== null && this.val.tag === x.tag && this.val.content == x.content) return
     const dom = this.dom
+    const lab = this.lab
     if (this.val !== null) dom.classList.remove(this.val.tag.toLowerCase())
     this.val = x
     dom.classList.add(x.tag.toLowerCase())
-    dom.textContent = x.tag.replaceAll("u","v")
+    lab.textContent = x.tag.replaceAll("u","v")
     this.setHelp()
   }
 

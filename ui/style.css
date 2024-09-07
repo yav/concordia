@@ -213,6 +213,28 @@ body {
   border: 0;
 }
 
+.card-type {
+  display: flex;
+  align-items: center;
+}
+
+.card-score {
+  display: inline-block;
+  background: radial-gradient(#fff,#fff0 80%);
+  min-width: 20px;
+  min-height: 20px;
+  text-align: center;
+  color: black;
+  vertical-align: middle;
+  font-size: 16px;
+}
+
+.card_type_name {
+  display: inline-block;
+  text-align: center;
+  width: 100%;
+}
+
 .red { fill: #f60; }
 .yellow { fill: #fc0; }
 .blue { fill: #ccf; }

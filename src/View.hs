@@ -12,18 +12,21 @@ import Static
 import State
 import Types
 import Log
+import Score
 
 data View = View
-  { hand :: [Card]
+  { hand :: [CardView]
   , playerInfo :: [PlayerView]
   , boardInfo :: BoardView
   , logMessages :: [[LogWord]]
   } deriving (Generic,ToJSON)
 
+type CardView = CardG (God,Int)
+
 data PlayerView = PlayerView
   { player :: PlayerId
-  , discardTop :: Maybe Card
-  , discard :: [Card]
+  , discardTop :: Maybe CardView
+  , discard :: [CardView]
   , resources :: [ResourceSpot]
   , houses :: Int
   , money :: Int
@@ -55,51 +58,65 @@ data RegionState = NoBonus | Goods Resource | Money Int
   deriving (Generic,ToJSON)
 
 data MarketSpot = MarketSpot
-  { card :: Card
+  { card :: CardView
   , cost :: [ResourceCost]
   } deriving (Generic,ToJSON)
 
 
 stateView :: PlayerId -> GameState -> View
 stateView pid s = View
-  { hand = fromMaybe [] (s ^? players % ix pid % playerHand)
-  , playerInfo =
-      [ playerView pid p s (s ^. playerState p) | p <- after ++ before ]
-  , boardInfo = boardView (s ^. board)
+  { hand = maybe [] (map (ourVal False)) (s ^? players % ix pid % playerHand)
+  , playerInfo = pvs
+  , boardInfo = boardView (s ^. board) (ourVal True)
   , logMessages = reverse (s ^. gameLog)
   }
   where
   (before,after) = break (== pid) (s ^. playerOrder)
+  ourVal = fromMaybe (addValue (\_ _ -> -1)) (lookup pid godVals)
+  (pvs,godVals) = 
+    unzip [ playerView pid p s (s ^. playerState p) | p <- after ++ before ]
 
 
-playerView :: PlayerId -> PlayerId -> GameState -> PlayerState -> PlayerView
-playerView viewBy pid gs s = PlayerView
-  { player = pid
-  , discardTop = listToMaybe (s ^. playerDiscard)
-  , discard = [ c | pid == viewBy, c <- s ^. playerDiscard ]
-  , houses = s ^. playerHousesToBuild
-  , resources =
-    take (s ^. playerResourceLimit)
-       (map HasWorker (bagToList (s ^. playerWorkersForHire)) ++
-        map HasResource (bagToList (s ^. playerResources)) ++
-        repeat Available)
-  , money = s ^. playerMoney
-  , handSize = length (s ^. playerHand)
-  , isCurrent = gs ^. curPlayer == pid
-  , isDouble = gs ^. playerDoubleBonus == pid
-  , triggeredEndGame =
-    case gs ^. gameStatus of
-      EndTriggeredBy p -> p == pid
-      _ -> False
-  }
+addValue :: (Bool -> God -> Int) -> Bool -> Card -> CardView
+addValue val inMarket c = c { cardColor = map doAdd (cardColor c) }
+  where
+  doAdd g = (g, val inMarket g)
+  
+playerView ::
+  PlayerId -> PlayerId -> GameState -> PlayerState -> 
+  (PlayerView, (PlayerId, Bool -> Card -> CardView))
+playerView viewBy pid gs s = (vi, (pid, godVal))
+  where
+  godVal = addValue (godValue pid Nothing gs)
+  noVal = addValue (\_ _ -> -1)
+  thisVal = if viewBy == pid then godVal False else noVal False
+  vi = PlayerView
+    { player = pid
+    , discardTop = thisVal <$> listToMaybe (s ^. playerDiscard)
+    , discard = [ thisVal c | pid == viewBy, c <- s ^. playerDiscard ]
+    , houses = s ^. playerHousesToBuild
+    , resources =
+      take (s ^. playerResourceLimit)
+         (map HasWorker (bagToList (s ^. playerWorkersForHire)) ++
+          map HasResource (bagToList (s ^. playerResources)) ++
+          repeat Available)
+    , money = s ^. playerMoney
+    , handSize = length (s ^. playerHand)
+    , isCurrent = gs ^. curPlayer == pid
+    , isDouble = gs ^. playerDoubleBonus == pid
+    , triggeredEndGame =
+      case gs ^. gameStatus of
+        EndTriggeredBy p -> p == pid
+        _ -> False
+    }
 
-boardView :: BoardState -> BoardView
-boardView s = BoardView
+boardView :: BoardState -> (Card -> CardView) -> BoardView
+boardView s addVal = BoardView
   { name = s ^. mapLayout % mapName
   , cities = cityView s 
   , paths = pathView s
   , regions = regionView s
-  , market = let m = s ^. marketDeck
+  , market = let m = map addVal (s ^. marketDeck)
              in (length m, zipWith MarketSpot m (s ^. marketLayout))
   }
 
