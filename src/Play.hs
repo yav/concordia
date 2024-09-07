@@ -327,6 +327,7 @@ actArchitect pid =
          [ ( AskCity cid
            , "Build house here."
            , do doChangeMoney pid (- moneyCost)
+                doLogBy' pid [T "Paid", tSh moneyCost, M]
                 doPayCost pid cost
                 updateThe_ (players % ix pid % playerHousesToBuild) (subtract 1)
                 updateThe_ (board % mapHouses % at cid) (Just . (pid :) . fromMaybe [])
