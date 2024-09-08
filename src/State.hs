@@ -49,7 +49,7 @@ data RegionBonus = RegionBonus
   , _rbMoney    :: Int
   }
 
-data GameStatus = InProgress | EndTriggeredBy PlayerId | Finished {- Score -}
+data GameStatus = InProgress | EndTriggeredBy PlayerId | Finished PlayerId
 
 makeLenses ''PlayerState
 makeLenses ''BoardState

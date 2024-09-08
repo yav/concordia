@@ -24,7 +24,13 @@ play =
      case s ^. gameStatus of
        Finished {} -> pure ()
        EndTriggeredBy pid
-         | pid == s ^. curPlayer -> setThe gameStatus Finished >> sync
+         | pid == s ^. curPlayer ->
+          do setThe gameStatus (Finished pid)
+             let discard ps =
+                   set playerHand [] $
+                   over playerDiscard ((ps ^. playerHand) ++) ps
+             updateThe_ players (fmap discard)
+             sync
          -- XXX: In team play we finish when it becomes our partner's turn.
 
          | otherwise -> doTakeTurn >> nextPlayer >> play

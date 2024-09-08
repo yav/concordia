@@ -3,6 +3,8 @@ module View(View, stateView) where
 import GHC.Generics(Generic)
 import Data.Maybe(listToMaybe, fromMaybe)
 import Data.Text(Text)
+import Data.List(sortOn)
+import Data.Ord(Down(..))
 import Data.Map qualified as Map
 import Data.Aeson(ToJSON)
 import Optics
@@ -19,9 +21,11 @@ data View = View
   , playerInfo :: [PlayerView]
   , boardInfo :: BoardView
   , logMessages :: [[LogWord]]
+  , finished :: [(PlayerId,Int)]
   } deriving (Generic,ToJSON)
 
 type CardView = CardG (God,Int)
+
 
 data PlayerView = PlayerView
   { player :: PlayerId
@@ -69,12 +73,18 @@ stateView pid s = View
   , playerInfo = pvs
   , boardInfo = boardView (s ^. board) (ourVal True)
   , logMessages = reverse (s ^. gameLog)
+  , finished = case s ^. gameStatus of
+                 Finished {} -> sortOn (Down . snd) (map totalScore pvs)
+                 _ -> []
   }
   where
   (before,after) = break (== pid) (s ^. playerOrder)
   ourVal = fromMaybe (addValue (\_ _ -> -1)) (lookup pid godVals)
   (pvs,godVals) = 
     unzip [ playerView pid p s (s ^. playerState p) | p <- after ++ before ]
+  scoreCard c = sum (map snd (cardColor c))
+  totalScore pv = (player pv, sum (map scoreCard (discard pv)) +
+                                   if triggeredEndGame pv then 7 else 0)
 
 
 addValue :: (Bool -> God -> Int) -> Bool -> Card -> CardView
@@ -89,11 +99,15 @@ playerView viewBy pid gs s = (vi, (pid, godVal))
   where
   godVal = addValue (godValue pid Nothing gs)
   noVal = addValue (\_ _ -> -1)
-  thisVal = if viewBy == pid then godVal False else noVal False
+  openInfo = case gs ^. gameStatus of
+               Finished {} -> True
+               _ -> False
+  visible = viewBy == pid || openInfo
+  thisVal = if visible then godVal False else noVal False
   vi = PlayerView
     { player = pid
     , discardTop = thisVal <$> listToMaybe (s ^. playerDiscard)
-    , discard = [ thisVal c | pid == viewBy, c <- s ^. playerDiscard ]
+    , discard = [ thisVal c | visible, c <- s ^. playerDiscard ]
     , houses = s ^. playerHousesToBuild
     , resources =
       take (s ^. playerResourceLimit)
@@ -107,6 +121,7 @@ playerView viewBy pid gs s = (vi, (pid, godVal))
     , triggeredEndGame =
       case gs ^. gameStatus of
         EndTriggeredBy p -> p == pid
+        Finished p -> p == pid
         _ -> False
     }
 
