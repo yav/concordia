@@ -1,13 +1,12 @@
 module KOI (module I, Interact, Concordia(..), Update(..)
-  , askInputsMaybe, askInputsMaybe_, askInputs, sync
+  , askInputsMaybe, askInputsMaybe_, askInputs, sync, stop
   ) where
 
 import Data.Text(Text)
-import Optics ( (^.) )
 import KOI.Basics(PlayerId(..),WithPlayer(..))
 import KOI.Interact hiding (Interact,askInputsMaybe_,askInputs,askInputsMaybe,choose,chooseMaybe)
 import KOI.Interact qualified as I
-import State ( gameStatus, GameState, GameStatus(Finished) )
+import State ( GameState )
 import Question ( Question )
 import View ( stateView, View )
 
@@ -41,6 +40,9 @@ askInputs pid@(PlayerId name) txt opts =
   I.askInputs (name <> ": " <> txt)
     [ (pid :-> q,lab,act) | (q,lab,act) <- opts ] 
 
+stop :: Interact a
+stop = sync >> I.askInputs "Game Over" []
+
 instance Component Concordia where
   type AppState Concordia = GameState
   type AppStateView Concordia = View
@@ -50,10 +52,7 @@ instance Component Concordia where
 
   doUpdate _ (SetState s) _ = s
 
-  finalState _ s =
-    case s ^. gameStatus of
-      Finished {} -> True
-      _           -> False
+  finalState _ _ = False
 
   playerView _ = stateView
 

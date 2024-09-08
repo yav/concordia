@@ -81,7 +81,7 @@ class CardType {
   }
   destroy() {
     this.dom.remove()
-    this.tooltip.destory()
+    this.tooltip.destroy()
   }
   set([x,v]) {
     const vv = v < 0? "?" : v.toString()

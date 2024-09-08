@@ -106,11 +106,25 @@ class Record {
     }
   }
   
-  map(f) { for (const i of this.obj) f(this.obj[i]) }
+  map(f) { for (const i in this.obj) f(this.obj[i]) }
 
   getElement(i) { return this.obj[i] }
 }
 
+// Assumes the lenght of the array are not changing
+class Tuple {
+  constructor(arr) { this.arr = arr }
+
+  set(arr) {
+    for (let i = 0; i < this.arr.length; ++i) this.arr[i].set(arr[i])
+    }
+
+  destroy() { for (const o of this.obj) o.destroy() }
+  
+  map(f) { for (const o of this.obj) f(o) }
+
+  getElement(i) { return this.obj[i] }
+}
 
 
 
@@ -141,4 +155,27 @@ class Tagged {
   }
 
   map(f) { if (this.val !== nul) f(this.val) } 
+
+  getElement(tag) {
+    if (this.tag === tag) return this.val
+    return null
+  }
 }
+
+
+class Toggle {
+  constructor(dom, hidden) {
+    this.visible = false
+    this.hidden = hidden
+    this.dom = dom
+    dom.classList.add(hidden)
+  }
+
+  set(vis) {
+    if (this.visible === vis) return
+    if (vis) { this.dom.classList.remove(this.hidden) }
+    else this.dom.classList.add(this.hidden)
+    this.visible = vis
+  }
+}
+
