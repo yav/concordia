@@ -17,6 +17,7 @@ sync :: Interact ()
 sync =
   do s <- getState
      update (SetState s)
+     save
 
 askInputsMaybe_ ::
   PlayerId -> Text -> [(Question,Text,Interact ())] -> Interact ()
