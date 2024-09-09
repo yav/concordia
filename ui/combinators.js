@@ -119,11 +119,11 @@ class Tuple {
     for (let i = 0; i < this.arr.length; ++i) this.arr[i].set(arr[i])
     }
 
-  destroy() { for (const o of this.obj) o.destroy() }
+  destroy() { for (const o of this.arr) o.destroy() }
   
-  map(f) { for (const o of this.obj) f(o) }
+  map(f) { for (const o of this.arr) f(o) }
 
-  getElement(i) { return this.obj[i] }
+  getElement(i) { return this.arr[i] }
 }
 
 
