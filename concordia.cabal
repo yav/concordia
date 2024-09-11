@@ -8,6 +8,7 @@ maintainer:         iavor.diatchki@gmail.com
 category:           Game
 build-type:         Simple
 extra-doc-files:    CHANGELOG.md
+extra-source-files: ui/maps/*.json
 
 common warnings
     ghc-options: -Wall -Wno-x-partial
@@ -17,9 +18,9 @@ executable concordia
     main-is:          Main.hs
     other-modules:
       KOI, Types, State, Setup, Static, Score, Play, Question, Cards,
-      Constants, HelperActions, View, Log
+      Constants, HelperActions, View, Log, Maps
     default-extensions:
-      TemplateHaskell,
+      TemplateHaskell, QuasiQuotes,
       ImportQualifiedPost,
       OverloadedStrings,
       TypeFamilies,
@@ -31,6 +32,6 @@ executable concordia
       LambdaCase
 
     build-depends:    base, containers, text, aeson,
-                      optics, KOI,
+                      optics, KOI, heredoc
     hs-source-dirs:   src
     default-language: Haskell2010

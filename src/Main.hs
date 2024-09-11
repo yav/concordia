@@ -1,6 +1,5 @@
 module Main where
 
-import Data.Aeson qualified as JS
 import KOI.Basics
 import KOI.CallJS(jsHandlers)
 import KOI.Bag
@@ -12,50 +11,46 @@ import Play
 import Constants
 import Types
 import Cards
+import Maps
 
 
 main :: IO ()
 main = startApp App
   { appId = Concordia
-  , appOptions = [ optMap, optSalt ]
+  , appOptions = [ optBoard, optSalt ]
   , appColors = [ "yellow", "red", "green", "blue", "black" ]
   , appJS = $(jsHandlers [])
   , appInitialState = \rng opts ps ->
-    do cfg <- getConfig opts ps
+    do let cfg = getConfig opts ps
        pure (withRNG_ rng (setupGame cfg))
   , appStart = play
   }
 
 
 
-getConfig :: Options -> [PlayerId] -> IO Config
+getConfig :: Options -> [PlayerId] -> Config
 getConfig opts ps = 
-  do mp <- do mb <- JS.eitherDecodeFileStrict' (getMap opts)
-              case mb of
-                Left err -> fail err
-                Right a  -> pure a
-     pure Config
-       { cfgPlayerOrder        = ps
-       , cfgMap                = mp
-       , cfgCityTiles          = if getSalt opts then cityTilesWithSalt
-                                                 else cityTiles
-       , cfgResourceLimit      = 12
-       , cfgStartHireWorkers   = bagFromNumList [(Person,2), (Ship,2)]
-       , cfgStartBoardWorkers  = bagFromList [Person,Ship]
-       , cfgStartResources     = bagFromList [Brick,Wheat,if getSalt opts then Salt else Wheat,Tool,Wine,Cloth]
-       , cfgStartMoney         = 5
-       , cfgStartHouses        = 15
-       , cfgMarket             = marketCosts
-       , cfgPlayerCards        = startDeckVenus
-       , cfgMarketCards        = marketDeck False
-       }
+  Config
+    { cfgPlayerOrder        = ps
+    , cfgMap                = mapData (getBoard opts)
+    , cfgCityTiles          = if getSalt opts then cityTilesWithSalt
+                                              else cityTiles
+    , cfgResourceLimit      = 12
+    , cfgStartHireWorkers   = bagFromNumList [(Person,2), (Ship,2)]
+    , cfgStartBoardWorkers  = bagFromList [Person,Ship]
+    , cfgStartResources     = bagFromList [Brick,Wheat,if getSalt opts then Salt else Wheat,Tool,Wine,Cloth]
+    , cfgStartMoney         = 5
+    , cfgStartHouses        = 15
+    , cfgMarket             = marketCosts
+    , cfgPlayerCards        = startDeckVenus
+    , cfgMarketCards        = marketDeck False
+    }
 
-
-
-optMap :: Option
-getMap :: Options -> String
-(optMap, getMap) = optionString "map" "PATH" Nothing "Path to map.json"
 
 optSalt :: Option
 getSalt :: Options -> Bool
 (optSalt, getSalt) = flag "salt" (Just False) "Use salt"
+
+optBoard :: Option
+getBoard :: Options -> Maps
+(optBoard, getBoard) = option "board" (Just Italia) "Use this map"
