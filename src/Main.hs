@@ -17,7 +17,7 @@ import Maps
 main :: IO ()
 main = startApp App
   { appId = Concordia
-  , appOptions = [ optBoard, optSalt ]
+  , appOptions = [ optBoard, optSalt, optVenus ]
   , appColors = [ "yellow", "red", "green", "blue", "black" ]
   , appJS = $(jsHandlers [])
   , appInitialState = \rng opts ps ->
@@ -42,14 +42,18 @@ getConfig opts ps =
     , cfgStartMoney         = 5
     , cfgStartHouses        = 15
     , cfgMarket             = marketCosts
-    , cfgPlayerCards        = startDeckVenus
-    , cfgMarketCards        = marketDeck False
+    , cfgPlayerCards        = if getVenus opts then startDeckVenus else startDeckBase
+    , cfgMarketCards        = marketDeck (not (getVenus opts))
     }
 
 
 optSalt :: Option
 getSalt :: Options -> Bool
 (optSalt, getSalt) = flag "salt" (Just False) "Use salt"
+
+optVenus :: Option
+getVenus :: Options -> Bool
+(optVenus, getVenus) = flag "venus" (Just False) "Use Venus cards"
 
 optBoard :: Option
 getBoard :: Options -> Maps
