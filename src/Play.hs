@@ -143,14 +143,16 @@ actColonistSettle pid =
        | w <- ws ] ++ [otherOpt]
 
   buildWorker tgts w =
-    askInputsMaybe_ pid "Choose deployment city"
-       [ ( AskCity city
-         , "Deploy here"
-         , do doBuildWorker pid w city
-              newWs <- canBuildWorker pid
-              doAction tgts newWs pass
-         )
-       | city <- tgts ]
+    do paths <- mapCityPaths w <$> the (board % mapLayout)
+       let suitable = not . null . flip (Map.findWithDefault []) paths
+       askInputsMaybe_ pid "Choose deployment city"
+          [ ( AskCity city
+            , "Deploy here"
+            , do doBuildWorker pid w city
+                 newWs <- canBuildWorker pid
+                 doAction tgts newWs pass
+            )
+          | city <- tgts, suitable city ]
 
 
 
