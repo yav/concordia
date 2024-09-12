@@ -128,7 +128,7 @@ class CardType {
         break
       case "Minerva":
         const r = this.val.contents
-        const amt = (r === "Wine" || r === "Cloth")? "4" : "3"
+        const amt = r === "Cloth"? "5" : "Wine"? "4" : "3"
         dom.textContent = amt + " VP per"
         pres("house")
         text(" in ")

@@ -98,7 +98,10 @@ specialist r withSalt cities = val * (res r + fromSalt)
   res x    = Map.findWithDefault 0 x cities
   fromSalt = if withSalt == Just r then res Salt else 0
 
-  val = if r `elem` [Cloth,Wine] then 4 else 3
+  val = case r of
+          Cloth -> 5
+          Wine  -> 4
+          _     -> 3
 
 venus :: Map RegionId Int -> Maybe (Map RegionId Int) -> Int
 venus ours mbTeam =
