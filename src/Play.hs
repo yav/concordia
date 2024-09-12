@@ -370,7 +370,8 @@ actMercator n pid =
 
   canBuy s r = guard haveSpace >> haveMoney
     where
-    haveSpace = bagSize (s ^. playerResources) < s ^. playerResourceLimit
+    used = bagSize (s ^. playerResources) + bagSize (s ^. playerWorkersForHire)
+    haveSpace =  used < s ^. playerResourceLimit
     haveMoney =
       do c <- Map.lookup r resourceCost
          guard (c <= s ^. playerMoney)
