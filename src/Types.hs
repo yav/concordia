@@ -45,8 +45,8 @@ specialistName r =
     Brick -> "Mason"
     Wheat -> "Farmer"
     Tool  -> "Smith"
-    Wine  -> "Vinter"
-    Cloth -> "Taylor"
+    Wine  -> "Vintner"
+    Cloth -> "Weaver"
     Salt  -> "Chef"
 
 cardName :: Card -> Text

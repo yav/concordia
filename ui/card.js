@@ -35,8 +35,8 @@ class CardAction {
           case "Brick": return "Mason"
           case "Wheat": return "Farmer"
           case "Tool":  return "Smith"
-          case "Wine":  return "Vinter"
-          case "Cloth": return "Taylor"
+          case "Wine":  return "Vintner"
+          case "Cloth": return "Weaver"
           default: return act.tag + " (" + act.contents + ")"
         }
     }
