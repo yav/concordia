@@ -96,7 +96,7 @@ deck1 isBase
   | otherwise = prefectArchitect : common
   where
   common = [ advMercator, architect, colonist, diplomat1,
-               specialistMason, specialistFarmer, specialistSmith]
+             specialistFarmer, specialistSmith]
 
 deck2 isBase
   | isBase = architect : common
