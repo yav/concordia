@@ -284,6 +284,7 @@ body {
 .blue { fill: #ccf; }
 .green { fill: #6c0; }
 .black { fill: #fcc; }
+.some-player { fill: #999 }
 
 .brick { background-image: url("icons/brick.svg"); }
 .wheat { background-image: url("icons/wheat.svg"); }
@@ -474,8 +475,8 @@ body {
   border: 1px solid black;
   padding: 2px;
   max-width: 15em;
-  vertical-align: baseline;
-  display: inline-block;
+  display: inline-flex;
+  align-items: stretch;
 }
 
 .tooltip .resource-icon {

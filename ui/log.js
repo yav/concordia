@@ -50,6 +50,7 @@ class LogWord extends Tagged {
       , M: () => { const r = new Resource(own,[14,14]); r.set("Money")
                    return new Const(r) }
       , W: () => new PlayerResource(own,[14,14])
+      , H: () => new PlayerResource(own,[14,14])
       , CID: () => new Pointer(own, "cities", "this city", board)
       , PID: () => new Pointer(own, "paths", "this path", board)
       , RID: () => new Pointer(own, "regions", "this region", board)
@@ -60,4 +61,45 @@ class LogWord extends Tagged {
            }
       })
   }
+}
+
+
+function toLogWords(s) {
+  const ws = []
+  let str = s
+  function text(n) {
+    ws.push({tag: "T", contents: str.slice(0,n)})
+    str = str.slice(n)
+  }
+
+  while (str.length > 0) {
+    console.log(str)
+    switch (str.charAt(0)) {
+      case '[':
+        const end = str.search("]")
+        if (end >= 0) {
+          const w = str.slice(1,end)
+          str = str.slice(end+1)
+          let tag = "T"
+          switch(w) {
+            case "Brick": 
+            case "Wheat": 
+            case "Tool":  
+            case "Wine":  
+            case "Cloth": tag = "G"; break
+            case "Money": tag = "M"; break
+            case "House": tag = "H"; break 
+          }
+          ws.push({tag: tag, contents: w})
+        } else {
+          text(1)
+        }
+        break
+      
+      default:
+        const p = str.search("\\[")
+        text(p < 0? str.length : p)
+    }
+  }
+  return ws
 }

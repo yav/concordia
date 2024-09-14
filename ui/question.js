@@ -23,7 +23,10 @@ class Question {
     dom.classList.add("clickable")
   }
   temporary(dom,q) {
-    this.register(() => dom.remove())
+    const help = new Tooltip(dom)
+    const ent = new TooltipEntry(help)
+    ent.set(toLogWords(q.chHelp))
+    this.register(() => { dom.remove(); help.destroy() } )
     dom.addEventListener("click",() => this.resolve(q))
     dom.classList.add("clickable")
   }

@@ -387,7 +387,7 @@ actMercator n pid =
   cvtSalt as s =
     [ ( AskResource Salt, "Convert Salt"
       , askInputsMaybe_ pid "Convert Salt"
-        [ (AskTextResource "To" r, "Conver to this resource",
+        [ (AskTextResource "To" r, "Convert to[" <> Text.pack (show r) <> "]",
            do updateThe_ (playerState pid % playerResources)
                          (bagChange (-1) Salt . bagChange 1 r)
               doLogBy' pid [T "Converted", G Salt, T "to", G r]
@@ -399,7 +399,7 @@ actMercator n pid =
     ]
 
   doBuy as (r,c) =
-    (AskTextResource "Buy" r, "Buy for " <> Text.pack (show c),
+    (AskTextResource "Buy" r, "Cost: " <> Text.pack (show c) <> "[Money]",
        do doChangeMoney pid (- c)
           updateThe_ (playerState pid % playerResources) (bagChange 1 r)
           doLogBy' pid [T "Bought", G r]
@@ -408,7 +408,7 @@ actMercator n pid =
     )
 
   doSell as (r,c) =
-    (AskResource r, "Sell for " <> Text.pack (show c),
+    (AskResource r, "Sell for " <> Text.pack (show c) <> "[Money]",
       do updateThe_ (playerState pid % playerResources) (bagChange (-1) r)
          doChangeMoney pid c
          doLogBy' pid [T "Sold", G r]

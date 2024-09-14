@@ -9,7 +9,7 @@ import KOI.Basics(WithPlayer)
 import Types ( Worker, Resource )
 import Static ( CityId, PathId, RegionId )
 
-data LogWord = T Text | G Resource | M | W (WithPlayer Worker) 
+data LogWord = T Text | G Resource | M | H | W (WithPlayer Worker) 
              | CID CityId | PID PathId | RID RegionId
              | L
   deriving(Generic,ToJSON)
