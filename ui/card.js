@@ -45,7 +45,7 @@ class CardAction {
 
   setHelp() {
     if (this.act === null) return
-    let msg = "TOD"
+    let msg = "TODO"
     switch (this.act.tag) {
       case "Magister":
         msg = "Activate the top card of your discard pile." +

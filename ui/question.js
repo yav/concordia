@@ -1,15 +1,16 @@
 class Question {
   constructor() { this.cleanup = [] }
-  reset() { this.cleanup = [] }
+  reset() {
+    for(const f of this.cleanup) f()
+    this.cleanup = []
+  }
   register(f) { this.cleanup.push(f) }
   resolve(q) {
-    for(const f of this.cleanup) f()
     this.reset()
     conn.sendJSON(q)
   }
   undo() {
-    console.log("UNDO")
-    for (const f of this.cleanup) f()
+    this.reset()
     conn.sendJSON({tag: "undo"})
   } 
   existing(dom,q) {
