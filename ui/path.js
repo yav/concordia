@@ -25,7 +25,7 @@ class Path {
   is(pid) { return this.path === pid }
 
   ask(q) {
-    quest.existing(this.dom, q)
+    gui.quest.existing(this.dom, q)
   }
 
   select(yes) {

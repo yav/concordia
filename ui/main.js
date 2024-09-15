@@ -1,14 +1,13 @@
 let conn = null
 let gui = null
-const quest = new Question()
 
 function main() {
+  gui = new GUI()
   conn = srvConnect()
 }
 
 async function uiRedraw(s) {
-  if (gui === null) gui = new GUI()
-  quest.reset()
+  gui.quest.reset()
   await gui.set(s.game)
   uiQuestions(s.questions)
 }

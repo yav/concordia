@@ -63,7 +63,7 @@ class CardAction {
   }
 
   ask(q) {
-    quest.existing(this.dom,q)
+    gui.quest.existing(this.dom,q)
   }
 }
 
@@ -171,7 +171,7 @@ class Card {
   }
 
   ask(q) {
-    quest.existing(this.dom,q)
+    gui.quest.existing(this.dom,q)
   }
 
 }

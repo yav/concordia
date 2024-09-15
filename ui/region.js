@@ -37,7 +37,7 @@ class Region {
 
   is(r) { return this.region === r }
 
-  ask(q) { quest.existing(this.dom,q) }
+  ask(q) { gui.quest.existing(this.dom,q) }
 
   select(yes) {
     if (yes) { this.dom.classList.add("selected") }

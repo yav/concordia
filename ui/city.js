@@ -52,7 +52,7 @@ class City {
   }
 
   ask(q) {
-    quest.existing(this.dom,q)
+    gui.quest.existing(this.dom,q)
   }
 
   is(city) { return this.city === city }

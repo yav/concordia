@@ -2,6 +2,7 @@ class GUI {
   constructor() {
     const playerContainer = uiGet("players")
     const handContainer   = uiGet("hand")
+    this.quest            = new Question
     this.question         = new Text(uiGet("question"),false)
     this.players          = new List(() => new Player(playerContainer))
     this.hand             = new Hand()
@@ -56,7 +57,7 @@ class GUI {
         this.players.getElements()[0].askResource(ch.contents,q)
         break
       case "AskText":
-        uiGet("question").appendChild(quest.button(q))
+        uiGet("question").appendChild(gui.quest.button(q))
         break
       case "AskCityWorker":
         const [city,ty] = ch.contents
@@ -72,7 +73,7 @@ class GUI {
         this.board.askThing("regions", ch.contents,q)
         break
       case "AskTextResource":
-        uiGet("question").appendChild(quest.buttonResource(q))
+        uiGet("question").appendChild(gui.quest.buttonResource(q))
         break
       default: console.log(q) 
     }

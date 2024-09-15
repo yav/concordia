@@ -1,6 +1,6 @@
 class UndoButton {
   constructor() {
-    this.handler = () => quest.undo()
+    this.handler = () => gui.quest.undo()
     const dom = uiGet("undo")
     this.tooltip = new TextTooltip(dom, "Undo")
     dom.addEventListener("click",this.handler)
