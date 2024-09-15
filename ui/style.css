@@ -20,6 +20,18 @@ body {
   font-size: 12px;
 }
 
+#turn-indicator {
+  position: absolute;
+  width: 100%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom: 2px solid black;
+  margin: 0;
+  text-align: center;
+  background-color: white;
+  font-size: 16px;
+}
+
 #board {
   width: 80%;
   height: 100%;
@@ -341,7 +353,7 @@ body {
 
 .player .discard {
   position: fixed;
-  left: 0;
+  right: 20%;
   top: 0;
   display: none;
   flex-direction: column;

@@ -1,10 +1,15 @@
 class Question {
-  constructor() { this.cleanup = [] }
+  constructor() {
+    this.cleanup = []
+    this.indicator = new TurnIndicator()
+  }
+
   reset() {
     for(const f of this.cleanup) f()
     this.cleanup = []
+    this.indicator.hide()
   }
-  register(f) { this.cleanup.push(f) }
+  register(f) { this.cleanup.push(f); this.indicator.show() }
   resolve(q) {
     this.reset()
     conn.sendJSON(q)
@@ -50,4 +55,26 @@ class Question {
   }
 
 
+}
+
+class TurnIndicator {
+  constructor() {
+    this.indicator = new Toggle(uiGet("turn-indicator"),"hidden")
+    this.disappearing = null
+  }
+
+  hide() {
+    if (this.disappearing !== null) return
+    this.disappearing = setTimeout(() => {
+       this.disappearing = null
+       this.indicator.set(false)
+       
+    }, 200)
+  }
+
+  show() {
+    if (this.disappearing !== null) clearTimeout(this.disappearing)
+    this.indicator.set(true)
+    this.disappearing = null
+  }
 }
