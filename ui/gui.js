@@ -124,6 +124,6 @@ function monitorSize(gui) {
   let timeout = null
   window.onresize = () => {
     if (timeout !== null) clearTimeout(timeout)
-    timeout = setTimeout(() => gui.redraw(), 500)
+    timeout = setTimeout(() => gui.resize(), 500)
   }
 }
