@@ -1,0 +1,21 @@
+#!/bin/bash
+DIR=install
+
+cat > src/Version.hs << END
+module Version where
+
+import Data.Text(Text)
+
+version :: Text
+version = "$(git rev-parse --short HEAD)"
+END
+cabal build
+
+rm -rf "$DIR"
+mkdir -p "$DIR"
+cp $(cabal exec which concordia) $DIR
+ln -s "$PWD/ui" $DIR
+# upx "$DIR/concordia"
+rm -f "$DIR/save_*"
+
+
