@@ -15,6 +15,7 @@ import State
 import Types
 import Log
 import Score
+import Version qualified as V
 
 data View = View
   { hand :: [CardView]
@@ -22,6 +23,7 @@ data View = View
   , boardInfo :: BoardView
   , logMessages :: [[LogWord]]
   , finished :: [(PlayerId,Int)]
+  , version :: Text
   } deriving (Generic,ToJSON)
 
 type CardView = CardG (God,Int)
@@ -76,6 +78,7 @@ stateView pid s = View
   , finished = case s ^. gameStatus of
                  Finished {} -> sortOn (Down . snd) (map totalScore pvs)
                  _ -> []
+  , version = V.version
   }
   where
   (before,after) = break (== pid) (s ^. playerOrder)

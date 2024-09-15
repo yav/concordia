@@ -10,6 +10,7 @@ class GUI {
     this.board            = new Board()
     this.log              = new List(() => new LogEntry(this.board))
     this.undo             = new UndoButton()
+    this.version          = new Text(uiGet("version"), false)
     monitorSize(this)
   }
 
@@ -21,6 +22,7 @@ class GUI {
     this.log.set(obj.logMessages)
     this.hand.set(obj.hand)
     this.score.set(obj.finished) 
+    this.version.set("v." + obj.version)
   }
 
   destroy() {
