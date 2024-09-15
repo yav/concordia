@@ -4,8 +4,8 @@ class Region {
     uiGet("board").appendChild(dom)
     this.val = new Tagged(
       {
-        NoBonus: () => new NoBonus(dom)
-        , Money: () => new Money(dom)
+        NoBonus: () => new NoBonus(dom,board)
+        , Money: () => new Money(dom,board)
         , Goods: () => new Resource(dom,[32,32],board)
       })
     this.region = null
@@ -16,7 +16,7 @@ class Region {
   set([r, s]) {
     if (this.region !== r) {
       this.region = r
-      this.setPosition()
+      this.setPos()
     }
     this.val.set(s)
   }
@@ -27,11 +27,12 @@ class Region {
     this.dom.remove()
   }
 
-  setPosition() {
+  setPos() {
     const board = this.board
     const loc = board.json.loc.region[this.region]
     board.setLoc(this.dom, loc)
     board.setDim(this.dom, [32, 32])
+    this.val.map((x) => x.setSize())
   }
 
   is(r) { return this.region === r }
@@ -45,16 +46,22 @@ class Region {
 }
 
 class NoBonus extends Const {
-  constructor(owner) {
+  constructor(owner,board) {
     const dom = uiFromTemplate("no-bonus")
     super(owner, dom)
+    this.board = board
+    this.dom = dom
   }
+  setSize() { this.board.setDim(this.dom,[32,32]) }
 }
 
 class Money extends Text {
-  constructor(owner) {
+  constructor(owner, board) {
     const dom = uiFromTemplate("gain-money")
     super(dom, true)
     owner.appendChild(dom)
+    this.board = board
+    this.dom = dom
   }
+  setSize() { this.board.setDim(this.dom,[32,32]) }
 }

@@ -9,7 +9,10 @@ class GUI {
     this.board            = new Board()
     this.log              = new List(() => new LogEntry(this.board))
     this.undo             = new UndoButton()
+    monitorSize(this)
   }
+
+  resize() { this.board.resize() }
 
   async set(obj) {
     await this.board.set(obj.boardInfo)
@@ -113,5 +116,14 @@ class FinalScoreEntry extends Tuple {
            , new Text(els.fs_score, true)
            ] )
     own.appendChild(dom)
+  }
+}
+
+
+function monitorSize(gui) {
+  let timeout = null
+  window.onresize = () => {
+    if (timeout !== null) clearTimeout(timeout)
+    timeout = setTimeout(() => gui.redraw(), 500)
   }
 }

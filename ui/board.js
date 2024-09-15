@@ -14,15 +14,18 @@ class Board {
     this.regions.destroy()
   }
   async set(obj) {
-    if (await this.board.set(obj.name)) {
-      for (city of this.cities.getElements()) city.setPos()
-      for (region of this.regions.getElements()) region.setPos()
-      this.market.setPos()
-    }
+    if (await this.board.set(obj.name)) this.resize()
     this.market.set(obj.market)
     this.cities.set(obj.cities)
     this.paths.set(obj.paths)
     this.regions.set(obj.regions)
+  }
+
+  resize() {
+    this.board.computeSizes()
+    for (city of this.cities.getElements()) city.setPos()
+    for (region of this.regions.getElements()) region.setPos()
+    this.market.setPos()
   }
 
   askMarket(n,q) { this.market.ask(n,q) }
@@ -111,10 +114,15 @@ class BoardMap {
     dom.style.height = b + "px"
   }
 
+  // Note that we don't compute the sizes here, this is done by the caller
   async set(name) {
     if (this.name === name && this.json !== null) return false
     this.name = name
     await this.load()
+    return true
+  }
+
+  computeSizes() {
     // The JSON data is on image which has been scaled
     // to fit in 1920x1080
     const r = this.img.width / this.img.height // r * h = w    
@@ -133,7 +141,6 @@ class BoardMap {
     this.img.style.width = "100%"
     this.scaleX = actualW / normW
     this.scaleY = actualH / normH
-    return true
   }
 }
 

@@ -40,7 +40,7 @@ class Optional {
     this.el = null
   }
 
-  map(f) { if (this.el !== null) f(e) }
+  map(f) { if (this.el !== null) f(this.el) }
 
   getElements() { return this.el === null? [] : [this.el] }
 
@@ -154,7 +154,7 @@ class Tagged {
     }
   }
 
-  map(f) { if (this.val !== nul) f(this.val) } 
+  map(f) { if (this.val !== null) f(this.val) } 
 
   getElement(tag) {
     if (this.tag === tag) return this.val
