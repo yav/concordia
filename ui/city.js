@@ -9,6 +9,9 @@ class City {
     this.workers = new List(() => new PlayerResource(els.workers, [32,32], board))
     this.houses = new List(() => new PlayerResource(els.houses, [32,32], board))
     this.board = board
+    this.tooltip = new Tooltip(dom)
+    this.help = new TooltipEntry(this.tooltip)
+    this.setHelp()
     uiGet("board").appendChild(dom)
   }
 
@@ -18,6 +21,7 @@ class City {
     this.houses.destroy()
     this.dom.remove()
     this.board = null
+    this.tooltip.destroy()
   }
 
   setPos() {
@@ -36,7 +40,7 @@ class City {
     const isNew = this.city === null
     this.city = obj.city
     if (isNew) this.setPos()
-    this.produce.set(obj.produces)
+    if (this.produce.set(obj.produces)) this.setHelp(obj.produces)
     this.workers.set(obj.workers)
     const hs = []
     for (const p of obj.playerHouses) {
@@ -60,6 +64,19 @@ class City {
   select(yes) {
     if (yes) { this.dom.classList.add("selected") }
     else { this.dom.classList.remove("selected") }
+  }
+
+  setHelp(p) {
+    let msg = "Cannot build here"
+    switch (p) {
+      case "Brick": msg = "1 [Money] per [House] + [Wheat]"; break
+      case "Wheat": msg = "2 [Money] per [House] + [Brick] + [Wheat]"; break
+      case "Tool":  msg = "3 [Money] per [House] + [Brick] + [Tool]"; break
+      case "Wine":  msg = "4 [Money] per [House] + [Brick] + [Wine]"; break
+      case "Cloth": msg = "5 [Money] per [House] + [Brick] + [Cloth]"; break
+      case "Salt":  msg = "5 [Money] per [House] + [Tool] + [Wine]"; break
+    }
+    this.help.set(toLogWords(msg))
   }
 
 }

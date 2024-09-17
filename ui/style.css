@@ -503,7 +503,8 @@ body {
   align-items: stretch;
 }
 
-.tooltip .resource-icon {
-  vertical-align: 200px;
-  display: inline-block;
+.tooltip-entry .resource-icon {
+  margin-right: 4px;
 }
+
+

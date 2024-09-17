@@ -54,12 +54,16 @@ class Optional {
       if (x !== null) {
         this.el = this.mk()
         this.el.set(x)
-      }
+        return true
+      } else
+        return false
     } else {
       if (x === null) {
         this.el.destroy()
         this.el = null
-      } else this.el.set(x)
+        return true
+      } else
+        return this.el.set(x)
     }
   }
 }

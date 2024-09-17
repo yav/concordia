@@ -42,12 +42,13 @@ class Resource {
 
   set(x) {
     const xx = x.toLowerCase()
-    if (this.val === xx) return
+    if (this.val === xx) return false
     if (this.val !== null) this.dom.removeClass(this.val)
     this.val = xx
     this.dom.addClass(this.val)
     const tip = x === "magnus"? "Prefectus Magnus": x
     this.dom.setTitle(tip)
+    return true
   }
 
   setSize() { this.dom.setSize() }
