@@ -1,20 +1,26 @@
 
 
+function whenOver(control,msg) {
+  const t = new Toggle(msg,"hidden")
+  control.addEventListener("mouseenter", () => t.set(true))
+  control.addEventListener("mouseleave", () => t.set(false))
+  msg.addEventListener("mouseleave", () => t.set(false))
+}
+
 class CardAction {
-  constructor(owner) {
+  constructor(owner, tooltip) {
     const dom = uiFromTemplate("card-element")
     this.val = null
     this.dom = dom
     this.dom.classList.add("action")
-    this.tooltip = new Tooltip(this.dom)
-    this.help = new TextEntry(this.tooltip)
+    this.help = new TextEntry(tooltip)
+    whenOver(dom, this.help.getDOM())
     this.act = null
     owner.appendChild(dom)
   }
 
   destroy() {
     this.dom.remove()
-    this.tooltip.destroy()
   }
 
   set(x) {
@@ -48,14 +54,14 @@ class CardAction {
     let msg = "TODO"
     switch (this.act.tag) {
       case "Magister":
-        msg = "Activate the top card of your discard pile." +
+        msg = "<div>Activate the top card of your discard pile." +
           "<p>The action has <u>no effect</u> if the top card is <u>Senator</u>, <u>Magister</u>, " + 
-          "or there is no top card.</p>"
+          "or there is no top card.</p></div>"
         break
       case "Diplomat":
-        msg = "Activate the top card of another player's discard pile."
+        msg = "<div>Activate the top card of another player's discard pile."
         msg += "<p>May not choose another <u>Diplomat</u>. "
-        msg += "The action has no effect if there are no valid targets."
+        msg += "The action has no effect if there are no valid targets.</p></div>"
         break
  
     }
@@ -63,25 +69,24 @@ class CardAction {
   }
 
   ask(q) {
-    gui.quest.existing(this.dom,q)
+    gui.quest.existing(this.dom,this.tooltip, q)
   }
 }
 
 
 class CardType {
-  constructor(owner) {
+  constructor(owner, tooltip) {
     const [dom,els] = uiFromTemplateNested("card-type")
     this.val      = null
     this.dom      = dom
     this.score    = new Text(els.card_score, true)
     this.lab      = els.card_type_name
-    this.tooltip  = new Tooltip(dom)
-    this.help     = new TextEntry(this.tooltip)
+    this.help     = new TextEntry(tooltip)
+    whenOver(dom, this.help.getDOM())
     owner.appendChild(dom)
   }
   destroy() {
     this.dom.remove()
-    this.tooltip.destroy()
   }
   set([x,v]) {
     const vv = v < 0? "?" : v.toString()
@@ -150,8 +155,9 @@ class Card {
   constructor(owner) {
     const [dom,els] = uiFromTemplateNested("card-template")
     this.dom = dom
-    this.acts = new List(() => new CardAction(els.card_header))
-    this.gods = new List(() => new CardType(els.card_footer))
+    this.tooltip = new Tooltip(dom)
+    this.acts = new List(() => new CardAction(els.card_header,this.tooltip))
+    this.gods = new List(() => new CardType(els.card_footer,this.tooltip))
     owner.appendChild(dom)
   }
 
@@ -164,6 +170,7 @@ class Card {
     this.acts.destroy()
     this.gods.destroy()
     this.dom.remove()
+    this.tooltip.destroy()
   }
 
   askAct(act,q) {
@@ -171,7 +178,7 @@ class Card {
   }
 
   ask(q) {
-    gui.quest.existing(this.dom,q)
+    gui.quest.existing(this.dom,this.tooltip,q)
   }
 
 }

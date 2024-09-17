@@ -22,7 +22,7 @@ class GUI {
     this.log.set(obj.logMessages)
     this.hand.set(obj.hand)
     this.score.set(obj.finished) 
-    this.version.set("v." + obj.version)
+    this.version.set("version: " + obj.version)
   }
 
   destroy() {

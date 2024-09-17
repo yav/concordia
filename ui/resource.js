@@ -27,7 +27,7 @@ class DOMNode {
   setTitle(txt) { this.desc.set(txt) }
 
   destroy() { this.desc.destroy(); this.dom.remove() }
-  ask(q) { gui.quest.existing(this.dom,q) }
+  ask(q) { gui.quest.existing(this.dom,this.desc,q) }
 }
 
 class Resource {

@@ -3,4 +3,4 @@ module Version where
 import Data.Text(Text)
 
 version :: Text
-version = "077c932"
+version = "dcf70d8"

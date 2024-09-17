@@ -12,7 +12,10 @@ class Tooltip {
 
   clear() { this.dom.innerHTML = "" }
 
-  add(ch) { this.dom.appendChild(ch) }
+  add(ch, front=false) { 
+    if (front) this.dom.prepend(ch)
+    else this.dom.append(ch)
+  }
 
   show() {
     const loc = this.el.getBoundingClientRect();
@@ -30,9 +33,9 @@ class Tooltip {
 }
 
 class TextEntry  {
-  constructor(tp) {
+  constructor(tp, front = false) {
     const dom = uiFromTemplate("tooltip-entry")
-    tp.add(dom)
+    tp.add(dom, front)
     this.dom = dom
   }
   setHTML(x) {
@@ -43,11 +46,11 @@ class TextEntry  {
 
 
 class TooltipEntry extends List {
-  constructor(tp) {
+  constructor(tp, front) {
     const dom = uiFromTemplate("tooltip-entry")
     super(() => new LogWord(dom,undefined))
     this.dom = dom
-    tp.add(dom)
+    tp.add(dom, front)
   }
 
   destroy() {

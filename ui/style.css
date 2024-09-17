@@ -180,7 +180,7 @@ body {
 }
 
 .log-word {
-  display: inline-block;
+  display: inline;
   margin-right: 4px;
 }
 
@@ -488,6 +488,8 @@ body {
 .tooltip-container {
   position: fixed;
   z-index: 10;
+  display: flex;
+  flex-direction: column;
 }
 .tooltip-entry {
   background-color: white;
@@ -496,7 +498,8 @@ body {
   border: 1px solid black;
   padding: 2px;
   max-width: 15em;
-  display: inline-flex;
+  display: flex;
+  flex-wrap: wrap;
   align-items: stretch;
 }
 

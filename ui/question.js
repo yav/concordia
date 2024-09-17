@@ -18,11 +18,16 @@ class Question {
     this.reset()
     conn.sendJSON({tag: "undo"})
   } 
-  existing(dom,q) {
+  existing(dom,tooltip,q) {
+    const help = tooltip === undefined? new Tooltip(dom) : tooltip
+    const ent = new TooltipEntry(help, true)
+    ent.set(toLogWords(q.chHelp))
     const h = () => this.resolve(q)
     this.register(() => {
       dom.removeEventListener("click",h)
       dom.classList.remove("clickable")
+      ent.destroy()
+      if (tooltip === undefined) help.destroy()
     })
     dom.addEventListener("click",h)
     dom.classList.add("clickable")
