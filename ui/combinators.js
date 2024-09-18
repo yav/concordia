@@ -96,21 +96,23 @@ class Text {
 
 // Assumes the fields of the object are not changing
 class Record {
-  constructor(obj) {
+  constructor(obj,ord) {
     this.obj = obj
+    this.ord = ord === undefined? Object.keys(obj) : ord
   }
   set(obj) {
-    for (const i in this.obj) {
+
+    for (const i of this.ord) {
       this.obj[i].set(obj[i])
     }
   }
   destroy() {
-    for (const i in this.obj) {
+    for (const i of this.ord) {
       this.obj[i].destroy()
     }
   }
   
-  map(f) { for (const i in this.obj) f(this.obj[i]) }
+  map(f) { for (const i of this.ord) f(this.obj[i]) }
 
   getElement(i) { return this.obj[i] }
 }

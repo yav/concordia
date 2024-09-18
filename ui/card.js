@@ -81,12 +81,16 @@ class CardType {
     this.dom      = dom
     this.score    = new Text(els.card_score, true)
     this.lab      = els.card_type_name
-    this.help     = new TextEntry(tooltip)
+    this.ownTooltip = tooltip === undefined
+    this.toolip     = this.ownTooltip? new Tooltip(dom) : tooltip
+    const tp      = tooltip === undefined? new Tooltip(dom) : tooltip
+    this.help     = new TextEntry(this.toolip)
     whenOver(dom, this.help.getDOM())
     owner.appendChild(dom)
   }
   destroy() {
     this.dom.remove()
+    if (this.ownTooltip) this.toolip.destroy()
   }
   set([x,v]) {
     const vv = v < 0? "?" : v.toString()

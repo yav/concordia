@@ -17,17 +17,23 @@ import Log
 import Score
 import Version qualified as V
 
+
 data View = View
   { hand :: [CardView]
   , playerInfo :: [PlayerView]
   , boardInfo :: BoardView
   , logMessages :: [[LogWord]]
-  , finished :: [(PlayerId,Int)]
+  , finished :: [(PlayerId,PlayerScore)]
   , version :: Text
   } deriving (Generic,ToJSON)
 
 type CardView = CardG (God,Int)
 
+data PlayerScore = PlayerScore
+  { godPoints :: [(God,Int,Int)] -- card number, card value
+  , concordia :: Int
+  , total :: Int
+  } deriving (Generic, ToJSON)
 
 data PlayerView = PlayerView
   { player :: PlayerId
@@ -40,6 +46,7 @@ data PlayerView = PlayerView
   , isCurrent :: Bool
   , isDouble :: Bool
   , triggeredEndGame :: Bool
+  , godScore :: [(God,Int)]
   } deriving (Generic,ToJSON)
 
 data ResourceSpot = Available | HasWorker Worker | HasResource Resource
@@ -76,7 +83,8 @@ stateView pid s = View
   , boardInfo = boardView (s ^. board) (ourVal True)
   , logMessages = reverse (s ^. gameLog)
   , finished = case s ^. gameStatus of
-                 Finished {} -> sortOn (Down . snd) (map totalScore pvs)
+                 Finished {} -> sortOn (Down . total . snd)
+                                       (map totalScore pvs)
                  _ -> []
   , version = V.version
   }
@@ -85,9 +93,24 @@ stateView pid s = View
   ourVal = fromMaybe (addValue (\_ _ -> -1)) (lookup pid godVals)
   (pvs,godVals) = 
     unzip [ playerView pid p s (s ^. playerState p) | p <- after ++ before ]
-  scoreCard c = sum (map snd (cardColor c))
-  totalScore pv = (player pv, sum (map scoreCard (discard pv)) +
-                                   if triggeredEndGame pv then 7 else 0)
+
+
+totalScore :: PlayerView -> (PlayerId, PlayerScore)
+totalScore pv =
+  (player pv, PlayerScore
+  { godPoints = godVs
+  , concordia = conc
+  , total = conc + sum [ n * v | (_,n,v) <- godVs ]
+  })
+  where
+  conc = if triggeredEndGame pv then 7 else 0
+  godVs = [ (g, getCount g, v) | (g,v) <- godScore pv ]
+  getCount g = Map.findWithDefault 0 g godCount
+  godCount = Map.fromListWith (+) (concatMap doCard (discard pv))
+  doCard c = map doGod (cardColor c)
+  doGod (c,_) = (c,1)
+
+  
 
 
 addValue :: (Bool -> God -> Int) -> Bool -> Card -> CardView
@@ -100,13 +123,16 @@ playerView ::
   (PlayerView, (PlayerId, Bool -> Card -> CardView))
 playerView viewBy pid gs s = (vi, (pid, godVal))
   where
-  godVal = addValue (godValue pid Nothing gs)
+  scoreFun = godValue pid Nothing gs
+  godVal = addValue scoreFun
   noVal = addValue (\_ _ -> -1)
   openInfo = case gs ^. gameStatus of
                Finished {} -> True
                _ -> False
   visible = viewBy == pid || openInfo
   thisVal = if visible then godVal False else noVal False
+  allGods = [ Vesta, Jupiter, Saturnus, Venus, Mercurius, Mars ] ++
+            [ Minerva g | g <- [ Brick, Wheat, Tool, Wine, Cloth ] ]
   vi = PlayerView
     { player = pid
     , discardTop = thisVal <$> listToMaybe (s ^. playerDiscard)
@@ -126,6 +152,7 @@ playerView viewBy pid gs s = (vi, (pid, godVal))
         EndTriggeredBy p -> p == pid
         Finished p -> p == pid
         _ -> False
+    , godScore = [ (g, scoreFun False g) | g <- allGods ]
     }
 
 boardView :: BoardState -> (Card -> CardView) -> BoardView

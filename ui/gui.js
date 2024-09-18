@@ -98,29 +98,6 @@ class Hand extends List {
   }
 }
 
-class FinalScore extends List {
-  constructor() {
-    const dom = uiGet("final-score") 
-    super (() => new FinalScoreEntry(dom))
-    this.visible = new Toggle(dom,"hidden")
-    uiGet("final-score-container").appendChild(dom)
-  }
-  set(xs) {
-    const val = xs === null? [] : xs
-    this.visible.set(val.length > 0)
-    super.set(val)
-  }
-}
-
-class FinalScoreEntry extends Tuple {
-  constructor(own) {
-    const [dom,els] = uiFromTemplateNested("final-score-entry")
-    super( [ new Text(els.fs_player, true)
-           , new Text(els.fs_score, true)
-           ] )
-    own.appendChild(dom)
-  }
-}
 
 
 function monitorSize(gui) {
