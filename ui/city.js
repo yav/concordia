@@ -56,7 +56,7 @@ class City {
   }
 
   ask(q) {
-    gui.quest.existing(this.dom,undefined,q)
+    gui.quest.existing(this.dom,this.tooltip,q)
   }
 
   is(city) { return this.city === city }
