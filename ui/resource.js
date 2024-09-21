@@ -47,7 +47,9 @@ class Resource {
     this.val = xx
     this.dom.addClass(this.val)
     const tip = x === "magnus"? "Prefectus Magnus": x
-    this.dom.setTitle(tip)
+    const prices = { "Brick": 3, "Wheat": 4, "Tool": 5, "Wine": 6, "Cloth": 7 }
+    const p = prices[x]
+    this.dom.setTitle(p == undefined? tip : tip + " (cost: " + p + ")")
     return true
   }
 

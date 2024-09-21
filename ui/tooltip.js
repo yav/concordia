@@ -57,6 +57,8 @@ class TooltipEntry extends List {
     super.destroy()
     this.dom.remove()
   }
+
+  getDOM() { return this.dom }
 }
 
 

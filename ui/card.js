@@ -2,9 +2,17 @@
 
 function whenOver(control,msg) {
   const t = new Toggle(msg,"hidden")
-  control.addEventListener("mouseenter", () => t.set(true))
-  control.addEventListener("mouseleave", () => t.set(false))
-  msg.addEventListener("mouseleave", () => t.set(false))
+  function show() { t.set(true) }
+  function hide() { t.set(false) }
+
+  control.addEventListener("mouseenter", show)
+  control.addEventListener("mouseleave", hide)
+  msg.addEventListener("mouseleave", hide)
+  return () => {
+    control.removeEventListener("mouseenter", show);
+    control.removeEventListener("mouseleave",hide)
+    msg.removeEventListener("mouseleave", hide)
+  }
 }
 
 class CardAction {
@@ -14,6 +22,7 @@ class CardAction {
     this.dom = dom
     this.dom.classList.add("action")
     this.help = new TextEntry(tooltip)
+    this.tooltip = tooltip
     whenOver(dom, this.help.getDOM())
     this.act = null
     owner.appendChild(dom)
@@ -51,21 +60,130 @@ class CardAction {
 
   setHelp() {
     if (this.act === null) return
-    let msg = "TODO"
+
+    const top = this.help.getDOM()
+    top.innerHTML = ""
+    const dom = [top]
+    
+
+    function push(tag) { dom.push(document.createElement(tag)) }
+    function cur() { return dom[dom.length-1] }
+    function pop() { const d = dom.pop(); cur().appendChild(d)   }
+    function hl(t) { push("u"); text(t); pop() }
+    function sep(tag) { cur().appendChild(document.createElement(tag)) }
+    function next() {
+      pop()
+      const d = document.createElement("div")
+      d.style.marginTop = "1ex"
+      dom.push(d)
+    }
+    function list() {
+      const d = document.createElement("ol")
+      d.setAttribute("type","i")
+      d.style.marginLeft = "-2em"
+      dom.push(d);
+    }
+
+    function text(t) { cur().appendChild(document.createTextNode(t)) }
+    function res(r) { new Resource(cur(),[14,14]).set(r) }
+    function pres(r) { new PlayerResource(cur(),[14,14]).set({player: conn.playerId,thing:r})}
+    function m() { res("Money"); }
+    function w() { pres("person"); text("/ "); pres("ship") }
+    function h() { pres("house") }
+  
+    push("div")
     switch (this.act.tag) {
       case "Magister":
-        msg = "<div>Activate the top card of your discard pile." +
-          "<p>The action has <u>no effect</u> if the top card is <u>Senator</u>, <u>Magister</u>, " + 
-          "or there is no top card.</p></div>"
+        text("Activate the top card of your discard pile.")
+        next()
+        text("No effect if the activated card is ")
+        hl("Senator"); text(", "); hl("Magister")
+        text(", or there is no top card.")
         break
       case "Diplomat":
-        msg = "<div>Activate the top card of another player's discard pile."
-        msg += "<p>May not choose another <u>Diplomat</u>. "
-        msg += "The action has no effect if there are no valid targets.</p></div>"
+        text("Activate the top card of another player's discard pile.")
+        next()
+        text("May not choose another "); hl("Diplomat"); text(".")
         break
- 
+      case "Tribune":
+        list()
+        push("li"); text("Take the cards from your discard to your hand."); pop()
+        push("li"); text("Gain 1"); res("Money")
+        text(" for each card you took, in excess of 3."); pop()
+        push("li"); text("May deploy "); w(); text("in the Capital for ")
+        res("wheat"); text("+"); res("tool"); pop()
+        pop()
+        break
+      case "Prefect":
+        hl("Resource Province")
+        list()
+        push("li"); text("Gain the resource"); pop()
+        push("li"); res("magnus");
+        text(": gain the resource again, then ");
+        res("magnus");
+        text("passes to the previous player."); pop()
+        push("li"); hl("All"); text (" players gain "); hl("city");
+        text(" resources for their "); res("house"); text("in the province")
+        pop()
+        push("li"); text("Province switches to"); m(); pop()
+        pop()
+
+        push("u"); res("Money"); text ("Province"); pop()
+        list()
+        push("li"); text("Gain "); res("Money");
+        text("for "); hl("all"); m(); text("provinces"); pop()
+        push("li"); text("All provinces switch to resource"); pop()
+        pop()
+        break
+      case "Senator":
+        text("Buy up to 2 cards from the market")
+        break
+
+      case "Architect":
+        list()
+        push("li"); text("Up to "); hl("N"); text(" times:"); sep("br");
+        text("move a "); w(); text("to an adjacent path"); sep("br");
+        hl("N"); text(" is the number of deployed "); w(); pop()
+        
+        push("li"); text("Any number of times:");
+        sep("br"); text("Build "); h(); text(" next to "); w();
+        pop()
+        pop()
+        break
+      
+      case "Mercator":
+        list()
+        push("li"); text("Gain " + this.act.contents + " "); m(); pop()
+        push("li"); text("Up to 2 times:"); sep("br")
+        text("buy/sell any number of 1 resource"); pop()
+        pop()
+        break
+
+      case "Specialist":
+        text("Gain 1 "); res(this.act.contents);
+        text("for each "); h(); text("in a "); res(this.act.contents); text("city")
+        break
+
+      case "Colonist":
+        switch(this.act.contents) {
+          case "Settle":
+            text("Build "); w(); text("in a city with "); h()
+            text(" or the Capital"); next()
+            text("Cost: "); res("wheat"); text("+"); res("tool")
+            next(); text("May repeat any number of times")
+            break
+          case "Tax":
+            list()
+            push("li"); text("Gain 5 "); m(); pop()
+            push("li"); text("Gain 1 "); m(); text("per deployed "); w(); pop()
+            pop()
+            break
+        }
+        break
+      default:
+        text("TODO")
     }
-    this.help.setHTML(msg)
+    pop()
   }
 
   ask(q) {
