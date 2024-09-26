@@ -15,7 +15,7 @@ rm -rf "$DIR"
 mkdir -p "$DIR"
 cp $(cabal exec which concordia) $DIR
 ln -s "$PWD/ui" $DIR
-# upx "$DIR/concordia"
+upx "$DIR/concordia"
 rm -f "$DIR/save_*"
 
 
