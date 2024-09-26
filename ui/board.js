@@ -127,14 +127,11 @@ class BoardMap {
     // to fit in 1920x1080
     const r = this.img.width / this.img.height // r * h = w    
     const normW1 = r * 1080
-    let normW = 0
-    let normH = 0
-    if (normW1 > 1920) {
+    let normW = 1920
+    let normH = normW / r
+    if (normH > 1080) {
       normH = 1080
       normW = r * normH
-    } else {
-      normW = normW1
-      normH = normW / r
     }
     const actualW = 0.8 * document.body.clientWidth
     const actualH = actualW / r
