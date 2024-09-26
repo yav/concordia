@@ -174,24 +174,40 @@ actPrefect pid =
              fromMaybe 0
              do bonus <- Map.lookup r bonuses
                 pure (bonus ^. rbMoney)
-       let amt = sum (map fromRegion done)
+       extra <- the (board % mapExtraMoneyBonus)
+       let amt = sum (map fromRegion done) + extra
        doChangeMoney pid amt
        doLogBy' pid [T "Gained", tSh amt, M, T "from Prefect"] 
        setThe (board % mapPrefected) []
 
   getPrefectBonus r =
     do rbs <- the (board % mapRegionBonus)
-       case view rbResource =<< Map.lookup r rbs of
+       case Map.lookup r rbs of
          Nothing -> pure mempty
-         Just rsr ->
-           do pm <- the playerDoubleBonus
-              amt <- if pid == pm
-                          then
-                            do order <- the playerOrder
-                               setThe playerDoubleBonus (playerBefore order pid)
-                               pure 2
-                          else pure 1
-              pure (Map.singleton pid (bagFromList (replicate amt rsr)))
+         Just bonus ->
+           case bonus ^. rbResource of
+              NoBonus -> pure mempty
+              VariableBonus ->
+                askInputs pid "Choose bonus"
+                  [ ( AskTextResource "Bonus" rsr
+                    , "Prefect bonus"
+                    , do let m = Map.findWithDefault 0 rsr resourcePrefectMoney
+                         setThe (board % mapRegionBonus % ix r % rbMoney) m
+                         resourceBonus rsr
+                    )
+                  | rsr <- [ Brick, Wheat, Tool, Wine, Cloth ]
+                  ]
+              ResourceBonus rsr -> resourceBonus rsr
+        where
+        resourceBonus rsr =
+          do pm <- the playerDoubleBonus
+             amt <- if pid == pm
+                         then
+                           do order <- the playerOrder
+                              setThe playerDoubleBonus (playerBefore order pid)
+                              pure 2
+                         else pure 1
+             pure (Map.singleton pid (bagFromList (replicate amt rsr)))
 
   getGoods r =
     do doLogBy' pid [T "Prfect in", RID r]

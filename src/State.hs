@@ -37,6 +37,7 @@ data BoardState = BoardState
   , _mapCityWorkers  :: !(Map CityId (Bag (WithPlayer Worker)))
   , _mapPathWorkers  :: !(Map PathId (WithPlayer Worker))
   , _mapRegionBonus  :: !(Map RegionId RegionBonus)
+  , _mapExtraMoneyBonus :: !Int
   , _mapProduces     :: !(Map CityId Resource)
   , _mapPrefected    :: ![ RegionId ]
   , _marketLayout    :: ![ [ResourceCost] ]
@@ -45,9 +46,12 @@ data BoardState = BoardState
   }
 
 data RegionBonus = RegionBonus
-  { _rbResource :: Maybe Resource
+  { _rbResource :: BonusChoice
   , _rbMoney    :: Int
   }
+
+data BonusChoice = NoBonus | VariableBonus | ResourceBonus Resource
+
 
 data GameStatus = InProgress | EndTriggeredBy PlayerId | Finished PlayerId
 

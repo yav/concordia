@@ -32,6 +32,7 @@ getConfig :: Options -> [PlayerId] -> Config
 getConfig opts ps = 
   Config
     { cfgPlayerOrder        = ps
+    , cfgMapName            = getBoard opts
     , cfgMap                = mapData (getBoard opts)
     , cfgCityTiles          = if getSalt opts then cityTilesWithSalt
                                               else cityTiles

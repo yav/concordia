@@ -11,7 +11,8 @@ import Optics
 import KOI.Basics
 import KOI.Bag
 import Static
-import State
+import State hiding (BonusChoice(..))
+import State qualified
 import Types
 import Log
 import Score
@@ -67,7 +68,7 @@ data CityView = CityView
   , workers       :: [WithPlayer Worker]
   } deriving (Generic,ToJSON)
 
-data RegionState = NoBonus | Goods Resource | Money Int
+data RegionState = NoBonus | Variable | Goods Resource | Money Int
   deriving (Generic,ToJSON)
 
 data MarketSpot = MarketSpot
@@ -191,6 +192,7 @@ regionView s =
   rstate rid bon
     | rid `elem` pref = Money (bon ^. rbMoney)
     | otherwise = case bon ^. rbResource of
-                    Nothing -> NoBonus
-                    Just r  -> Goods r
+                    State.NoBonus -> NoBonus
+                    State.ResourceBonus r -> Goods r
+                    State.VariableBonus -> Variable
 
