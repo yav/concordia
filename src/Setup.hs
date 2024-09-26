@@ -75,14 +75,18 @@ setupBoard cfg =
      shuffled <- mapM shuffle decks
      let cityProd = snd (Map.foldlWithKey' pickTile (tiles,mempty)
                         (layout ^. mapCities))
+     let cityNum =
+            let add acc c = Map.insertWith (+) (c ^. cityRegion) (1::Int) acc
+                mp = Map.foldl' add mempty (layout ^. mapCities)
+             in \rid -> Map.findWithDefault 0 rid mp
 
      let regBonus mp cid city =
           fromMaybe mp
           do resource <- Map.lookup cid cityProd
              cost     <- Map.lookup resource resourceCost
-             let bigger (m,(res1,cost1)) (n,(res2,cost2)) =
-                   (m+n,if cost1 > cost2 then (res1,cost1) else (res2,cost2))
-             pure (Map.insertWith bigger (city ^. cityRegion) (1::Int,(resource,cost)) mp)
+             let bigger (res1,cost1) (res2,cost2) =
+                   if cost1 > cost2 then (res1,cost1) else (res2,cost2)
+             pure (Map.insertWith bigger (city ^. cityRegion) (resource,cost) mp)
 
      pure BoardState
        { _mapLayout       = layout
@@ -92,14 +96,14 @@ setupBoard cfg =
                               (foldr addStartWorker bagEmpty ps)
        , _mapPathWorkers  = mempty
        , _mapRegionBonus  =
-          let mk (n,(r,_)) =
-               if cfgMapName cfg == Crete && n == 1
+          let mk rid (r,_) =
+               if cfgMapName cfg == Crete && cityNum rid == 1
                 then RegionBonus { _rbResource = VariableBonus, _rbMoney = 0 }
                 else
                 RegionBonus { _rbResource = ResourceBonus r
                             , _rbMoney = Map.findWithDefault 0 r
                                                         resourcePrefectMoney }
-          in mk <$>  Map.foldlWithKey' regBonus mempty (layout ^. mapCities)
+          in Map.mapWithKey mk (Map.foldlWithKey' regBonus mempty (layout ^. mapCities))
        , _mapProduces     = cityProd
        , _mapPrefected    = []
        , _marketLayout    = cfgMarket cfg
