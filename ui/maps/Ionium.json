@@ -1,32 +1,1089 @@
 {
   "map": "Ionium",
-  "next_region": 1,
-  "next_city": 1,
-  "next_edge": 0,
+  "next_region": 12,
+  "next_city": 31,
+  "next_edge": 76,
   "region": {
-    "0": "#ff0"
+    "0": "#ff0",
+    "1": "#633",
+    "2": "#096",
+    "3": "#060",
+    "4": "#c60",
+    "5": "#669",
+    "6": "#999",
+    "7": "#fcc",
+    "8": "#c36",
+    "9": "#393",
+    "10": "#600",
+    "11": "#99c"
   },
   "city": {
     "0": {
       "cityTile": "X",
       "cityRegion": 0
+    },
+    "1": {
+      "cityTile": "B",
+      "cityRegion": 1
+    },
+    "2": {
+      "cityTile": "B",
+      "cityRegion": 1
+    },
+    "3": {
+      "cityTile": "B",
+      "cityRegion": 1
+    },
+    "4": {
+      "cityTile": "B",
+      "cityRegion": 9
+    },
+    "5": {
+      "cityTile": "B",
+      "cityRegion": 9
+    },
+    "6": {
+      "cityTile": "B",
+      "cityRegion": 10
+    },
+    "7": {
+      "cityTile": "B",
+      "cityRegion": 10
+    },
+    "8": {
+      "cityTile": "B",
+      "cityRegion": 10
+    },
+    "9": {
+      "cityTile": "D",
+      "cityRegion": 0
+    },
+    "10": {
+      "cityTile": "D",
+      "cityRegion": 0
+    },
+    "11": {
+      "cityTile": "D",
+      "cityRegion": 11
+    },
+    "12": {
+      "cityTile": "D",
+      "cityRegion": 11
+    },
+    "13": {
+      "cityTile": "D",
+      "cityRegion": 11
+    },
+    "14": {
+      "cityTile": "C",
+      "cityRegion": 3
+    },
+    "15": {
+      "cityTile": "C",
+      "cityRegion": 3
+    },
+    "16": {
+      "cityTile": "C",
+      "cityRegion": 7
+    },
+    "17": {
+      "cityTile": "C",
+      "cityRegion": 7
+    },
+    "18": {
+      "cityTile": "C",
+      "cityRegion": 7
+    },
+    "19": {
+      "cityTile": "C",
+      "cityRegion": 6
+    },
+    "20": {
+      "cityTile": "C",
+      "cityRegion": 6
+    },
+    "21": {
+      "cityTile": "c",
+      "cityRegion": 5
+    },
+    "22": {
+      "cityTile": "C",
+      "cityRegion": 5
+    },
+    "23": {
+      "cityTile": "C",
+      "cityRegion": 5
+    },
+    "24": {
+      "cityTile": "A",
+      "cityRegion": 2
+    },
+    "25": {
+      "cityTile": "A",
+      "cityRegion": 2
+    },
+    "26": {
+      "cityTile": "A",
+      "cityRegion": 4
+    },
+    "27": {
+      "cityTile": "A",
+      "cityRegion": 4
+    },
+    "28": {
+      "cityTile": "A",
+      "cityRegion": 4
+    },
+    "29": {
+      "cityTile": "A",
+      "cityRegion": 8
+    },
+    "30": {
+      "cityTile": "A",
+      "cityRegion": 8
     }
   },
-  "edge": {},
+  "edge": {
+    "0": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 3,
+      "pathTo": 2
+    },
+    "1": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 3,
+      "pathTo": 1
+    },
+    "2": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 2,
+      "pathTo": 1
+    },
+    "3": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 1,
+      "pathTo": 5
+    },
+    "4": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 2,
+      "pathTo": 4
+    },
+    "5": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 2,
+      "pathTo": 8
+    },
+    "6": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 4,
+      "pathTo": 8
+    },
+    "7": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 1,
+      "pathTo": 26
+    },
+    "8": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 1,
+      "pathTo": 5
+    },
+    "9": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 2,
+      "pathTo": 6
+    },
+    "10": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 2,
+      "pathTo": 6
+    },
+    "11": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 6,
+      "pathTo": 7
+    },
+    "12": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 6,
+      "pathTo": 8
+    },
+    "13": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 6,
+      "pathTo": 7
+    },
+    "14": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 6,
+      "pathTo": 8
+    },
+    "15": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 8,
+      "pathTo": 4
+    },
+    "16": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 4,
+      "pathTo": 5
+    },
+    "17": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 5,
+      "pathTo": 30
+    },
+    "18": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 7,
+      "pathTo": 11
+    },
+    "19": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 8,
+      "pathTo": 11
+    },
+    "20": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 8,
+      "pathTo": 29
+    },
+    "21": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 8,
+      "pathTo": 30
+    },
+    "22": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 30,
+      "pathTo": 29
+    },
+    "23": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 30,
+      "pathTo": 29
+    },
+    "24": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 30,
+      "pathTo": 26
+    },
+    "25": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 30,
+      "pathTo": 26
+    },
+    "26": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 30,
+      "pathTo": 24
+    },
+    "27": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 26,
+      "pathTo": 27
+    },
+    "28": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 29,
+      "pathTo": 25
+    },
+    "29": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 29,
+      "pathTo": 9
+    },
+    "30": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 29,
+      "pathTo": 9
+    },
+    "31": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 9,
+      "pathTo": 10
+    },
+    "32": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 9,
+      "pathTo": 11
+    },
+    "33": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 9,
+      "pathTo": 11
+    },
+    "34": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 9,
+      "pathTo": 10
+    },
+    "35": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 9,
+      "pathTo": 0
+    },
+    "36": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 10,
+      "pathTo": 25
+    },
+    "37": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 10,
+      "pathTo": 0
+    },
+    "38": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 0,
+      "pathTo": 12
+    },
+    "39": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 11,
+      "pathTo": 12
+    },
+    "40": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 11,
+      "pathTo": 13
+    },
+    "41": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 11,
+      "pathTo": 12
+    },
+    "42": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 12,
+      "pathTo": 13
+    },
+    "43": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 12,
+      "pathTo": 0
+    },
+    "44": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 0,
+      "pathTo": 13
+    },
+    "45": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 0,
+      "pathTo": 16
+    },
+    "46": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 0,
+      "pathTo": 24
+    },
+    "47": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 27,
+      "pathTo": 28
+    },
+    "48": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 27,
+      "pathTo": 24
+    },
+    "49": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 24,
+      "pathTo": 18
+    },
+    "50": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 24,
+      "pathTo": 21
+    },
+    "51": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 24,
+      "pathTo": 21
+    },
+    "52": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 28,
+      "pathTo": 22
+    },
+    "53": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 28,
+      "pathTo": 21
+    },
+    "54": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 21,
+      "pathTo": 22
+    },
+    "55": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 21,
+      "pathTo": 17
+    },
+    "56": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 21,
+      "pathTo": 17
+    },
+    "57": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 22,
+      "pathTo": 17
+    },
+    "58": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 22,
+      "pathTo": 23
+    },
+    "59": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 17,
+      "pathTo": 18
+    },
+    "60": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 17,
+      "pathTo": 18
+    },
+    "61": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 17,
+      "pathTo": 20
+    },
+    "62": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 17,
+      "pathTo": 23
+    },
+    "63": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 23,
+      "pathTo": 20
+    },
+    "64": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 18,
+      "pathTo": 20
+    },
+    "65": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 18,
+      "pathTo": 16
+    },
+    "66": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 18,
+      "pathTo": 16
+    },
+    "67": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 20,
+      "pathTo": 19
+    },
+    "68": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 16,
+      "pathTo": 19
+    },
+    "69": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 16,
+      "pathTo": 14
+    },
+    "70": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 19,
+      "pathTo": 15
+    },
+    "71": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 14,
+      "pathTo": 15
+    },
+    "72": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 15,
+      "pathTo": 13
+    },
+    "73": {
+      "pathWorker": "Ship",
+      "pathCanStop": true,
+      "pathFrom": 14,
+      "pathTo": 13
+    },
+    "74": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 25,
+      "pathTo": 24
+    },
+    "75": {
+      "pathWorker": "Person",
+      "pathCanStop": true,
+      "pathFrom": 4,
+      "pathTo": 5
+    }
+  },
   "loc": {
     "region": {
       "0": [
-        390,
-        932.3333282470703
+        388,
+        930.2333374023438
+      ],
+      "1": [
+        298,
+        783.5333251953125
+      ],
+      "2": [
+        507,
+        731.5333251953125
+      ],
+      "3": [
+        534,
+        926.5333251953125
+      ],
+      "4": [
+        439,
+        729.5333251953125
+      ],
+      "5": [
+        577,
+        743.5333251953125
+      ],
+      "6": [
+        597,
+        809.5333251953125
+      ],
+      "7": [
+        599,
+        876.5333251953125
+      ],
+      "8": [
+        368,
+        743.5333251953125
+      ],
+      "9": [
+        299,
+        854.5333251953125
+      ],
+      "10": [
+        316,
+        927.5333251953125
+      ],
+      "11": [
+        461,
+        932.5333251953125
       ]
     },
     "city": {
       "0": [
-        910,
-        604.3333282470703
+        890,
+        559.7666625976562
+      ],
+      "1": [
+        227,
+        212.53334045410156
+      ],
+      "2": [
+        114,
+        294.53334045410156
+      ],
+      "3": [
+        117,
+        155.53334045410156
+      ],
+      "4": [
+        276,
+        340.3333282470703
+      ],
+      "5": [
+        380,
+        277.3333282470703
+      ],
+      "6": [
+        201,
+        577
+      ],
+      "7": [
+        188,
+        724
+      ],
+      "8": [
+        336,
+        469
+      ],
+      "9": [
+        700,
+        543.5333251953125
+      ],
+      "10": [
+        787,
+        498.5333251953125
+      ],
+      "11": [
+        711,
+        646.5333251953125
+      ],
+      "12": [
+        815,
+        712.5333251953125
+      ],
+      "13": [
+        1054,
+        863.5333251953125
+      ],
+      "14": [
+        1269,
+        716.5333251953125
+      ],
+      "15": [
+        1373,
+        732.5333251953125
+      ],
+      "16": [
+        1190,
+        538.5333251953125
+      ],
+      "17": [
+        1102,
+        279.96665954589844
+      ],
+      "18": [
+        1159,
+        413.96665954589844
+      ],
+      "19": [
+        1353,
+        527.2666625976562
+      ],
+      "20": [
+        1304,
+        289.26666259765625
+      ],
+      "21": [
+        965,
+        187.3333282470703
+      ],
+      "22": [
+        1067,
+        90.16667175292969
+      ],
+      "23": [
+        1305,
+        144.1666717529297
+      ],
+      "24": [
+        787,
+        262.1666717529297
+      ],
+      "25": [
+        760,
+        374.03334045410156
+      ],
+      "26": [
+        509,
+        126.16667175292969
+      ],
+      "27": [
+        714,
+        104.16667175292969
+      ],
+      "28": [
+        877,
+        93.16667175292969
+      ],
+      "29": [
+        634,
+        437.1666717529297
+      ],
+      "30": [
+        503,
+        267.1666717529297
       ]
     },
-    "edge": {},
+    "edge": {
+      "0": [
+        92,
+        253.3333282470703
+      ],
+      "1": [
+        190,
+        224.3333282470703
+      ],
+      "2": [
+        183,
+        267.3333282470703
+      ],
+      "3": [
+        320,
+        305.3333282470703
+      ],
+      "4": [
+        215,
+        334.3333282470703
+      ],
+      "5": [
+        222,
+        403.3333282470703
+      ],
+      "6": [
+        271,
+        445.3333282470703
+      ],
+      "7": [
+        362,
+        166.3333282470703
+      ],
+      "8": [
+        324,
+        256.3333282470703
+      ],
+      "9": [
+        111,
+        494.3333282470703
+      ],
+      "10": [
+        195,
+        458.3333282470703
+      ],
+      "11": [
+        137,
+        712.8666687011719
+      ],
+      "12": [
+        281,
+        547.8666687011719
+      ],
+      "13": [
+        207,
+        681.8666687011719
+      ],
+      "14": [
+        313,
+        634.8666687011719
+      ],
+      "15": [
+        312,
+        431.8666687011719
+      ],
+      "16": [
+        433,
+        424.8666687011719
+      ],
+      "17": [
+        454,
+        276.3333282470703
+      ],
+      "18": [
+        420,
+        664.3999938964844
+      ],
+      "19": [
+        477,
+        622.3999938964844
+      ],
+      "20": [
+        490,
+        522.3999938964844
+      ],
+      "21": [
+        458,
+        454.3999938964844
+      ],
+      "22": [
+        504,
+        443.3999938964844
+      ],
+      "23": [
+        571,
+        392.3999938964844
+      ],
+      "24": [
+        473,
+        228.3333282470703
+      ],
+      "25": [
+        558,
+        225.3333282470703
+      ],
+      "26": [
+        658,
+        307.3333282470703
+      ],
+      "27": [
+        627,
+        137.3333282470703
+      ],
+      "28": [
+        713,
+        419.3333282470703
+      ],
+      "29": [
+        672,
+        533.3333282470703
+      ],
+      "30": [
+        621,
+        568.3333282470703
+      ],
+      "31": [
+        755,
+        523.1000061035156
+      ],
+      "32": [
+        689,
+        630.1000061035156
+      ],
+      "33": [
+        650,
+        642.1000061035156
+      ],
+      "34": [
+        793,
+        579.5333404541016
+      ],
+      "35": [
+        793,
+        626.5333404541016
+      ],
+      "36": [
+        784,
+        462.53334045410156
+      ],
+      "37": [
+        857,
+        553.1000061035156
+      ],
+      "38": [
+        831,
+        654.5333404541016
+      ],
+      "39": [
+        772,
+        735.1000061035156
+      ],
+      "40": [
+        792,
+        879.1000061035156
+      ],
+      "41": [
+        750,
+        797.1000061035156
+      ],
+      "42": [
+        901,
+        840.1000061035156
+      ],
+      "43": [
+        891,
+        736.1000061035156
+      ],
+      "44": [
+        958,
+        768.1000061035156
+      ],
+      "45": [
+        1053,
+        676.1000061035156
+      ],
+      "46": [
+        956,
+        510.1000061035156
+      ],
+      "47": [
+        810,
+        140.5
+      ],
+      "48": [
+        753,
+        210.5
+      ],
+      "49": [
+        983,
+        416.5
+      ],
+      "50": [
+        940,
+        356.5
+      ],
+      "51": [
+        888,
+        249.5
+      ],
+      "52": [
+        987,
+        108.5
+      ],
+      "53": [
+        917,
+        193.5
+      ],
+      "54": [
+        1026,
+        150.5
+      ],
+      "55": [
+        1046,
+        268.5
+      ],
+      "56": [
+        1075,
+        229.5
+      ],
+      "57": [
+        1140,
+        198.5
+      ],
+      "58": [
+        1210,
+        137.5
+      ],
+      "59": [
+        1062,
+        392.5
+      ],
+      "60": [
+        1162,
+        370.5
+      ],
+      "61": [
+        1215,
+        307.5
+      ],
+      "62": [
+        1235,
+        229.5
+      ],
+      "63": [
+        1400,
+        235.5
+      ],
+      "64": [
+        1268,
+        413.5
+      ],
+      "65": [
+        1108,
+        550.5
+      ],
+      "66": [
+        1221,
+        502.5
+      ],
+      "67": [
+        1385,
+        427.5
+      ],
+      "68": [
+        1288,
+        559.1666870117188
+      ],
+      "69": [
+        1202,
+        689.1666870117188
+      ],
+      "70": [
+        1389,
+        648.1666870117188
+      ],
+      "71": [
+        1340,
+        732.1666870117188
+      ],
+      "72": [
+        1315,
+        887.1666870117188
+      ],
+      "73": [
+        1199,
+        814.1666870117188
+      ],
+      "74": [
+        752,
+        340.53334045410156
+      ],
+      "75": [
+        339,
+        340.53334045410156
+      ]
+    },
     "market": {
       "TL": [
         8,
