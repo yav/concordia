@@ -82,6 +82,10 @@ button {
   height: 32px;
 }
 
+.non-stop {
+  border: 5px dashed black !important;
+}
+
 .Ship {
   background-image: url("ship.svg");
 }
@@ -284,18 +288,21 @@ function newCity(info, exist) {
   controls.appendChild(makeWater)
 }
 
-function newEdge(ty, from, to, exist) {
+function newEdge(ty, from, to, stop, exist) {
   const id = exist === undefined? state.next_edge++ : exist
   const [dom,controls] = newComponent(id, "edge")
   dom.classList.add(ty)
 
 
   state.edge[id] = { pathWorker: ty,
-                     pathCanStop: true,
+                     pathCanStop: stop === undefined? true : stop,
                      pathFrom: from,
                      pathTo: to === undefined? from : to }
   if (state.edge[id].pathFrom === state.edge[id].pathTo) {
     dom.classList.add("partial")
+  }
+  if (!state.edge[id].pathCanStop) {
+    dom.classList.add("non-stop")
   }
   function update(what) {
     return (c) => {
@@ -304,6 +311,11 @@ function newEdge(ty, from, to, exist) {
         dom.classList.add("partial")
       } else {
         dom.classList.remove("partial")
+      }
+      if (!state.edge[id].pathCanStop) {
+        dom.classList.add("non-stop")
+      } else {
+        dom.classList.remove("non-stop")
       }
     }
   }
@@ -327,6 +339,12 @@ function newEdge(ty, from, to, exist) {
   changeTo.textContent = "Change City 2"
   changeTo.addEventListener("click", () => ask("city", update("pathTo")))
   controls.appendChild(changeTo)
+
+  const canStop = document.createElement("input")
+  canStop.setAttribute("type","checkbox")
+  canStop.checked = state.edge[id].pathCanStop
+  addEventListener("change", () => update("pathCanStop")(canStop.checked))
+  controls.appendChild(canStop)
 
   const del = document.createElement("button")
   del.textContent = "Delete"
@@ -377,7 +395,7 @@ function setupLoad() {
         for (const i0 in state.edge) {
           const i = Number(i0)
           const edge = state.edge[i]
-          newEdge(edge.pathWorker, edge.pathFrom, edge.pathTo, i)
+          newEdge(edge.pathWorker, edge.pathFrom, edge.pathTo, edge.pathCanStop, i)
         }
 
       })

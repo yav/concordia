@@ -2,7 +2,7 @@
   "map": "Ionium",
   "next_region": 12,
   "next_city": 31,
-  "next_edge": 76,
+  "next_edge": 77,
   "region": {
     "0": "#ff0",
     "1": "#633",
@@ -103,7 +103,7 @@
       "cityRegion": 6
     },
     "21": {
-      "cityTile": "c",
+      "cityTile": "C",
       "cityRegion": 5
     },
     "22": {
@@ -599,6 +599,12 @@
       "pathCanStop": true,
       "pathFrom": 4,
       "pathTo": 5
+    },
+    "76": {
+      "pathWorker": "Person",
+      "pathCanStop": false,
+      "pathFrom": 5,
+      "pathTo": 30
     }
   },
   "loc": {
@@ -1082,6 +1088,10 @@
       "75": [
         339,
         340.53334045410156
+      ],
+      "76": [
+        455,
+        306.3333282470703
       ]
     },
     "market": {
