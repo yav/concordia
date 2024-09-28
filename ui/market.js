@@ -1,24 +1,21 @@
 class Market {
   constructor(board) {
     this.spots = new List(() => new MarketSpot(uiGet("market"), board))
-    this.count = new Text(uiGet("card-count"), false)
+    this.button = new MarketButton()
     this.board = board
   }
 
-  destroy() { this.spots.destroy(); this.count.destroy() }
-  set([count,cards]) { this.spots.set(cards); this.count.set(count.toString()) }
+  destroy() { this.spots.destroy(); this.button.destroy() }
+  set([count,cards]) { this.spots.set(cards); this.button.set(count.toString()) }
 
   setPos() {
     const board = this.board
-    const market = uiGet("market")
-    const tl = board.json.loc.market.TL
-    const br = board.json.loc.market.BR
-    board.setLoc(market, tl)
-    board.setDim(market, [ 32 + br[0] - tl[0], 32 + br[1] - tl[1] ]) 
-    this.spots.map((el) => el.setSize())
+    board.setLoc(uiGet("market-button"),[0,48])
+    board.setLoc(uiGet("market"), [0,85])
   }
 
   ask(n,q) {
+    this.button.setVis(true)
     this.spots.getElements()[n].ask(q)
   }
 }
@@ -55,3 +52,18 @@ class MarketSpot {
   ask(q) { this.card.ask(q) }
 }
 
+class MarketButton {
+  constructor() {
+    this.dom = uiGet("market-button")
+    const market = uiGet("market")
+    this.toggle = new Toggle(market,"hidden")
+    this.click = () => this.toggle.set(!this.toggle.isVisible())
+    this.dom.addEventListener("click",this.click)
+    this.count = new Text(uiGet("market-count"),false)
+  }
+
+  destroy() { this.count.destroy(); this.dom.reomveEventListener("click",this.click) }
+  set(count) { this.count.set(count) }
+  setVis(b) { this.toggle.set(b) }
+
+}

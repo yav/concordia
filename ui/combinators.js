@@ -183,5 +183,7 @@ class Toggle {
     else this.dom.classList.add(this.hidden)
     this.visible = vis
   }
+
+  isVisible() { return this.visible }
 }
 
