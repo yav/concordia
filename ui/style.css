@@ -366,13 +366,21 @@ body {
 
 
 .player {
+  display: grid;
+  grid-template-columns: 20px 12px 20px 12px 20px 12px 160px 140px;
+  grid-template-rows: 20px 40px;
+  grid-template-areas:
+    "nm nm nm nm nm nm storage disacrd"
+    "card-lab card-num house-lab house-num money-lab money-num storage discard";
   background-color: white;
   border-bottom: 1px solid black;
+  padding: 2px;
 }
 
 
 .mag-name {
   display: flex;
+  grid-area: nm;
 }
 
 .player .name {
@@ -381,11 +389,30 @@ body {
   padding-left: 2px;
 }
 
+.player .house-label { grid-area: house-lab; }
+.player .house-num  { grid-area: house-num; justify-self: center; }
+.player .card-label { grid-area: card-lab; }
+.player .card-num  { grid-area: card-num; justify-self: center; }
+.player .money-label { grid-area: money-lab; }
+.player .money-num  { grid-area: money-num; justify-self: center; }
+
+
+.player .storage {
+  height: 40px;
+  grid-area: storage;
+  display: flex;
+  flex-flow: column wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  overflow: scroll;
+}
+
 .player .discard_cell {
   position: relative;
 }
 
 .player .view_discard {
+  grid-area: disacrd;
   z-index: 2;
   width: 20px;
   height: 20px;
@@ -412,7 +439,7 @@ body {
 }
 
 .current {
-  border: 4px solid black;
+  background: linear-gradient(#c99,white 20%,white 80%, #c99); 
 }
 
 

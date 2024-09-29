@@ -25,11 +25,7 @@ class Player {
       , discard:  new List(() => new Card(els.discard))
       })
     this.houses_label = new PlayerResource(els.houses_label,[20,20])
-    this.resources = []
-    for (let i = 0; i < 12; ++i) {
-      this.resources.push(new StoredResource(els[i]))
-    }
-
+    this.resources = new List(() => new StoredResource(els.storage))
     owner.appendChild(dom)
   }
 
@@ -41,12 +37,12 @@ class Player {
     this.magnus.set(obj.isDouble? "magnus" : null)
     this.endGame.set(obj.triggeredEndGame? "concordia" : null)
     this.val.set(obj)
-    for (let i = 0; i < 12; ++i) {
-      const r = obj.resources[i]
+    const rs = []
+    for (const r of obj.resources) {
       if (r.tag === "HasWorker")
         r.contents = { player: obj.player, thing: r.contents }
-      this.resources[i].set(r)
     }
+    this.resources.set(obj.resources)
     if (obj.isCurrent) {
       if (!this.cur) { this.dom.classList.add("current")} 
     }
@@ -59,23 +55,19 @@ class Player {
   destroy() {
     this.houses_label.destroy()
     this.discardButton.destroy()
-    for (let i = 0; i < 12; ++i) {
-      this.resources[i].destroy()
-    }
+    this.resources.destroy()
     this.dom.remove()
   }
 
   is(p) { return this.player === p }
 
   askWorker(ty,q) {
-    for (let i = 0; i < 12; ++i) {
-      const r = this.resources[i]
+    for (const r of this.resources.getElements()) {
       if (r.isWorker(ty)) { r.ask(q); break }
     }
   }
   askResource(ty,q) {
-    for (let i = 0; i < 12; ++i) {
-      const r = this.resources[i]
+    for (consr of this.resources.getElements()) {
       if (r.isResource(ty)) { r.ask(q); break }
     }
   }
