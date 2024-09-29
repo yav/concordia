@@ -45,6 +45,10 @@ cityTiles = Map.fromList
   , (D, [Brick, Wheat, Tool, Wine, Cloth])
   ]
 
+withTiles :: [(CityTile,Resource)] -> Map CityTile [Resource]
+withTiles xs = foldr add cityTiles xs
+  where add (a,r) = Map.adjust (r:) a
+
 
 cityTilesWithSalt :: Map CityTile [Resource]
 cityTilesWithSalt =
@@ -55,6 +59,8 @@ cityTilesWithSalt =
   cityTiles
   where
   replace x a = Map.adjust ((Salt :) . delete a) x
+
+
 
 marketCosts :: [[ResourceCost]]
 marketCosts = [ [], [Any], [Any], [cloth], [cloth], [Any,cloth], [cloth,cloth] ]

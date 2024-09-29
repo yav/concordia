@@ -1,5 +1,7 @@
 module Main where
 
+import Data.Map(Map)
+
 import KOI.Basics
 import KOI.CallJS(jsHandlers)
 import KOI.Bag
@@ -34,8 +36,7 @@ getConfig opts ps =
     { cfgPlayerOrder        = ps
     , cfgMapName            = getBoard opts
     , cfgMap                = mapData (getBoard opts)
-    , cfgCityTiles          = if getSalt opts then cityTilesWithSalt
-                                              else cityTiles
+    , cfgCityTiles          = mapTiles opts
     , cfgResourceLimit      = 12
     , cfgStartHireWorkers   = bagFromNumList [(Person,2), (Ship,2)]
     , cfgStartBoardWorkers  = bagFromList [Person,Ship]
@@ -46,6 +47,14 @@ getConfig opts ps =
     , cfgPlayerCards        = if getVenus opts then startDeckVenus else startDeckBase
     , cfgMarketCards        = marketDeck (not (getVenus opts))
     }
+
+mapTiles :: Options -> Map CityTile [Resource]
+mapTiles opts
+  | getSalt opts = if big then withTiles [(t,Salt)| t <- [A,B,C,D]] else cityTilesWithSalt
+  | otherwise = if big then withTiles [(A,Tool),(B,Wine),(C,Cloth),(D,Brick)] else cityTiles
+  where
+  mp = getBoard opts
+  big = mp == Hispania -- or byzantium
 
 
 optSalt :: Option
