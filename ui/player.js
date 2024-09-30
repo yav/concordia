@@ -32,7 +32,7 @@ class Player {
 
   set(obj) {
     this.player = obj.player
-    this.discardButton.set(this.player)
+    this.discardButton.set(this.player, obj.discard.length)
     this.houses_label.set({player: obj.player, thing: "House" })
     this.magnus.set(obj.isDouble? "magnus" : null)
     this.endGame.set(obj.triggeredEndGame? "concordia" : null)
@@ -82,8 +82,10 @@ class DiscardButton {
   constructor(btn,discard) {
     this.player = null
     this.btn = btn
+    this.lab = new Text(btn,true)
     this.discard = discard
     this.tooltip = new TextTooltip(btn, "View played cards")
+
 
     let discardVisible = false
     btn.addEventListener("click",() => {
@@ -92,7 +94,8 @@ class DiscardButton {
     })
   }
 
-  set(p) {
+  set(p,n) {
+    this.lab.set(n)
     if (this.player === p) return
     this.player = p
     this.discard.style.display = "none"

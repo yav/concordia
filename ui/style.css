@@ -432,6 +432,9 @@ body {
   top: 0;
   border: 1px solid black;
   cursor: pointer;
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
 }
 
 .player .discard {
