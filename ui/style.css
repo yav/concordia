@@ -398,7 +398,10 @@ body {
 
 
 .player .storage {
-  height: 40px;
+  height: 44px;
+  padding-top: 2px;
+  padding-left: 2px;
+  gap: 2px;
   grid-area: storage;
   display: flex;
   flex-flow: column wrap;
