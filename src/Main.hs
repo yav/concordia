@@ -46,8 +46,10 @@ getConfig opts ps =
     , cfgMarket             = if useWineMarket opts then altMarketCosts else marketCosts
     , cfgPlayerCards        = if getVenus opts then startDeckVenus else startDeckBase
     , cfgMarketCards        = marketDeck (not (getVenus opts))
+    , cfgUseSalt            = getSalt opts
     }
 
+-- Could move this to Setup?
 mapTiles :: Options -> Map CityTile [Resource]
 mapTiles opts
   | getSalt opts = if big then withTiles [(t,Salt)| t <- [A,B,C,D]] else cityTilesWithSalt

@@ -3,6 +3,7 @@ module Setup where
 import Data.Maybe(fromMaybe)
 import Data.Map(Map)
 import Data.Map qualified as Map
+import Data.Set qualified as Set
 import Optics
 import KOI.Basics
 import KOI.Bag
@@ -24,6 +25,7 @@ data Config = Config
   , cfgStartResources     :: Bag Resource
   , cfgStartMoney         :: Int
   , cfgStartHouses        :: Int
+  , cfgUseSalt            :: Bool
 
   , cfgMarket             :: [[ResourceCost]]
   , cfgPlayerCards        :: [Card]
@@ -53,6 +55,7 @@ setupGame cfg0 =
        , _gameStatus   = InProgress
        , _playerDoubleBonus = last (first : rest)
        , _gameLog      = []
+       , _withSalt     = cfgUseSalt cfg
        }
 
 
@@ -69,7 +72,7 @@ setupPlayer cfg turnOrder = PlayerState
   , _playerHand           = cfgPlayerCards cfg
   , _playerDiscard        = []
   , _playerResourceLimit  = cfgResourceLimit cfg
-  , _playerPowers         = []
+  , _playerForumTiles     = Set.fromList [] -- [Titus, Servius, Faustus, Gaius]
   }
 
 setupBoard :: Config -> Gen BoardState
@@ -116,6 +119,8 @@ setupBoard cfg =
        , _marketDeck      = concat shuffled
        , _mapExtraMoneyBonus =
           if cfgMapName cfg == Crete then 2 else 0
+       , _forumMarket = []
+       , _forumDiscard = []
        }
 
   where

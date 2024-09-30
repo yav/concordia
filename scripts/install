@@ -1,6 +1,8 @@
 #!/bin/bash
 DIR=install
 
+set -e
+
 cat > src/Version.hs << END
 module Version where
 

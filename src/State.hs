@@ -2,6 +2,7 @@ module State where
 
 import Data.Map(Map)
 import Data.Map qualified as Map
+import Data.Set(Set)
 
 import Optics
 import KOI.Basics
@@ -19,6 +20,7 @@ data GameState = GameState
   , _playerDoubleBonus :: !PlayerId
   , _gameStatus   :: !GameStatus
   , _gameLog      :: ![[LogWord]]
+  , _withSalt     :: !Bool
   }
 
 data PlayerState = PlayerState
@@ -29,6 +31,7 @@ data PlayerState = PlayerState
   , _playerHand           :: ![Card]
   , _playerDiscard        :: ![Card]   -- ^ Most recent first
   , _playerResourceLimit  :: !Int      -- ^ Including workers
+  , _playerForumTiles     :: !(Set ForumTile)
   }
 
 data BoardState = BoardState
@@ -43,6 +46,8 @@ data BoardState = BoardState
   , _marketLayout    :: ![ [ResourceCost] ]
   , _marketDeck      :: ![ Card ] -- ^ This includes the cards on display,
                                  -- they are at the front
+  , _forumMarket :: ![ForumTile]
+  , _forumDiscard :: ![ForumTile]
   }
 
 data RegionBonus = RegionBonus
@@ -64,8 +69,4 @@ playerState :: PlayerId -> Lens' GameState PlayerState
 playerState pid = lens ((Map.! pid) . _players) setP
   where
   setP s v = s { _players = Map.insert pid v (_players s) }
-
-
-
-
 

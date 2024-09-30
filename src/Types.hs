@@ -28,6 +28,19 @@ data Action   = Architect
               | Legatus -- only team
   deriving (Eq,Show,Generic,ToJSON)
 
+data ForumTile =
+  -- powers
+    Claudia | Aulus | Gaius | Donatus | Titus
+  | Annaeus | Lucius | Servius | Sextus
+  | Appius | Faustus | Claudius | Cornelius
+
+  -- special actions
+  | Julius | Mamilius | Numerius | Spurius
+  | Augstus | Laurentius | Marcus | Publius | Tiberus
+  | Commodus | Mamercus | Novius | Quintus | Victoria
+    deriving (Eq,Ord,Show,Generic,ToJSON)
+
+
 actionText :: Action -> Text
 actionText act =
   case act of

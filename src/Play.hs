@@ -16,6 +16,7 @@ import State
 import Types
 import Question
 import HelperActions
+import Forum
 import Log
 
 play :: Interact ()
@@ -92,7 +93,12 @@ action act =
 actTribune :: PlayerId -> Interact ()
 actTribune pid =
   do discard <- updateThe (playerState pid % playerDiscard) (\d -> (d, []))
-     let amt = max 0 (length discard - 3)
+     let actNum = length discard
+     -- XXX: buy forum card
+     changeSalt <- hasForumTile pid Titus
+     when changeSalt (titusBonus pid)
+  
+     let amt = max 0 (actNum - 3)
      doChangeMoney pid amt
      doLogBy' pid [T "Gained", tSh amt, M, T "for Tribune"] 
 
@@ -249,7 +255,9 @@ actConsul pid =
 actArchitect :: PlayerId -> Interact ()
 actArchitect pid =
   do doLogBy' pid [T "Architect"]
-     move <- countWorkersOnBoard pid
+     move' <- countWorkersOnBoard pid
+     yes <- hasForumTile pid Appius
+     let move = if yes then move' + 1 else move'
      doMoves move
      buildHouses
 
@@ -367,11 +375,20 @@ actArchitect pid =
          ]
 
 
+
 actMercator :: Int -> PlayerId -> Interact ()
 actMercator n pid =
   do doChangeMoney pid n
      doLogBy' pid [ T "Gained", tSh n, M, T "from Mercator" ]
-     trade []
+     extraTrade <- hasForumTile pid Servius
+     freeBrick  <- hasForumTile pid Faustus
+     bonus      <- hasForumTile pid Gaius
+     let s = TradeS { tradeLimit = if extraTrade then 3 else 2
+                    , freeBricks = if freeBrick then 1 else 0
+                    , sellBonus  = if bonus then 1 else 0
+                    , trades     = []
+     }
+     trade s
 
   where
   end = (AskText "End Turn", "Done trading", pure ())
@@ -386,14 +403,17 @@ actMercator n pid =
                mapMaybe (sellOpt as s) resources  
 
 
-  canBuy s r = guard haveSpace >> haveMoney
+  canBuy as s r = guard haveSpace >> haveMoney
     where
     used = bagSize (s ^. playerResources) + bagSize (s ^. playerWorkersForHire)
     haveSpace =  used < s ^. playerResourceLimit
-    haveMoney =
+    haveMoney
+      | r == Brick && freeBricks as > 0 =
+        pure (0, as { freeBricks = freeBricks as - 1 })
+      | otherwise =
       do c <- Map.lookup r resourceCost
          guard (c <= s ^. playerMoney)
-         pure c
+         pure (c,as)
 
   canSell s r =
     do c <- Map.lookup r resourceCost
@@ -432,21 +452,28 @@ actMercator n pid =
         
 
   actOk a@(_,r) as
-    | a `elem` as = Just as  -- We already did this
-    | r `elem` map snd as = Nothing -- Don't buy and sell the same thing
-    | length as < 2 = Just (a : as) -- We have available action
+    | a `elem` trades as = Just as  -- We already did this
+    | r `elem` map snd (trades as) = Nothing -- Don't buy and sell the same thing
+    | length (trades as) < tradeLimit as = Just as { trades = a : trades as }-- We have available action
     | otherwise = Nothing -- No more resource actions
 
   buyOpt as s r =
     do as' <- actOk (Buy,r) as
-       c <- canBuy s r
-       pure (doBuy as' (r,c))
+       (c,as'') <- canBuy as' s r
+       pure (doBuy as'' (r,c))
 
   sellOpt as s r =
     do as' <- actOk (Sell,r) as
        c   <- canSell s r
-       pure (doSell as' (r,c))
- 
+       pure (doSell as' (r,c+sellBonus as))
+
+data TradeS = TradeS
+  { tradeLimit :: Int
+  , freeBricks :: Int
+  , sellBonus  :: Int
+  , trades     :: [(TradeAct,Resource)]
+  }
+
 data TradeAct = Buy | Sell
   deriving Eq
 
