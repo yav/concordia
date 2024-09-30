@@ -97,11 +97,11 @@ actTribune pid =
      doLogBy' pid [T "Gained", tSh amt, M, T "for Tribune"] 
 
      doAddCards pid discard
-     ws <- canBuildWorker pid
+     (pays, ws) <- canBuildWorker pid
      capital <- the (board % mapLayout % mapStartCity)
      askInputsMaybe_ pid "Deploy a worker to the capital" $
       (AskText "End Turn", "Do not deploy worker", pure ()) : 
-      [ (AskWorker w, "Deploy this worker", doBuildWorker pid w capital)
+      [ (AskWorker w, "Deploy this worker", doBuildWorker pid w capital pays)
       | w <- ws
       ]
 
@@ -116,13 +116,13 @@ actColonistTax pid =
 actColonistSettle :: PlayerId -> Interact ()
 actColonistSettle pid =
   do doLogBy pid "Settle Colonist"
-     ws   <- canBuildWorker pid
+     (pays,ws)   <- canBuildWorker pid
      tgts <- getBuildTargets
      case (ws,tgts) of
        ([],_) -> doLogBy' pid [T "Has on workers they can afford"]
        (_,[]) -> doLogBy' pid [T "Has no cities they can deploy in"]
        _ -> pure ()
-     doAction tgts ws pass
+     doAction tgts pays ws pass
   where
   getBuildTargets =
     do brd <- the board
@@ -137,20 +137,20 @@ actColonistSettle pid =
     , pure ()
     )
 
-  doAction tgts ws otherOpt =
+  doAction tgts pays ws otherOpt =
      askInputsMaybe_ pid "Choose worker to deploy" $
-       [ (AskWorker w, "Deploy worker", buildWorker tgts w)
+       [ (AskWorker w, "Deploy worker", buildWorker tgts w pays)
        | w <- ws ] ++ [otherOpt]
 
-  buildWorker tgts w =
+  buildWorker tgts w pays =
     do paths <- mapCityPaths w <$> the (board % mapLayout)
        let suitable = not . null . flip (Map.findWithDefault []) paths
        askInputsMaybe_ pid "Choose deployment city"
           [ ( AskCity city
             , "Deploy here"
-            , do doBuildWorker pid w city
-                 newWs <- canBuildWorker pid
-                 doAction tgts newWs pass
+            , do doBuildWorker pid w city pays 
+                 (newPays,newWs) <- canBuildWorker pid
+                 doAction tgts newPays newWs pass
             )
           | city <- tgts, suitable city ]
 

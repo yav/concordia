@@ -75,12 +75,9 @@ doDiscardCard pid n =
        _ -> pure ()
 
 -- | Pay for a worker and place it on the board
-doBuildWorker :: PlayerId -> Worker -> CityId -> Interact ()
-doBuildWorker pid w city =
-  do sequence_
-      [ updateThe_ (playerState pid % playerResources) (bagChange (-1) r)
-      | r <- workerCost
-      ]
+doBuildWorker :: PlayerId -> Worker -> CityId -> [Bag Resource] -> Interact ()
+doBuildWorker pid w city payments =
+  do doPayCost pid payments
      updateThe_ (playerState pid % playerWorkersForHire)
                 (bagChange (-1) w)
      updateThe_ (board % mapCityWorkers % at city)
@@ -119,16 +116,14 @@ doGainResources src pid new =
 
 -- | What kind of worker can this player build at the moment
 -- (i.e., they have the worker and the resources to build it).
-canBuildWorker :: PlayerId -> Interact [Worker]
+canBuildWorker :: PlayerId -> Interact ([Bag Resource], [Worker])
 canBuildWorker pid =
   do pstate <- the (playerState pid)
      let workers   = pstate ^. playerWorkersForHire
          hasW p    = bagContains p workers > 0
          resources = pstate ^. playerResources
-         canPay =
-           and [ bagContains r resources >= n
-               | (r,n) <- bagToNumList (bagFromList workerCost) ]
-     pure [ w | canPay, w <- [Person,Ship], hasW w ]
+         canPay = canAfford' (map Resource workerCost) resources
+     pure (canPay, [ w | not (null canPay), w <- [Person,Ship], hasW w ])
 
 -- | Compute various ways in which a player can pay a cost.
 -- If the result is empty, then they can't affor this.
