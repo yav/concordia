@@ -67,7 +67,7 @@ class Player {
     }
   }
   askResource(ty,q) {
-    for (consr of this.resources.getElements()) {
+    for (const r of this.resources.getElements()) {
       if (r.isResource(ty)) { r.ask(q); break }
     }
   }
