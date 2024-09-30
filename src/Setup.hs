@@ -14,7 +14,7 @@ import State
 import Maps
 
 data Config = Config
-  { cfgPlayerOrder        :: [PlayerId]
+  { cfgPlayers           :: [PlayerId]
   , cfgMap                :: MapLayout
   , cfgMapName            :: Maps
   , cfgCityTiles          :: Map CityTile [Resource]
@@ -34,10 +34,15 @@ data Config = Config
 setupGame :: Config -> Gen GameState
 setupGame cfg0 =
   do let solo = PlayerId "Solo"
-     let (cfg,first,rest) =
-            case cfgPlayerOrder cfg0 of
-              []     -> (cfg0 { cfgPlayerOrder = [solo] }, solo, [])
-              p : ps -> (cfg0,p,ps)
+     cfg <-
+        case cfgPlayers cfg0 of
+          []     -> pure cfg0 { cfgPlayers = [solo] }
+          ps ->
+            do qs <- shuffle ps
+               pure cfg0 { cfgPlayers = qs }
+     let (first,rest) = case cfgPlayers cfg of
+                          a : as -> (a,as)
+                          _ -> error "setupGame []"
      brd <- setupBoard cfg
      pure GameState
        { _players      = Map.fromList (zip (first:rest)
@@ -64,13 +69,14 @@ setupPlayer cfg turnOrder = PlayerState
   , _playerHand           = cfgPlayerCards cfg
   , _playerDiscard        = []
   , _playerResourceLimit  = cfgResourceLimit cfg
+  , _playerPowers         = []
   }
 
 setupBoard :: Config -> Gen BoardState
 setupBoard cfg =
   do tiles <- traverse shuffle (cfgCityTiles cfg)
      let layout = cfgMap cfg
-     let ps = cfgPlayerOrder cfg
+     let ps = cfgPlayers cfg
      let decks = take (length ps) (cfgMarketCards cfg)
      shuffled <- mapM shuffle decks
      let cityProd = snd (Map.foldlWithKey' pickTile (tiles,mempty)

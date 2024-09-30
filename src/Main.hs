@@ -33,7 +33,7 @@ main = startApp App
 getConfig :: Options -> [PlayerId] -> Config
 getConfig opts ps = 
   Config
-    { cfgPlayerOrder        = ps
+    { cfgPlayers            = ps
     , cfgMapName            = getBoard opts
     , cfgMap                = mapData (getBoard opts)
     , cfgCityTiles          = mapTiles opts
