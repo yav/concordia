@@ -128,23 +128,29 @@ class PlayerResource {
   ask(q) { this.dom.ask(q) }
 }
 
-class StoredResource extends Tagged {
+class StoredResource {
   constructor(owner) {
-    super({ Available: () => {
-              const dom = new DOMNode(uiFromTemplate("available-spot"),[20,20])
-              dom.setOwner(owner)
-              dom.setTitle("Available")
-              return new Const(dom)
+    const dom = uiFromTemplate("stored-resource")
+    this.dom = dom
+    this.val = new Tagged({ Available: () => {
+              const d = new DOMNode(uiFromTemplate("available-spot"),[20,20])
+              d.setOwner(dom)
+              d.setTitle("Available")
+              return new Const(d)
             }
-          , HasWorker: () => new PlayerResource(owner,[20,20])
-          , HasResource: () => new Resource(owner,[20,20])
+          , HasWorker: () => new PlayerResource(dom,[20,20])
+          , HasResource: () => new Resource(dom,[20,20])
           })
+    owner.appendChild(dom)
+    
   }
+  set(xs) { this.val.set(xs) }
+  destroy() { this.val.destroy(); this.dom.remove() }
 
-  isWorker(ty) { return this.tag === "HasWorker" && this.val.is(ty) }
-  isResource(ty) { return this.tag === "HasResource" && this.val.is(ty) }
+  isWorker(ty) { return this.val.tag === "HasWorker" && this.val.val.is(ty) }
+  isResource(ty) { return this.val.tag === "HasResource" && this.val.val.is(ty) }
   ask(q) {
-    this.val.ask(q)
+    this.val.val.ask(q)
   }
 }
 

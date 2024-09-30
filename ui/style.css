@@ -398,7 +398,7 @@ body {
 
 
 .player .storage {
-  height: 44px;
+  height: 58px;
   padding-top: 2px;
   padding-left: 2px;
   gap: 2px;
@@ -408,6 +408,10 @@ body {
   align-items: flex-start;
   align-content: flex-start;
   overflow: scroll;
+}
+
+.stored-resource {
+  display: inline-block;
 }
 
 .player .discard_cell {

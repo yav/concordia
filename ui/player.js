@@ -37,7 +37,6 @@ class Player {
     this.magnus.set(obj.isDouble? "magnus" : null)
     this.endGame.set(obj.triggeredEndGame? "concordia" : null)
     this.val.set(obj)
-    const rs = []
     for (const r of obj.resources) {
       if (r.tag === "HasWorker")
         r.contents = { player: obj.player, thing: r.contents }
@@ -105,3 +104,4 @@ class DiscardButton {
     this.tooltip.destroy()
   } 
 }
+
