@@ -52,6 +52,9 @@ class GUI {
       case "AskMarket":
         this.board.askMarket(ch.contents,q)
         break
+      case "AskMarketAct":
+        this.board.askMarketAct(ch.contents,q)
+        break
       case "AskWorker":
         this.players.getElements()[0].askWorker(ch.contents,q)
         break

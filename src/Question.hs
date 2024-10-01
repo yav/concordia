@@ -16,6 +16,7 @@ data Question =
   | AskRegion RegionId
   | AskPath PathId
   | AskMarket Int
+  | AskMarketAct Int Int -- ^ Market card, action number
   | AskHand Int Int -- ^ Card, Action Number
   | AskDiscard PlayerId Int -- ^ Player's discard, action number
   | AskText Text

@@ -29,6 +29,7 @@ class Board {
   }
 
   askMarket(n,q) { this.market.ask(n,q) }
+  askMarketAct(ni,q) { this.market.askAct(ni,q) }
   askCityWorker(city,ty,q) { this.cities.getElements()[city].askWorker(ty,q) }
 
   getThing(ty,id) {

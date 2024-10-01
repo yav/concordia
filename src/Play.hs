@@ -87,7 +87,7 @@ action act =
     Mercator n -> actMercator n
     Specialist r -> actSpecialist r
     Magister -> actMagister
-    Consul -> actConsul
+    Consul -> actConsul []
     Legatus -> const (pure ()) -- XXX
 
 actTribune :: PlayerId -> Interact ()
@@ -271,12 +271,12 @@ actSpecialist r pid =
 actSenator :: PlayerId -> Interact ()
 actSenator pid = 
   do doLogBy' pid [T "Senator"]
-     doPickCards pid 2 True
+     doPickCards pid 2 True []
 
-actConsul :: PlayerId -> Interact ()
-actConsul pid =
+actConsul :: [Int] -> PlayerId -> Interact ()
+actConsul ignore pid =
   do doLogBy' pid [T "Consul"]
-     doPickCards pid 1 False
+     doPickCards pid 1 False ignore
 
 actArchitect :: PlayerId -> Interact ()
 actArchitect pid =
@@ -528,7 +528,12 @@ data TradeAct = Buy | Sell
 actDiplomat :: PlayerId -> Interact ()
 actDiplomat pid =
   do ps <- the players
-     case concatMap getTop (Map.toList ps) of
+     lucius <- hasForumTile pid Lucius
+     extra <- if not lucius then pure [] else
+       do n <- length <$> the (board % marketLayout)
+          market <- take n <$> the (board % marketDeck)
+          pure (concatMap getMarket (zip [0..] market))
+     case extra ++ concatMap getTop (Map.toList ps) of
        [] -> doLogBy' pid [T "used Diplomat without an effect"] 
        opts -> askInputsMaybe_ pid "Choose action to copy" opts
   where
@@ -541,6 +546,15 @@ actDiplomat pid =
                  action a pid)
           | (n,a) <- zip [0..] (cardActions c), a /= Diplomat ] 
       _ -> []
+
+  getMarket (i,c) =
+    [ ( AskMarketAct i n, "Perform this action (Lucius Flavius)"
+      , case a of
+          Consul -> actConsul [i] pid
+          _      -> action a pid
+      )
+    | (n,a) <- zip [0..] (cardActions c), a /= Diplomat
+    ]
 
 actMagister :: PlayerId -> Interact ()
 actMagister pid =

@@ -204,11 +204,11 @@ doGetMarketCards withBoardCost =
            (c, map Resource (cardCost c) ++ if withBoardCost then b else [])
      pure (zipWith cost cards spotCosts)
 
-doPickCards :: PlayerId -> Int -> Bool -> Interact ()
-doPickCards pid howMany extraCost =
+doPickCards :: PlayerId -> Int -> Bool -> [Int] -> Interact ()
+doPickCards pid howMany extraCost ignore =
   do avail <- zip [ 0 .. ] <$> doGetMarketCards extraCost
      let marketLen = length avail
-     picked <- pickCard []  avail
+     picked <- pickCard [] (filter ((`notElem` ignore) . fst) avail)
      let (pickedCards, otherCards) =
             partition ((`elem` picked) . fst) avail
      doAddCards pid (map (fst . snd) pickedCards)
@@ -227,8 +227,8 @@ doPickCards pid howMany extraCost =
        let q = "Select a market card " <> num (length picked + 1)
                <> "/" <> num howMany
        askInputs pid q $
-          ( AskText "End Turn", "No more cards.", pure picked) :
-          [ ( AskMarket n, "Get this card."
+          ( AskText "End Turn", "No more cards", pure picked) :
+          [ ( AskMarket n, "Get this card"
             , do doLogBy' pid [T "Selected", T (cardName c)]
                  doPayCost pid opt
                  pickCard (n : picked) (filter ((/= n) . fst) avail)

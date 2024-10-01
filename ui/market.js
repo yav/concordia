@@ -17,6 +17,13 @@ class Market {
   ask(n,q) {
     this.button.setVis(true)
     this.spots.getElements()[n].ask(q)
+    gui.quest.register(() => this.button.setVis(false))
+  }
+  
+  askAct([n,i],q) {
+    this.button.setVis(true)
+    this.spots.getElements()[n].askAct(i,q)
+    gui.quest.register(() => this.button.setVis(false))
   }
 }
 
@@ -50,6 +57,7 @@ class MarketSpot {
   }
 
   ask(q) { this.card.ask(q) }
+  askAct(i,q) { this.card.askAct(i,q) }
 }
 
 class MarketButton {
