@@ -5,7 +5,7 @@ import Control.Monad(when,forM,guard)
 import Data.Maybe(fromMaybe,catMaybes,mapMaybe)
 import Data.Map qualified as Map
 import Data.Set qualified as Set
-import Data.List(nub,foldl')
+import Data.List(foldl')
 import Optics
 import KOI.Basics
 import KOI.Bag
@@ -326,9 +326,25 @@ actArchitect pid =
 
   buildHouses =
     do ws <- getWorkers
-       let paths = [ eid | (_,Right eid) <- ws ]
        layout <- the (board % mapLayout)
+       let cities = Set.fromList [ cid | (_,Right eid) <- ws
+                                       , cid <- pathCities layout eid ]
+           ours = [ (cid,False) | cid <- Set.toList cities ]
        prod   <- the (board % mapProduces)
+       aulus  <- hasForumTile pid Aulus
+       annaeus <- hasForumTile pid Annaeus
+       adjPaths <- if not annaeus then pure [] else
+         do allWs <- the (board % mapPathWorkers)
+            let theirs = Set.fromList [ cid
+                 | (eid, p :-> _) <- Map.toList allWs
+                 , p /= pid
+                 , let cids = pathCities layout eid
+                 , cid <- cids
+                 , not (cid `Set.member` cities)
+                 , other <- filter (/= cid) cids
+                 , other `Set.member` cities
+                 ]
+            pure [ (cid,True) | cid <- Set.toList theirs ]  
        let canBuild built cid =
              do houses <- case Map.lookup cid built of
                             Nothing -> pure 0
@@ -337,19 +353,23 @@ actArchitect pid =
                                  pure (length ps)
                 r             <- Map.lookup cid prod
                 (money, cost) <- Map.lookup r cityCosts
-                pure (money * (1 + houses), map Resource cost)
-       let cityOpts built =
-              nub [ (cid,cost)
-                  | eid <- paths
-                  , cid <- pathCities layout eid
-                  , Just cost <- [canBuild built cid]
-                  ]
-       buildHouse cityOpts
+                let baseCost = money * (1 + houses)
+                pure (if aulus then baseCost - 1 else baseCost, map Resource cost)
+      
+
+       let cityOpts useAdj built =
+              Map.toList $
+              Map.fromListWith (&&)
+              [ ((cid,cost),adj)
+              | (cid,adj) <- if useAdj then adjPaths ++ ours else ours
+              , Just cost <- [canBuild built cid]
+              ]
+       buildHouse annaeus cityOpts
 
 
   endBuild = (AskText "End Turn", "No more houses", pure ())
 
-  buildHouse cityOpts =
+  buildHouse adj cityOpts =
     do houses    <- the (playerState pid % playerHousesToBuild)
        built     <- the (board % mapHouses)
        resources <- the (playerState pid % playerResources)
@@ -364,11 +384,12 @@ actArchitect pid =
                 doPayCost pid cost
                 updateThe_ (players % ix pid % playerHousesToBuild) (subtract 1)
                 updateThe_ (board % mapHouses % at cid) (Just . (pid :) . fromMaybe [])
-                doLogBy' pid [T "Built in", CID cid]
-                buildHouse cityOpts
+                doLogBy' pid ([T "Built in", CID cid] ++
+                                            [T "(Annaeus Arcadius)" | useAdj])
+                buildHouse (adj && not useAdj) cityOpts
            )
          | houses >= 1
-         , (cid,(moneyCost,rCost)) <- cityOpts built
+         , ((cid,(moneyCost,rCost)),useAdj) <- cityOpts adj built
          , money >= moneyCost
          , let cost = canAfford' rCost resources
          , not (null cost)
