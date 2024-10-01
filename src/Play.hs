@@ -165,7 +165,14 @@ actColonistSettle pid =
 actPrefect :: PlayerId -> Interact ()
 actPrefect pid =
   do regs <- the (board % mapLayout % mapRegions)
-     askInputsMaybe_ pid "Choose a province to Prefect"
+     sextus <- hasForumTile pid Sextus
+     let extra =
+           [ (AskText "Diplomat", "Sextus Pompeius", 
+              do doLogBy' pid [T "Use as Diplomat (Sextus Pompeius)"]
+                 actDiplomat pid)
+           | sextus ]
+     askInputsMaybe_ pid "Choose a province to Prefect" $
+        extra ++
         [ ( AskRegion r
           , "Prefect this province"
           , do done <- the (board % mapPrefected)
@@ -207,12 +214,31 @@ actPrefect pid =
         where
         resourceBonus rsr =
           do pm <- the playerDoubleBonus
-             amt <- if pid == pm
+             amt' <- if pid == pm
                          then
                            do order <- the playerOrder
                               setThe playerDoubleBonus (playerBefore order pid)
                               pure 2
                          else pure 1
+             donatus <- hasForumTile pid Donatus
+             when donatus
+               case Map.lookup rsr resourcePrefectMoney of
+                 Just m ->
+                   do updateThe_ (playerState pid % playerMoney) (+ m)
+                      doLogBy' pid [T "Gained", tSh m, M, T "(Donatus Pompeius)"]
+                 Nothing -> pure ()
+             claudius <- hasForumTile pid Claudius
+             amt <- if not claudius then pure amt' else
+               let cost = Map.findWithDefault 0 rsr resourceCost in
+               askInputs pid "Claudius Pompeius"
+                 [ (AskText "Pass", "Don't sell a good", pure amt')
+                 , ( AskTextResource "Sell" rsr, "Sell a bonus resource"
+                   , do updateThe_ (playerState pid % playerMoney) (+ cost)
+                        doLogBy' pid [T "Sold bonus", G rsr, T "(Claudius Pompeius)"]
+                        pure (amt' - 1)
+                   )
+                 ]
+
              pure (Map.singleton pid (bagFromList (replicate amt rsr)))
 
   getGoods r =
@@ -258,6 +284,7 @@ actArchitect pid =
      move' <- countWorkersOnBoard pid
      yes <- hasForumTile pid Appius
      let move = if yes then move' + 1 else move'
+     when yes (doLogBy' pid [T "Bonus move (Appius Arcadius)"])
      doMoves move
      buildHouses
 
@@ -354,7 +381,7 @@ actArchitect pid =
                 r             <- Map.lookup cid prod
                 (money, cost) <- Map.lookup r cityCosts
                 let baseCost = money * (1 + houses)
-                pure (if aulus then baseCost - 1 else baseCost, map Resource cost)
+                pure (if aulus then (True, baseCost - 1) else (False,baseCost), map Resource cost)
       
 
        let cityOpts useAdj built =
@@ -380,7 +407,7 @@ actArchitect pid =
          [ ( AskCity cid
            , "Build house here."
            , do doChangeMoney pid (- moneyCost)
-                doLogBy' pid [T "Paid", tSh moneyCost, M]
+                doLogBy' pid ([T "Paid", tSh moneyCost, M] ++ [T "(Aulus Arcadius)"|discount])
                 doPayCost pid cost
                 updateThe_ (players % ix pid % playerHousesToBuild) (subtract 1)
                 updateThe_ (board % mapHouses % at cid) (Just . (pid :) . fromMaybe [])
@@ -389,7 +416,7 @@ actArchitect pid =
                 buildHouse (adj && not useAdj) cityOpts
            )
          | houses >= 1
-         , ((cid,(moneyCost,rCost)),useAdj) <- cityOpts adj built
+         , ((cid,((discount,moneyCost),rCost)),useAdj) <- cityOpts adj built
          , money >= moneyCost
          , let cost = canAfford' rCost resources
          , not (null cost)
