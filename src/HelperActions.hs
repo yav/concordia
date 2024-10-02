@@ -195,16 +195,25 @@ countWorkersOnBoard pid =
      pure (cityCount + pathCount)
 
 
-doGetMarketCards :: Bool -> Interact [(Card, [ResourceCost])]
-doGetMarketCards withBoardCost =
+doGetMarketCards :: ShopMethod -> Interact [(Card, [ResourceCost])]
+doGetMarketCards extraCost =
   do brd <- the board
      let cards = brd ^. marketDeck
          spotCosts = brd ^. marketLayout
          cost c b =
-           (c, map Resource (cardCost c) ++ if withBoardCost then b else [])
+           (c, map Resource (cardCost c) ++
+               case extraCost of
+                 ShopConsul -> []
+                 ShopCornelius -> map (const Any) b
+                 ShopSenator -> b)
      pure (zipWith cost cards spotCosts)
 
-doPickCards :: PlayerId -> Int -> Bool -> [Int] -> Interact ()
+data ShopMethod =
+    ShopConsul
+  | ShopCornelius
+  | ShopSenator
+
+doPickCards :: PlayerId -> Int -> ShopMethod -> [Int] -> Interact ()
 doPickCards pid howMany extraCost ignore =
   do avail <- zip [ 0 .. ] <$> doGetMarketCards extraCost
      let marketLen = length avail

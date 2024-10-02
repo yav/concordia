@@ -271,12 +271,13 @@ actSpecialist r pid =
 actSenator :: PlayerId -> Interact ()
 actSenator pid = 
   do doLogBy' pid [T "Senator"]
-     doPickCards pid 2 True []
+     cornelius <- hasForumTile pid Cornelius
+     doPickCards pid 2 (if cornelius then ShopCornelius else ShopSenator) []
 
 actConsul :: [Int] -> PlayerId -> Interact ()
 actConsul ignore pid =
   do doLogBy' pid [T "Consul"]
-     doPickCards pid 1 False ignore
+     doPickCards pid 1 ShopConsul ignore
 
 actArchitect :: PlayerId -> Interact ()
 actArchitect pid =
