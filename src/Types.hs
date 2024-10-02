@@ -38,7 +38,7 @@ data ForumTile =
   | Julius | Mamilius | Numerius | Spurius
   | Augstus | Laurentius | Marcus | Publius | Tiberus
   | Commodus | Mamercus | Novius | Quintus | Victoria
-    deriving (Eq,Ord,Show,Generic,ToJSON)
+    deriving (Eq,Ord,Show,Enum,Bounded,Generic,ToJSON)
 
 
 actionText :: Action -> Text

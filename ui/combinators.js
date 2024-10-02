@@ -87,10 +87,12 @@ class Text {
     else { this.dom.textContent = "" }
   }
   set(x) {
-    if (this.val === x) return
+    if (this.val === x) return false
     this.val = x
     this.dom.textContent = this.val
+    return true
   }
+  getValue() { return this.val }
 
 }
 
@@ -183,6 +185,8 @@ class Toggle {
     else this.dom.classList.add(this.hidden)
     this.visible = vis
   }
+
+  toggle() { this.set(!this.isVisible()) }
 
   isVisible() { return this.visible }
 }

@@ -6,6 +6,7 @@ import Data.Text(Text)
 import Data.List(sortOn)
 import Data.Ord(Down(..))
 import Data.Map qualified as Map
+import Data.Set qualified as Set
 import Data.Aeson(ToJSON)
 import Optics
 import KOI.Basics
@@ -40,6 +41,7 @@ data PlayerView = PlayerView
   { player :: PlayerId
   , discardTop :: Maybe CardView
   , discard :: [CardView]
+  , forumTiles :: [ForumTile]
   , resources :: [ResourceSpot]
   , houses :: Int
   , money :: Int
@@ -138,6 +140,7 @@ playerView viewBy pid gs s = (vi, (pid, godVal))
     { player = pid
     , discardTop = thisVal <$> listToMaybe (s ^. playerDiscard)
     , discard = [ thisVal c | visible, c <- s ^. playerDiscard ]
+    , forumTiles = Set.toList (s ^. playerForumTiles)
     , houses = s ^. playerHousesToBuild
     , resources =
       take (s ^. playerResourceLimit)

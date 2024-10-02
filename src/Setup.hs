@@ -72,7 +72,7 @@ setupPlayer cfg turnOrder = PlayerState
   , _playerHand           = cfgPlayerCards cfg
   , _playerDiscard        = []
   , _playerResourceLimit  = cfgResourceLimit cfg
-  , _playerForumTiles     = Set.fromList [] -- [Titus, Servius, Faustus, Gaius]
+  , _playerForumTiles     = Set.fromList [minBound..maxBound]
   }
 
 setupBoard :: Config -> Gen BoardState

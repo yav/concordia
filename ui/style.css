@@ -20,6 +20,14 @@ body {
   font-size: 12px;
 }
 
+#rhs-panes {
+  position: fixed;
+  top: 0;
+  right: 20%;
+  height: 100%;
+  display: flex;
+}
+
 #version {
   position: fixed;
   left: 0;
@@ -250,6 +258,16 @@ body {
   display: inline-block;
 }
 
+.forum-tile {
+  height: 12px;
+  font-size: 10px;
+  background-color: white;
+  border: 1px solid black;
+  margin: 1px;
+  padding: 2px;
+
+}
+
 .card {
   width: 124px;
   border: 2px solid black;
@@ -368,13 +386,21 @@ body {
 .player {
   display: grid;
   grid-template-columns: 20px 12px 20px 12px 20px 12px 160px 140px;
-  grid-template-rows: 20px 40px;
+  grid-template-rows: 20px 40px 20px;
   grid-template-areas:
     "nm nm nm nm nm nm storage disacrd"
-    "card-lab card-num house-lab house-num money-lab money-num storage discard";
+    "card-lab card-num house-lab house-num money-lab money-num storage discard"
+    "fm fm fm fm fm fm fm discard";
   background-color: white;
   border-bottom: 1px solid black;
   padding: 2px;
+}
+
+.player .forum-tiles {
+  grid-area: fm;
+  display: flex;
+  flex-wrap: wrap;
+  overflow: scroll;
 }
 
 
@@ -437,15 +463,14 @@ body {
   font-size: 16px;
 }
 
-.player .discard {
-  position: fixed;
-  right: 20%;
-  top: 0;
-  display: none;
+
+.pane-container {
+  display: flex;
   flex-direction: column;
-  background-color: #0006;
   overflow: scroll;
+  background-color: #0008;
   height: 100%;
+  margin-left: 2px;
 }
 
 .current {

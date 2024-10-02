@@ -46,7 +46,7 @@ class TextEntry  {
 
 
 class TooltipEntry extends List {
-  constructor(tp, front) {
+  constructor(tp, front = false) {
     const dom = uiFromTemplate("tooltip-entry")
     super(() => new LogWord(dom,undefined))
     this.dom = dom

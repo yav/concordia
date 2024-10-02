@@ -13,8 +13,11 @@ class Player {
     new TextTooltip(els.cards, "Hand size")
     new TextTooltip(els.money, "Money")
     new TextTooltip(els.top_card, "Last card played")
+    this.discard = uiFromTemplate("pane-container")
+    this.discardButton = new DiscardButton(els.view_discard, this.discard)
 
-    this.discardButton = new DiscardButton(els.view_discard, els.discard)
+    const panes = uiGet("rhs-panes")
+    panes.appendChild(this.discard)
 
     this.val = new Record(
       { player:   new Text(els.name, true)
@@ -22,7 +25,8 @@ class Player {
       , handSize: new Text(els.cards, true)
       , money:    new Text(els.money, true)
       , discardTop:  new Optional(() => new Card(els.top_card))
-      , discard:  new List(() => new Card(els.discard))
+      , discard:  new List(() => new Card(this.discard))
+      , forumTiles: new List(() => new ForumTile(els["forum-tiles"]))
       })
     this.houses_label = new PlayerResource(els.houses_label,[20,20])
     this.resources = new List(() => new StoredResource(els.storage))
@@ -55,6 +59,7 @@ class Player {
     this.houses_label.destroy()
     this.discardButton.destroy()
     this.resources.destroy()
+    this.discard.remove()
     this.dom.remove()
   }
 
