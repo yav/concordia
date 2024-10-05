@@ -23,8 +23,8 @@ class Board {
 
   resize() {
     this.board.computeSizes()
-    for (city of this.cities.getElements()) city.setPos()
-    for (region of this.regions.getElements()) region.setPos()
+    for (const city of this.cities.getElements()) city.setPos()
+    for (const region of this.regions.getElements()) region.setPos()
     this.market.setPos()
   }
 
