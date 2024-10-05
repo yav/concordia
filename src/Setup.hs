@@ -1,6 +1,7 @@
 module Setup where
 
 import Data.Maybe(fromMaybe)
+import Data.List(partition)
 import Data.Map(Map)
 import Data.Map qualified as Map
 import Data.Set qualified as Set
@@ -25,12 +26,14 @@ data Config = Config
   , cfgStartResources     :: Bag Resource
   , cfgStartMoney         :: Int
   , cfgStartHouses        :: Int
-  , cfgUseSalt            :: Bool
-
+  , cfgUseSalt            :: Bool  
+  , cfgUseForum           :: Bool
+  
   , cfgMarket             :: [[ResourceCost]]
   , cfgPlayerCards        :: [Card]
   , cfgMarketCards        :: [ [Card] ]
     -- ^ 1st element is 1 cards, 2nd is 2, etc.
+  
   }
 
 setupGame :: Config -> Gen GameState
@@ -46,6 +49,7 @@ setupGame cfg0 =
                           a : as -> (a,as)
                           _ -> error "setupGame []"
      brd <- setupBoard cfg
+     rgen <- splitRNG
      pure GameState
        { _players      = Map.fromList (zip (first:rest)
                                            (map (setupPlayer cfg) [ 0 .. ]))
@@ -56,6 +60,8 @@ setupGame cfg0 =
        , _playerDoubleBonus = last (first : rest)
        , _gameLog      = []
        , _withSalt     = cfgUseSalt cfg
+       , _forumSetup   = cfgUseForum cfg
+       , _rng          = rgen
        }
 
 
@@ -97,6 +103,12 @@ setupBoard cfg =
                    if cost1 > cost2 then (res1,cost1) else (res2,cost2)
              pure (Map.insertWith bigger (city ^. cityRegion) (resource,cost) mp)
 
+
+     let (patriciansTiles, citizenTiles)
+            | cfgUseForum cfg = partition isPatrician [minBound..maxBound]
+            | otherwise = ([],[])
+     forum <- shuffle patriciansTiles
+
      pure BoardState
        { _mapLayout       = layout
        , _mapHouses       = mempty
@@ -119,8 +131,8 @@ setupBoard cfg =
        , _marketDeck      = concat shuffled
        , _mapExtraMoneyBonus =
           if cfgMapName cfg == Crete then 2 else 0
-       , _forumMarket = []
-       , _forumDiscard = []
+       , _forumMarket = forum
+       , _forumDiscard = citizenTiles
        }
 
   where

@@ -16,8 +16,10 @@ data Question =
   | AskRegion RegionId
   | AskPath PathId
   | AskMarket Int
+  | AskForumMarket Int
   | AskMarketAct Int Int -- ^ Market card, action number
   | AskHand Int Int -- ^ Card, Action Number
+  | AskHandForum Int
   | AskDiscard PlayerId Int -- ^ Player's discard, action number
   | AskText Text
   deriving (Show,Read,Eq,Ord,Generic,FromJSON,ToJSON)

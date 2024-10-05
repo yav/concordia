@@ -22,6 +22,7 @@ import Version qualified as V
 
 data View = View
   { hand :: [CardView]
+  , handForum :: [ForumTile]
   , playerInfo :: [PlayerView]
   , boardInfo :: BoardView
   , logMessages :: [[LogWord]]
@@ -64,6 +65,7 @@ data BoardView = BoardView
   , paths  :: [(PathId,Maybe (WithPlayer Worker))]
   , regions :: [ (RegionId, RegionState) ]
   , market :: (Int, [MarketSpot])
+  , forum :: [(Int,ForumTile)]
   } deriving (Generic,ToJSON)
 
 data CityView = CityView
@@ -85,6 +87,9 @@ data MarketSpot = MarketSpot
 stateView :: PlayerId -> GameState -> View
 stateView pid s = View
   { hand = maybe [] (map (ourVal False)) (s ^? players % ix pid % playerHand)
+  , handForum = 
+    let fs = maybe [] Set.toList (s ^? players % ix pid % playerForumTiles)
+    in if settingUpForum then fs else filter (not . isPatrician) fs
   , playerInfo = pvs
   , boardInfo = boardView (s ^. board) (ourVal True)
   , logMessages = reverse (s ^. gameLog)
@@ -95,10 +100,16 @@ stateView pid s = View
   , version = V.version
   }
   where
+  settingUpForum = s ^. forumSetup
   (before,after) = break (== pid) (s ^. playerOrder)
   ourVal = fromMaybe (addValue (\_ _ -> -1)) (lookup pid godVals)
+
   (pvs,godVals) = 
-    unzip [ playerView pid p s (s ^. playerState p) | p <- after ++ before ]
+    unzip [ playerView pid p s ps
+          | p <- after ++ before
+          , let ps1 = s ^. playerState p
+          , let ps = if settingUpForum then over playerForumTiles (const mempty) ps1 else ps1
+          ]
 
 
 totalScore :: PlayerView -> (PlayerId, PlayerScore)
@@ -171,6 +182,7 @@ boardView s addVal = BoardView
   , regions = regionView s
   , market = let m = map addVal (s ^. marketDeck)
              in (length m, zipWith MarketSpot m (s ^. marketLayout))
+  , forum = take 4 (zip [ 4, 6 .. ] (s ^. forumMarket))
   }
 
 pathView :: BoardState -> [ (PathId, Maybe (WithPlayer Worker)) ]

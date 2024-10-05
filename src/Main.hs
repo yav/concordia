@@ -19,13 +19,13 @@ import Maps
 main :: IO ()
 main = startApp App
   { appId = Concordia
-  , appOptions = [ optBoard, optSalt, optWineMarket, optVenus ]
+  , appOptions = [ optBoard, optSalt, optForum, optWineMarket, optVenus ]
   , appColors = [ "yellow", "red", "green", "blue", "black" ]
   , appJS = $(jsHandlers [])
   , appInitialState = \rng opts ps ->
     do let cfg = getConfig opts ps
        pure (withRNG_ rng (setupGame cfg))
-  , appStart = play
+  , appStart = extraSetup >> play
   }
 
 
@@ -47,6 +47,7 @@ getConfig opts ps =
     , cfgPlayerCards        = if getVenus opts then startDeckVenus else startDeckBase
     , cfgMarketCards        = marketDeck (not (getVenus opts))
     , cfgUseSalt            = getSalt opts
+    , cfgUseForum           = useForum opts
     }
 
 -- Could move this to Setup?
@@ -62,6 +63,10 @@ mapTiles opts
 optSalt :: Option
 getSalt :: Options -> Bool
 (optSalt, getSalt) = flag "salt" (Just False) "Use salt"
+
+optForum :: Option
+useForum :: Options -> Bool
+(optForum, useForum) = flag "forum" (Just False) "Use Forum tiles"
 
 optVenus :: Option
 getVenus :: Options -> Bool

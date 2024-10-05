@@ -91,6 +91,7 @@ function toLogWords(s) {
             case "Tool":  
             case "Wine":  
             case "Cloth": 
+            case "Salt":
             case "House": tag = "G"; break
             case "Money": tag = "M"; break       
           }

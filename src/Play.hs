@@ -1,7 +1,7 @@
 module Play where
 
 import Data.Text qualified as Text
-import Control.Monad(when,forM,guard)
+import Control.Monad(when,unless,forM,guard)
 import Data.Maybe(fromMaybe,catMaybes,mapMaybe)
 import Data.Map qualified as Map
 import Data.Set qualified as Set
@@ -18,6 +18,33 @@ import Question
 import HelperActions
 import Forum
 import Log
+
+extraSetup :: Interact ()
+extraSetup =
+  do fs <- the forumSetup
+     when fs doForumSetup
+     
+
+doForumSetup :: Interact ()
+doForumSetup =
+  do pids <- Map.keys <$> the players  
+     mapM_ drawTiles pids
+     setThe (board % forumDiscard) =<< updateThe (board % forumMarket) (\xs -> (xs,[]))
+     mapM_ pickTiles pids
+     doRefillForumMarket
+     setThe forumSetup False
+  where
+  drawTiles pid =
+    do ours <- updateThe (board % forumMarket) (splitAt 2)
+       setThe (playerState pid % playerForumTiles) (Set.fromList ours)
+  pickTiles pid =
+    do ours <- Set.toList <$> the (playerState pid % playerForumTiles)
+       askInputsMaybe_ pid "Choose a patrician"
+         [ (AskHandForum n, "Keep this patrician"
+           , mapM_ (\x -> unless (x == t) (doDiscardForumTile pid x)) ours
+           )
+         | (n,t) <- zip [ 0 .. ] ours
+         ]
 
 play :: Interact ()
 play =

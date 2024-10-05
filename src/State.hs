@@ -7,6 +7,7 @@ import Data.Set(Set)
 import Optics
 import KOI.Basics
 import KOI.Bag
+import KOI.RNG
 
 import Types
 import Static
@@ -21,6 +22,8 @@ data GameState = GameState
   , _gameStatus   :: !GameStatus
   , _gameLog      :: ![[LogWord]]
   , _withSalt     :: !Bool
+  , _forumSetup   :: !Bool
+  , _rng          :: !RNG
   }
 
 data PlayerState = PlayerState

@@ -68,6 +68,11 @@ class ForumTile {
         this.phase.set("Prefect")
         break
       case "Titus":
+        this.label.set("TV")
+        this.help_header.set("Titus Valerius")
+        this.help.set("Convert 1 good to [Salt]")
+        this.phase.set("Tribune")
+        break
       case "Annaeus":
       case "Lucius":
       case "Servius":
@@ -93,7 +98,7 @@ class ForumTile {
       case "Victoria":
 
       default:
-        this.label.set("XXX")
+        this.label.set(this.val)
         this.help_header.set("XXX")
         this.help.set("TODO")
     }

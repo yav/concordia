@@ -6,9 +6,11 @@ import Data.Maybe(fromMaybe)
 import Data.List(nub,partition)
 import Data.Map qualified as Map
 import Data.Set qualified as Set
+import Control.Monad(when)
 import Optics
 import KOI.Basics
 import KOI.Bag
+import KOI.RNG
 import KOI
 import Static
 import State
@@ -63,6 +65,20 @@ doChangeMoney pid amt
 -- | Add some cards to a player's hand
 doAddCards :: PlayerId -> [Card] -> Interact ()
 doAddCards pid cs = updateThe_ (playerState pid % playerHand) (cs ++)
+
+doDiscardForumTile :: PlayerId -> ForumTile -> Interact ()
+doDiscardForumTile pid t =
+  do updateThe_ (playerState pid % playerForumTiles) (Set.delete t)
+     updateThe_ (board % forumDiscard) (t:)
+
+doRefillForumMarket :: Interact ()
+doRefillForumMarket =
+  do ts <- the (board % forumMarket)
+     when (length ts < 4)
+       do discard <- updateThe (board % forumDiscard) (\xs -> (xs,[]))
+          (shuf,newR) <- shuffle discard <$> the rng 
+          setThe rng newR
+          setThe (board % forumMarket) (ts ++ shuf)
 
 -- | Move the card at the given index from the hand to the top of the discard.
 doDiscardCard :: PlayerId -> Int -> Interact ()
