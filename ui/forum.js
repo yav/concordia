@@ -52,19 +52,19 @@ class ForumTile {
       case "Aulus":
         this.label.set("AA")
         this.help_header.set("Aulus Arcadius")
-        this.help.set("1 [Money] discount to build a [House]")
+        this.help.set("1[Money] discount on [House]")
         this.phase.set("Architect")
         break
       case "Gaius":
         this.label.set("GM")
         this.help_header.set("Gaius Marcellus")
-        this.help.set("Sell goods for 1 [Money] extra.")
+        this.help.set("Sell goods for 1[Money] more")
         this.phase.set("Mercator")
         break
       case "Donatus":
         this.label.set("DP")
         this.help_header.set("Donatus Pompeius")
-        this.help.set("When producing goods also gain [Money] from bonus tile")
+        this.help.set("When producing goods also gain the [Money] of the bonus tile")
         this.phase.set("Prefect")
         break
       case "Titus":

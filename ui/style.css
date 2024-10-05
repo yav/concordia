@@ -285,9 +285,7 @@ body {
 }
 
 .forum-tile-help .resource-icon {
-  display: inline;
-  margin-right: 4px;
-  vertical-align: middle;
+  vertical-align: bottom;
 }
 
 .forum-tile-header {
@@ -300,11 +298,6 @@ body {
 }
 
 .forum-tile-help-text {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: stretch;
-  align-content: flex-start;
 }
 
 .forum-tile-help-action {
