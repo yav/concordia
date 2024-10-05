@@ -40,6 +40,8 @@ data ForumTile =
   | Commodus | Mamercus | Novius | Quintus | Victoria
     deriving (Eq,Ord,Show,Enum,Bounded,Generic,ToJSON)
 
+isPatrician :: ForumTile -> Bool
+isPatrician x = x <= Cornelius
 
 actionText :: Action -> Text
 actionText act =

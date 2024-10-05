@@ -268,6 +268,50 @@ body {
 
 }
 
+.patrician {
+  background-color: #0cf;
+}
+
+.citizen {
+  background-color: #cfc;
+}
+
+.forum-tile-help {
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 2px;
+  max-width: 16em;
+}
+
+.forum-tile-help .resource-icon {
+  display: inline;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.forum-tile-header {
+  text-align: center;
+  color: black;
+  
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  margin-bottom: 2px;
+}
+
+.forum-tile-help-text {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  align-content: flex-start;
+}
+
+.forum-tile-help-action {
+  text-align: center;
+  font-size: 10px;
+}
+
 .card {
   width: 124px;
   border: 2px solid black;
@@ -399,7 +443,7 @@ body {
 .player .forum-tiles {
   grid-area: fm;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   overflow: scroll;
 }
 

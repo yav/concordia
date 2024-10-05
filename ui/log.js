@@ -62,6 +62,12 @@ class LogWord extends Tagged {
   }
 }
 
+class LogText extends List {
+  constructor(own) {
+    super(() => new LogWord(own,undefined))
+  }
+  set(s) { super.set(toLogWords(s)) }
+}
 
 function toLogWords(s) {
   const ws = []
@@ -86,7 +92,7 @@ function toLogWords(s) {
             case "Wine":  
             case "Cloth": 
             case "House": tag = "G"; break
-            case "Money": tag = "M"; break
+            case "Money": tag = "M"; break       
           }
           ws.push({tag: tag, contents: w})
         } else {

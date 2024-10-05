@@ -37,11 +37,14 @@ data PlayerScore = PlayerScore
   , total :: Int
   } deriving (Generic, ToJSON)
 
+data ForumTileType = Patrician | Citizen
+  deriving (Generic,ToJSON)
+
 data PlayerView = PlayerView
   { player :: PlayerId
   , discardTop :: Maybe CardView
   , discard :: [CardView]
-  , forumTiles :: [ForumTile]
+  , forumTiles :: [(ForumTile,ForumTileType)]
   , resources :: [ResourceSpot]
   , houses :: Int
   , money :: Int
@@ -140,7 +143,8 @@ playerView viewBy pid gs s = (vi, (pid, godVal))
     { player = pid
     , discardTop = thisVal <$> listToMaybe (s ^. playerDiscard)
     , discard = [ thisVal c | visible, c <- s ^. playerDiscard ]
-    , forumTiles = Set.toList (s ^. playerForumTiles)
+    , forumTiles = [ (t, if isPatrician t then Patrician else Citizen)
+                   | t <- Set.toList (s ^. playerForumTiles) ]
     , houses = s ^. playerHousesToBuild
     , resources =
       take (s ^. playerResourceLimit)
