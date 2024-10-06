@@ -36,8 +36,7 @@ class ForumTile {
   destroy() {
     this.header.destroy()
     this.action.destroy()
-    this.help.destroy()
-    this.tooltip.destroy()
+    this.help.destroy() 
     this.dom.remove()
   }
   getClass() { return this.domClass.get() }
@@ -49,9 +48,13 @@ class ForumTile {
 
   set([l,t]) {
     if (this.val === l) return
-    this.domClass.set(t.toLowerCase())
     this.val = l
+    this.domClass.set(t.toLowerCase())
     this.update()
+  }
+
+  ask(q) {
+    gui.quest.existing(this.dom, undefined, q)
   }
 
   update() {
@@ -107,7 +110,7 @@ class ForumTile {
       case "Victoria":
 
       default:
-        this.header.set("XXX XXX")
+        this.header.set(this.val + " XXX")
         this.help.set("TODO")
     }
   }

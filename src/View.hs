@@ -22,7 +22,7 @@ import Version qualified as V
 
 data View = View
   { hand :: [CardView]
-  , handForum :: [ForumTile]
+  , handForum :: [(ForumTile,ForumTileType)]
   , playerInfo :: [PlayerView]
   , boardInfo :: BoardView
   , logMessages :: [[LogWord]]
@@ -86,10 +86,13 @@ data MarketSpot = MarketSpot
 
 stateView :: PlayerId -> GameState -> View
 stateView pid s = View
-  { hand = maybe [] (map (ourVal False)) (s ^? players % ix pid % playerHand)
+  { hand = 
+    if settingUpForum
+      then []
+      else maybe [] (map (ourVal False)) (s ^? players % ix pid % playerHand)
   , handForum = 
     let fs = maybe [] Set.toList (s ^? players % ix pid % playerForumTiles)
-    in if settingUpForum then fs else filter (not . isPatrician) fs
+    in forumView (if settingUpForum then fs else filter (not . isPatrician) fs)
   , playerInfo = pvs
   , boardInfo = boardView (s ^. board) (ourVal True)
   , logMessages = reverse (s ^. gameLog)
@@ -154,8 +157,7 @@ playerView viewBy pid gs s = (vi, (pid, godVal))
     { player = pid
     , discardTop = thisVal <$> listToMaybe (s ^. playerDiscard)
     , discard = [ thisVal c | visible, c <- s ^. playerDiscard ]
-    , forumTiles = [ (t, if isPatrician t then Patrician else Citizen)
-                   | t <- Set.toList (s ^. playerForumTiles) ]
+    , forumTiles = forumView (Set.toList (s ^. playerForumTiles))
     , houses = s ^. playerHousesToBuild
     , resources =
       take (s ^. playerResourceLimit)
@@ -215,3 +217,5 @@ regionView s =
                     State.ResourceBonus r -> Goods r
                     State.VariableBonus -> Variable
 
+forumView :: [ForumTile] -> [(ForumTile,ForumTileType)]
+forumView xs = [ (x, if isPatrician x then Patrician else Citizen) | x <- xs ]

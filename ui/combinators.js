@@ -104,9 +104,10 @@ class Record {
     this.ord = ord === undefined? Object.keys(obj) : ord
   }
   set(obj) {
-
     for (const i of this.ord) {
-      this.obj[i].set(obj[i])
+      const el = obj[i]
+      if (el === undefined) { console.log("Field " + i + " is undefined") }
+      this.obj[i].set(el)
     }
   }
   destroy() {
