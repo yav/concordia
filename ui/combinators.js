@@ -93,6 +93,7 @@ class Text {
     return true
   }
   getValue() { return this.val }
+  get() { return this.val }
 
 }
 
@@ -171,23 +172,31 @@ class Tagged {
 }
 
 
-class Toggle {
-  constructor(dom, hidden) {
-    this.visible = false
-    this.hidden = hidden
+
+class DomClass {
+  constructor(dom) {
+    this.tag = null
     this.dom = dom
-    dom.classList.add(hidden)
   }
 
-  set(vis) {
-    if (this.visible === vis) return
-    if (vis) { this.dom.classList.remove(this.hidden) }
-    else this.dom.classList.add(this.hidden)
-    this.visible = vis
+  set(newTag) {
+    if (this.tag === newTag) return
+    if (this.tag !== null) { this.dom.classList.remove(this.tag) }
+    this.tag = newTag
+    if (this.tag !== null) { this.dom.classList.add(this.tag) }
   }
 
-  toggle() { this.set(!this.isVisible()) }
-
-  isVisible() { return this.visible }
+  get() { return this.tag }
 }
 
+class Toggle {
+  constructor(dom, hidden) {
+    this.domClass = new DomClass(dom)
+    this.hidden = hidden
+    this.domClass.set(hidden)
+  }
+
+  set(vis) { this.domClass.set(vis? null : this.hidden) }
+  toggle() { this.set(!this.isVisible()) }
+  isVisible() { return this.domClass.get() === null }
+}

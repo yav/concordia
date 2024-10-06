@@ -26,7 +26,7 @@ class Player {
       , money:    new Text(els.money, true)
       , discardTop:  new Optional(() => new Card(els.top_card))
       , discard:  new List(() => new Card(this.discard))
-      , forumTiles: new List(() => new ForumTile(els["forum-tiles"]))
+      , forumTiles: new List(() => new ForumTileSmall(els["forum-tiles"]))
       })
     this.houses_label = new PlayerResource(els.houses_label,[20,20])
     this.resources = new List(() => new StoredResource(els.storage))

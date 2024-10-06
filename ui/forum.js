@@ -1,77 +1,86 @@
+class ForumTileSmall {
+  constructor(owner) {
+    const dom     = uiFromTemplate("forum-tile-small")
+    this.label    = new Text(dom,true)
+    this.domClass = new DomClass(dom)
+    this.tooltip  = new Tooltip(dom)
+    this.help     = new ForumTile(this.tooltip.getDom())
+    owner.appendChild(dom)
+  }
+  destroy() {
+    this.help.destroy()
+    this.label.destroy()
+    this.tooltip.destroy()
+  }
+  set(x) {
+    this.help.set(x)
+    this.label.set(this.help.getShortLabel())
+    console.log(this.help.getClass())
+    this.domClass.set(this.help.getClass())
+  }
+}
 
 
 
 class ForumTile {
   constructor(owner) {
-    const dom = uiFromTemplate("forum-tile")
-    this.dom = dom
-    this.label = new Text(dom,true)
-    this.tooltip = new Tooltip(dom)
-    const [help_dom,help_els] = uiFromTemplateNested("forum-tile-help")
-    this.tooltip.add(help_dom)
-    this.help_header_dom = help_els["header"]
-    this.help_header = new Text(help_els["header"],true)
-    this.help = new LogText(help_els["help"])
-    this.phase = new Text(help_els["action"],true)
-    this.val = null
-    this.class = null
+    const [dom,els] = uiFromTemplateNested("forum-tile")
+    this.dom    = dom
+    this.header = new Text(els.name,true)
+    this.domClass = new DomClass(els.header)
+    this.action = new Text(els.action,true)
+    this.help   = new LogText(els.help)
+    this.val    = null
     owner.appendChild(dom)
   }
   destroy() {
-    this.label.destroy()
-    this.dom.remove()
+    this.header.destroy()
+    this.action.destroy()
     this.help.destroy()
     this.tooltip.destroy()
-
+    this.dom.remove()
   }
+  getClass() { return this.domClass.get() }
+  getShortLabel() {
+    const txt = this.header.get()
+    if (txt === null) { return "??" }
+    return txt.split(" ").map((w) => w.charAt(0).toUpperCase()).join("")
+  }
+
   set([l,t]) {
-    if (this.val !== l) {
-      this.val = l
-      this.setLabelAndHelp()
-      if (t !== this.class) {
-        if (this.class !== null) {
-          this.dom.classList.remove(this.class)
-          this.help_header_dom.classList.remove(this.class)
-        }
-        this.class = t.toLowerCase()
-        this.dom.classList.add(this.class)
-        this.help_header_dom.classList.add(this.class)
-      }
-
-    }
+    if (this.val === l) return
+    this.domClass.set(t.toLowerCase())
+    this.val = l
+    this.update()
   }
 
-  setLabelAndHelp() {
+  update() {
     if (this.val === null) return
     switch(this.val) {
       case "Claudia":
-        this.label.set("CA")
-        this.help_header.set("Claudia Agrippina")
+        this.header.set("Claudia Agrippina")
+        this.action.set("On Hire")
         this.help.set("Gain 4 storage and 1 [Brick]")
         break
       case "Aulus":
-        this.label.set("AA")
-        this.help_header.set("Aulus Arcadius")
-        this.help.set("1[Money] discount on [House]")
-        this.phase.set("Architect")
+        this.header.set("Aulus Arcadius")
+        this.action.set("Architect")
+        this.help.set("1[Money] discount on total [House] cost")
         break
       case "Gaius":
-        this.label.set("GM")
-        this.help_header.set("Gaius Marcellus")
+        this.header.set("Gaius Marcellus")
+        this.action.set("Mercator")
         this.help.set("Sell goods for 1[Money] more")
-        this.phase.set("Mercator")
         break
       case "Donatus":
-        this.label.set("DP")
-        this.help_header.set("Donatus Pompeius")
+        this.header.set("Donatus Pompeius")
+        this.action.set("Prefect")
         this.help.set("When producing goods also gain the [Money] of the bonus tile")
-        this.phase.set("Prefect")
         break
       case "Titus":
-        this.label.set("TV")
-        this.help_header.set("Titus Valerius")
+        this.header.set("Titus Valerius")
+        this.action.set("Tribune")
         this.help.set("Convert 1 good to [Salt]")
-        this.phase.set("Tribune")
         break
       case "Annaeus":
       case "Lucius":
@@ -98,8 +107,7 @@ class ForumTile {
       case "Victoria":
 
       default:
-        this.label.set(this.val)
-        this.help_header.set("XXX")
+        this.header.set("XXX XXX")
         this.help.set("TODO")
     }
   }

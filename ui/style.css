@@ -258,7 +258,7 @@ body {
   display: inline-block;
 }
 
-.forum-tile {
+.forum-tile-small {
   height: 12px;
   font-size: 10px;
   background-color: white;
@@ -268,42 +268,47 @@ body {
 
 }
 
-.patrician {
-  background-color: #0cf;
-}
+.patrician { background-color: #0cf; }
+.citizen { background-color: #cfc; }
 
-.citizen {
-  background-color: #cfc;
-}
-
-.forum-tile-help {
-  background-color: white;
-  border: 1px solid black;
-  border-radius: 5px;
+.forum-tile {
+  font-size: 10px;
+  width: 124px;
+  border: 2px solid black;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(#eee,#cba);
+  gap: 2px;
   padding: 2px;
-  max-width: 16em;
 }
 
-.forum-tile-help .resource-icon {
-  vertical-align: bottom;
-}
+.forum-tile .resource-icon { vertical-align: bottom; }
 
-.forum-tile-header {
+.forum-tile .header {
+  width: 100%;
   text-align: center;
   color: black;
-  
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
-  margin-bottom: 2px;
+  border: 1px solid;
 }
 
-.forum-tile-help-text {
+.forum-tile .patrician.header {
+  border-color: #069;
 }
 
-.forum-tile-help-action {
+.forum-tile .action {
+  display: inline-block;
   text-align: center;
-  font-size: 10px;
+  font-size: 8px;
 }
+
+.forum-tile .help {
+  width: 100%;
+  background-color: white;
+  padding: 2px;
+}
+
 
 .card {
   width: 124px;
@@ -321,7 +326,7 @@ body {
   border: 1px solid black;
 }
 
-.action {
+.card .action {
   background: linear-gradient(#fff,#eee);
 }
 

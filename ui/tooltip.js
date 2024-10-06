@@ -12,6 +12,8 @@ class Tooltip {
 
   clear() { this.dom.innerHTML = "" }
 
+  getDom() { return this.dom }
+
   add(ch, front=false) { 
     if (front) this.dom.prepend(ch)
     else this.dom.append(ch)
