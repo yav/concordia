@@ -7,7 +7,10 @@ import Data.Aeson(ToJSON,FromJSON)
 
 
 data Resource = Brick | Wheat | Tool | Wine | Cloth | Salt
-  deriving (Eq,Ord,Show,Read,Generic,ToJSON,FromJSON)
+  deriving (Eq,Ord,Show,Read,Generic,ToJSON,FromJSON,Enum,Bounded)
+
+normalResources :: [Resource]
+normalResources = [ r | r <- [ minBound .. maxBound ], r /= Salt ]
 
 data ResourceCost = Resource Resource | Any
   deriving (Eq,Ord,Generic,ToJSON)

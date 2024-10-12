@@ -2,11 +2,11 @@ module HelperActions where
 
 import Data.Text(Text)
 import Data.Text qualified as Text
-import Data.Maybe(fromMaybe)
+import Data.Maybe(fromMaybe,isJust,catMaybes)
 import Data.List(nub,partition)
 import Data.Map qualified as Map
 import Data.Set qualified as Set
-import Control.Monad(when)
+import Control.Monad(when,forM)
 import Optics
 import KOI.Basics
 import KOI.Bag
@@ -66,6 +66,9 @@ doChangeMoney pid amt
 doAddCards :: PlayerId -> [Card] -> Interact ()
 doAddCards pid cs = updateThe_ (playerState pid % playerHand) (cs ++)
 
+hasForumTile :: PlayerId -> ForumTile -> Interact Bool
+hasForumTile pid t = isJust <$> the (playerState pid % playerForumTiles % at t)
+
 doDiscardForumTile :: PlayerId -> ForumTile -> Interact ()
 doDiscardForumTile pid t =
   do updateThe_ (playerState pid % playerForumTiles) (Set.delete t)
@@ -100,7 +103,7 @@ doBuildWorker pid w city payments =
                 (Just . bagChange 1 (pid :-> w) . fromMaybe bagEmpty)
      doLogBy' pid [T "Deployed", W (pid :-> w), T "to", CID city]
 
--- | Gain some reasource and ask which, if not enough space.
+-- | Gain some reasource and ask which to discard, if not enough space.
 doGainResources :: Maybe Text -> PlayerId -> Bag Resource  -> Interact ()
 doGainResources src pid new =
   do s <- the (playerState pid)
@@ -307,5 +310,73 @@ canMoveWorker w loc0 steps =
 
 
 
+doGetWorkers :: PlayerId -> Interact [(Worker, Either CityId PathId)]
+doGetWorkers pid =
+  do brd <- the board
+     let fromCity cid inCity rest =
+           [ (w, Left cid) | w <- [Person,Ship]
+                           , bagContains (pid :-> w) inCity > 0 ] ++
+           rest
+     let cities = Map.foldrWithKey fromCity [] (brd ^. mapCityWorkers)
+     let fromPath eid (p :-> w) rest
+           | pid == p  = (w,Right eid) : rest
+           | otherwise = rest
+     pure (Map.foldrWithKey fromPath cities (brd ^. mapPathWorkers))
 
-  
+
+doMoveWorkers :: PlayerId -> Interact ()
+doMoveWorkers pid =
+  do move' <- countWorkersOnBoard pid
+     yes   <- hasForumTile pid Appius
+     let move = if yes then move' + 1 else move'
+     when yes (doLogBy' pid [T "Bonus move (Appius Arcadius)"])
+     doMoves move
+  where
+  doMoves steps =
+    do ws <- doGetWorkers pid
+       opts <- catMaybes <$> forM ws \(w,loc) ->
+         do opts <- canMoveWorker w loc steps
+            if null opts
+              then pure Nothing
+              else pure (Just (w,loc,opts))
+
+       askInputsMaybe_ pid "Move worker" $
+         endMove :
+         [ case loc of
+             Left cid  -> moveCityWorker steps w cid tgts
+             Right eid -> movePathWorker steps w eid tgts
+         | (w,loc,tgts) <- opts
+         ]
+
+  endMove = (AskText "Done", "No more moves", pure ())
+
+  moveCityWorker steps w cid tgts =
+    ( AskCityWorker cid w
+    , "Move this worker"
+    , askInputs pid "Move to"
+        [ ( AskPath eid
+          , "Move here"
+          , do updateThe_ (board % mapCityWorkers % ix cid)
+                          (bagChange (-1) (pid :-> w))
+               setThe (board % mapPathWorkers % at eid) (Just (pid :-> w))
+               doLogBy' pid [T "Moved", W (pid :-> w), T "from", CID cid, T "to", PID eid]
+               doMoves (steps - takenSteps)
+          )
+        | (eid, takenSteps) <- tgts
+        ]
+    )
+
+  movePathWorker steps w from tgts =
+    ( AskPath from
+    , "Move this worker"
+    , askInputs pid "Move to"
+        [ ( AskPath tgt
+          , "Move here"
+          , do setThe (board % mapPathWorkers % at from) Nothing
+               setThe (board % mapPathWorkers % at tgt) (Just (pid :-> w))
+               doLogBy' pid [T "Moved", W (pid :-> w), T "from", PID from, T "to", PID tgt]
+               doMoves (steps - takenSteps)
+          )
+        | (tgt, takenSteps) <- tgts
+        ]
+    )

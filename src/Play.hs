@@ -235,7 +235,7 @@ actPrefect pid =
                          setThe (board % mapRegionBonus % ix r % rbMoney) m
                          resourceBonus rsr
                     )
-                  | rsr <- [ Brick, Wheat, Tool, Wine, Cloth ]
+                  | rsr <- normalResources
                   ]
               ResourceBonus rsr -> resourceBonus rsr
         where
@@ -309,78 +309,11 @@ actConsul ignore pid =
 actArchitect :: PlayerId -> Interact ()
 actArchitect pid =
   do doLogBy' pid [T "Architect"]
-     move' <- countWorkersOnBoard pid
-     yes <- hasForumTile pid Appius
-     let move = if yes then move' + 1 else move'
-     when yes (doLogBy' pid [T "Bonus move (Appius Arcadius)"])
-     doMoves move
-     buildHouses
-
+     doMoveWorkers pid
+     buildHouses  
   where
-  getWorkers =
-    do brd <- the board
-       let fromCity cid inCity rest =
-             [ (w, Left cid) | w <- [Person,Ship]
-                             , bagContains (pid :-> w) inCity > 0 ] ++
-             rest
-       let cities = Map.foldrWithKey fromCity [] (brd ^. mapCityWorkers)
-
-       let fromPath eid (p :-> w) rest
-             | pid == p  = (w,Right eid) : rest
-             | otherwise = rest
-       pure (Map.foldrWithKey fromPath cities (brd ^. mapPathWorkers))
-
-  endMove = (AskText "Build", "No more moves", pure ())
-
-  moveCityWorker steps w cid tgts =
-    ( AskCityWorker cid w
-    , "Move this worker"
-    , askInputs pid "Move to"
-        [ ( AskPath eid
-          , "Move here"
-          , do updateThe_ (board % mapCityWorkers % ix cid)
-                          (bagChange (-1) (pid :-> w))
-               setThe (board % mapPathWorkers % at eid) (Just (pid :-> w))
-               doLogBy' pid [T "Moved", W (pid :-> w), T "from", CID cid, T "to", PID eid]
-               doMoves (steps - takenSteps)
-          )
-        | (eid, takenSteps) <- tgts
-        ]
-    )
-
-  movePathWorker steps w from tgts =
-    ( AskPath from
-    , "Move this worker"
-    , askInputs pid "Move to"
-        [ ( AskPath tgt
-          , "Move here"
-          , do setThe (board % mapPathWorkers % at from) Nothing
-               setThe (board % mapPathWorkers % at tgt) (Just (pid :-> w))
-               doLogBy' pid [T "Moved", W (pid :-> w), T "from", PID from, T "to", PID tgt]
-               doMoves (steps - takenSteps)
-          )
-        | (tgt, takenSteps) <- tgts
-        ]
-    )
-
-  doMoves steps =
-    do ws <- getWorkers
-       opts <- catMaybes <$> forM ws \(w,loc) ->
-         do opts <- canMoveWorker w loc steps
-            if null opts
-              then pure Nothing
-              else pure (Just (w,loc,opts))
-
-       askInputsMaybe_ pid "Move worker" $
-         endMove :
-         [ case loc of
-             Left cid  -> moveCityWorker steps w cid tgts
-             Right eid -> movePathWorker steps w eid tgts
-         | (w,loc,tgts) <- opts
-         ]
-
   buildHouses =
-    do ws <- getWorkers
+    do ws <- doGetWorkers pid
        layout <- the (board % mapLayout)
        let cities = Set.fromList [ cid | (_,Right eid) <- ws
                                        , cid <- pathCities layout eid ]

@@ -62,9 +62,7 @@ countRegions pid b = sum . map presentIn <$> citiesInRegion (b ^. mapLayout)
 
 -- | What resource to count salt 
 saltSpecialist :: [Resource] -> Maybe Resource
-saltSpecialist have = listToMaybe [ r | r <- rs, r `elem` have ]
-  where
-  rs = [ Cloth, Wine, Tool, Wheat, Brick ]
+saltSpecialist have = listToMaybe [ r | r <- normalResources, r `elem` have ]
 
 vesta :: PlayerState -> Int
 vesta ps = div (goods + ps ^. playerMoney) 10

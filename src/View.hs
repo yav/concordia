@@ -152,7 +152,7 @@ playerView viewBy pid gs s = (vi, (pid, godVal))
   visible = viewBy == pid || openInfo
   thisVal = if visible then godVal False else noVal False
   allGods = [ Vesta, Jupiter, Saturnus, Venus, Mercurius, Mars ] ++
-            [ Minerva g | g <- [ Brick, Wheat, Tool, Wine, Cloth ] ]
+            [ Minerva g | g <- normalResources ]
   vi = PlayerView
     { player = pid
     , discardTop = thisVal <$> listToMaybe (s ^. playerDiscard)
