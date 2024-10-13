@@ -191,27 +191,36 @@ actPrefect pid =
               do doLogBy' pid [T "Use as Diplomat (Sextus Pompeius)"]
                  actDiplomat pid)
            | sextus ]
+     (done,moneyOpts) <- getMoneyOpt
      askInputsMaybe_ pid "Choose a province to Prefect" $
-        extra ++
+        moneyOpts ++ extra ++
         [ ( AskRegion r
           , "Prefect this province"
-          , do done <- the (board % mapPrefected)
-               if r `elem` done then getMoney done else getGoods r
+          , getGoods r
           )
-        | r <- Set.toList regs
+        | r <- Set.toList regs, r `notElem` done
         ]
   where
-  getMoney done =
-    do bonuses <- the (board % mapRegionBonus)
-       let fromRegion r =
-             fromMaybe 0
-             do bonus <- Map.lookup r bonuses
-                pure (bonus ^. rbMoney)
-       extra <- the (board % mapExtraMoneyBonus)
-       let amt = sum (map fromRegion done) + extra
-       doChangeMoney pid amt
-       doLogBy' pid [T "Gained", tSh amt, M, T "from Prefect"] 
-       setThe (board % mapPrefected) []
+  getMoneyOpt =
+    do done <- the (board % mapPrefected)
+       if null done then pure ([],[]) else
+         do bonuses <- the (board % mapRegionBonus)
+            let fromRegion r =
+                  fromMaybe 0
+                  do bonus <- Map.lookup r bonuses
+                     pure (bonus ^. rbMoney)
+            extra <- the (board % mapExtraMoneyBonus)
+            let amt = sum (map fromRegion done) + extra
+            let lab = Text.pack (show amt ++ "[Money]")
+            pure
+              ( done
+              , [ ( AskText lab, "Prefect for money"
+                  , do doChangeMoney pid amt
+                       doLogBy' pid [T "Gained", tSh amt, M, T "from Prefect"] 
+                       setThe (board % mapPrefected) []
+                  )
+                ])
+            
 
   getPrefectBonus r =
     do rbs <- the (board % mapRegionBonus)

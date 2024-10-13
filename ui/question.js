@@ -45,7 +45,8 @@ class Question {
 
   button(q) {
     const dom = uiFromTemplate("question-text")
-    dom.textContent = q.chChoice.contents
+    const txt = new LogText(dom)
+    txt.set(q.chChoice.contents)
     this.temporary(dom,q)
     return dom
   }
