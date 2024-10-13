@@ -237,7 +237,9 @@ actPrefect pid =
              amt' <- if pid == pm
                          then
                            do order <- the playerOrder
-                              setThe playerDoubleBonus (playerBefore order pid)
+                              let newPM@(PlayerId who) = playerBefore order pid
+                              setThe playerDoubleBonus newPM
+                              doLog (who <> " is the new Prefctus Magnus")
                               pure 2
                          else pure 1
              donatus <- hasForumTile pid Donatus
