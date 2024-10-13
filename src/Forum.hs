@@ -64,14 +64,18 @@ actJulius pid =
   do doLogBy' pid [T "Julius"]
      doMoveWorkers pid
 
-actNumerius :: PlayerId -> Interact ()
-actNumerius pid =
+countProvincesWithPresence :: PlayerId -> Interact Int
+countProvincesWithPresence pid =
   do brd <- the board
      let static = brd ^. mapLayout
          houses c = Map.findWithDefault [] c (brd ^. mapHouses)
          hasHouseIn c = pid `elem` houses c
-         add tot cities = if any hasHouseIn cities then 2 + tot else tot
-         earnings = Map.foldl' add 0 (citiesInRegion static)
+         add tot cities = if any hasHouseIn cities then 1 + tot else tot
+     pure (Map.foldl' add 0 (citiesInRegion static))
+
+actNumerius :: PlayerId -> Interact ()
+actNumerius pid =
+  do earnings <- (2 *) <$> (countProvincesWithPresence pid)
      doChangeMoney pid earnings
      doLogBy' pid [T "Earned", tSh earnings, M, T " (Numerius)"]
 
@@ -91,3 +95,35 @@ actAugustuts pid = doConvertResourceToSalt "Augustus" pid 1 2
 actLaurentius :: PlayerId -> Interact ()
 actLaurentius pid =
   doGainResources (Just "Laurentius") pid (bagFromList [Brick,Wheat])
+
+actCommodus ::PlayerId -> Interact ()
+actCommodus pid =
+  do n <- countProvincesWithPresence pid
+     doGainResources (Just "Commodus") pid (bagFromNumList [(Tool,div n 3)])
+
+actPublius :: PlayerId -> Interact ()
+actPublius pid =
+  do ps <- the (playerState pid)
+     let money = ps ^. playerMoney
+         ws    = map fst (bagToNumList (ps ^. playerWorkersForHire ))
+     tgts  <- colonistBuildTargets pid
+     act money (colonistWorkerTargets tgts ws)
+
+  where
+  cost = 5
+  act money tgts
+    | money < cost  = doLogBy' pid [T "Insufficient funds for Publius"]
+    | all null tgts = doLogBy' pid [T "No valid cities for Publius"]
+    | otherwise =
+       askInputsMaybe_ pid "Choose worker to deploy" $
+       [ (AskWorker w, "Deploy worker",buildWorker tgt) | tgt@(w,_) <- tgts ]
+      where
+      buildWorker (w,cities) =
+        askInputsMaybe_ pid "Choose deployment city"
+           [ ( AskCity city
+             , "Deploy here"
+             , doBuildWorker pid w city [bagEmpty]
+             )
+           | city <- cities ]
+
+

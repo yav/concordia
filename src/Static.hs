@@ -5,7 +5,8 @@ import Data.Maybe(fromMaybe)
 import Data.Text(Text)
 import Data.Map(Map)
 import Data.Map qualified as Map
-import Data.Set
+import Data.Set(Set)
+import Data.Set qualified as Set
 import Optics
 import Data.Aeson(ToJSON,FromJSON(parseJSON),(.:),ToJSONKey,FromJSONKey)
 import Data.Aeson qualified as JS
@@ -57,6 +58,16 @@ mapCityPaths w layout =
     , path ^. pathWorker == w
     , conn <- [ (path ^. pathFrom, [pathId]), (path ^. pathTo,[pathId]) ]
     ]
+
+-- What workers can be built in a city
+cityAccepts :: MapLayout -> Worker -> CityId  -> Bool
+cityAccepts layout = \w cid -> cid `Set.member` citiesFor w
+  where
+  citiesFor w = Map.findWithDefault mempty w cached 
+  cached = Map.fromList [ (w,setFor w) | w <- [ Person,Ship] ]
+  setFor w = Map.keysSet
+           $ Map.filter (not . null) 
+           $ mapCityPaths w layout
 
 citiesInRegion :: MapLayout -> Map RegionId [CityId]
 citiesInRegion layout =

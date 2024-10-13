@@ -1,8 +1,8 @@
 module Play where
 
 import Data.Text qualified as Text
-import Control.Monad(when,unless,forM,guard)
-import Data.Maybe(fromMaybe,catMaybes,mapMaybe)
+import Control.Monad(when,unless,guard)
+import Data.Maybe(fromMaybe,mapMaybe)
 import Data.Map qualified as Map
 import Data.Set qualified as Set
 import Data.List(foldl')
@@ -149,43 +149,36 @@ actColonistTax pid =
 actColonistSettle :: PlayerId -> Interact ()
 actColonistSettle pid =
   do doLogBy pid "Settle Colonist"
-     (pays,ws)   <- canBuildWorker pid
-     tgts <- getBuildTargets
-     case (ws,tgts) of
-       ([],_) -> doLogBy' pid [T "Has on workers they can afford"]
+     (pays,ws) <- canBuildWorker pid
+     tgts <- colonistBuildTargets pid
+     let tgtsFor = colonistWorkerTargets tgts
+     let cityTgts = tgtsFor ws
+     case (ws,cityTgts) of
+       ([],_) -> doLogBy' pid [T "Has no workers they can afford"]
        (_,[]) -> doLogBy' pid [T "Has no cities they can deploy in"]
        _ -> pure ()
-     doAction tgts pays ws pass
+     doAction tgtsFor pays cityTgts pass
   where
-  getBuildTargets =
-    do brd <- the board
-       let capital = brd ^. mapLayout % mapStartCity
-       let ours = [ city | (city,ps) <- Map.toList (brd ^. mapHouses)
-                         , pid `elem` ps ]
-       pure (capital : ours)
-
   pass =
     ( AskText "End turn"
     , "No more deployments"
     , pure ()
     )
 
-  doAction tgts pays ws otherOpt =
+  doAction tgtsFor pays ws otherOpt =
      askInputsMaybe_ pid "Choose worker to deploy" $
-       [ (AskWorker w, "Deploy worker", buildWorker tgts w pays)
-       | w <- ws ] ++ [otherOpt]
+       [ (AskWorker w, "Deploy worker", buildWorker tgtsFor wts pays)
+       | wts@(w,_) <- ws ] ++ [otherOpt]
 
-  buildWorker tgts w pays =
-    do paths <- mapCityPaths w <$> the (board % mapLayout)
-       let suitable = not . null . flip (Map.findWithDefault []) paths
-       askInputsMaybe_ pid "Choose deployment city"
-          [ ( AskCity city
-            , "Deploy here"
-            , do doBuildWorker pid w city pays 
-                 (newPays,newWs) <- canBuildWorker pid
-                 doAction tgts newPays newWs pass
-            )
-          | city <- tgts, suitable city ]
+  buildWorker tgtsFor (w,cities) pays =
+    askInputsMaybe_ pid "Choose deployment city"
+       [ ( AskCity city
+         , "Deploy here"
+         , do doBuildWorker pid w city pays 
+              (newPays,newWs) <- canBuildWorker pid
+              doAction tgtsFor newPays (tgtsFor newWs) pass
+         )
+       | city <- cities ]
 
 
 

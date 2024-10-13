@@ -6,7 +6,7 @@ import Data.Maybe(fromMaybe,isJust,catMaybes)
 import Data.List(nub,partition)
 import Data.Map qualified as Map
 import Data.Set qualified as Set
-import Control.Monad(when,forM)
+import Control.Monad(when,unless,forM)
 import Optics
 import KOI.Basics
 import KOI.Bag
@@ -144,6 +144,28 @@ canBuildWorker pid =
          canPay = canAfford' (map Resource workerCost) resources
      pure (canPay, [ w | not (null canPay), w <- [Person,Ship], hasW w ])
 
+
+colonistWorkerTargets :: 
+ (Worker -> [CityId]) {- ^ Wher we can place workers -} -> 
+ [Worker] {- ^ What workers we have -} ->
+ [(Worker,[CityId])]
+colonistWorkerTargets citiesFor ws =
+  [ (w,cs)
+  | w <- ws
+  , let cs = citiesFor w
+  , not (null cs)
+  ]
+
+colonistBuildTargets :: PlayerId -> Interact (Worker -> [CityId])
+colonistBuildTargets pid =
+  do brd <- the board
+     let static  = brd ^. mapLayout
+         supports = cityAccepts static
+     let capital = static ^. mapStartCity
+     let ours = [ city | (city,ps) <- Map.toList (brd ^. mapHouses)
+                       , pid `elem` ps ]
+     pure (\w -> filter (supports w) (capital : ours))
+
 -- | Compute various ways in which a player can pay a cost.
 -- If the result is empty, then they can't affor this.
 canAfford :: PlayerId -> [ResourceCost] -> Interact [Bag Resource]
@@ -179,7 +201,7 @@ doPayCost :: PlayerId -> [Bag Resource] -> Interact ()
 doPayCost pid opts0
   | null opts0 = pure ()  -- they can't afford it, give it for free :-)
   | otherwise = 
-    do doLogBy' pid [T "Paid"]
+    do unless (any bagIsEmpty opts0) (doLogBy' pid [T "Paid"])
        go opts0
   where
   go opts
