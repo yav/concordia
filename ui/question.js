@@ -68,6 +68,7 @@ class Question {
 class TurnIndicator {
   constructor() {
     this.indicator = new Toggle(uiGet("turn-indicator"),"hidden")
+    this.icon = uiGet("icon")
     this.disappearing = null
   }
 
@@ -76,6 +77,7 @@ class TurnIndicator {
     this.disappearing = setTimeout(() => {
        this.disappearing = null
        this.indicator.set(false)
+       this.icon.setAttribute("href","icons/c.gif")
        
     }, 200)
   }
@@ -83,6 +85,7 @@ class TurnIndicator {
   show() {
     if (this.disappearing !== null) clearTimeout(this.disappearing)
     this.indicator.set(true)
+    this.icon.setAttribute("href","icons/attention.gif")
     this.disappearing = null
   }
 }
