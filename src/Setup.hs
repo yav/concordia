@@ -4,7 +4,7 @@ import Data.Maybe(fromMaybe)
 import Data.List(partition)
 import Data.Map(Map)
 import Data.Map qualified as Map
-import Data.Set qualified as Set
+-- import Data.Set qualified as Set
 import Optics
 import KOI.Basics
 import KOI.Bag
@@ -78,7 +78,7 @@ setupPlayer cfg turnOrder = PlayerState
   , _playerHand           = cfgPlayerCards cfg
   , _playerDiscard        = []
   , _playerResourceLimit  = cfgResourceLimit cfg
-  , _playerForumTiles     = Set.fromList [minBound..maxBound]
+  , _playerForumTiles     = mempty -- Set.fromList [minBound..maxBound]
   }
 
 setupBoard :: Config -> Gen BoardState
