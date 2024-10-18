@@ -56,13 +56,15 @@ class NoBonus extends Const {
   setSize() { this.board.setDim(this.dom,[32,32]) }
 }
 
-class Money extends Text {
+class Money {
   constructor(owner, board) {
-    const dom = uiFromTemplate("gain-money")
-    super(dom, true)
+    const [dom,els] = uiFromTemplateNested("gain-money")
+    this.lab = new Text(els.lab, false)
     owner.appendChild(dom)
     this.board = board
     this.dom = dom
   }
   setSize() { this.board.setDim(this.dom,[32,32]) }
+  destroy() { this.lab.destroy(); this.dom.remove() }
+  set(x) { this.lab.set(x) }
 }

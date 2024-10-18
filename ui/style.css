@@ -422,7 +422,13 @@ body {
 .concordia { background-image: url("icons/concordia.svg"); }
 .any   { background-image: url("icons/blank.svg"); }
 
-
+.resource-icon .label {
+  color: black;
+  font-weight: bold;
+  background: radial-gradient(#ffcc 10%,#fff3);
+  height: 100%;
+  width: 100%;
+}
 
 
 .player {
