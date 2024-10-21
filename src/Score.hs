@@ -62,7 +62,7 @@ countRegions pid b = sum . map presentIn <$> citiesInRegion (b ^. mapLayout)
 
 -- | What resource to count salt 
 saltSpecialist :: [Resource] -> Maybe Resource
-saltSpecialist have = listToMaybe [ r | r <- normalResources, r `elem` have ]
+saltSpecialist have = listToMaybe [ r | r <- reverse normalResources, r `elem` have ]
 
 vesta :: PlayerState -> Int
 vesta ps = div (goods + ps ^. playerMoney) 10
@@ -91,10 +91,10 @@ mars pid b = 2 * (inCities + onPaths)
   count ba = sum [ n | (p,n) <- bagToNumList ba, isUs p ]
 
 specialist :: Resource -> Maybe Resource -> Map Resource Int -> Int
-specialist r withSalt cities = val * (res r + fromSalt)
+specialist r salt cities = val * (res r + fromSalt)
   where
   res x    = Map.findWithDefault 0 x cities
-  fromSalt = if withSalt == Just r then res Salt else 0
+  fromSalt = if salt == Just r then res Salt else 0
 
   val = case r of
           Cloth -> 5
