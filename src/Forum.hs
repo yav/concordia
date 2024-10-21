@@ -59,6 +59,10 @@ doConvertResourceToSalt who pid count tot
 titusBonus :: PlayerId -> Interact ()
 titusBonus pid = doConvertResourceToSalt "Titus Valerius" pid 1 1
 
+
+-- Citizen actions
+
+
 actJulius :: PlayerId -> Interact ()
 actJulius pid =
   do doLogBy' pid [T "Julius"]
@@ -96,11 +100,6 @@ actLaurentius :: PlayerId -> Interact ()
 actLaurentius pid =
   doGainResources (Just "Laurentius") pid (bagFromList [Brick,Wheat])
 
-actCommodus ::PlayerId -> Interact ()
-actCommodus pid =
-  do n <- countProvincesWithPresence pid
-     doGainResources (Just "Commodus") pid (bagFromNumList [(Tool,div n 3)])
-
 actPublius :: PlayerId -> Interact ()
 actPublius pid =
   do ps <- the (playerState pid)
@@ -127,3 +126,35 @@ actPublius pid =
            | city <- cities ]
 
 
+actTiberius :: PlayerId -> Interact ()
+actTiberius pid =
+  do brd <- the board
+     let bonuses = brd ^. mapRegionBonus
+         done    = brd ^. mapPrefected
+         opts    = Map.toList (Map.filterWithKey (\k _ -> k `notElem` done) bonuses)
+     askInputsMaybe_ pid "Gain bonus (Tiberius)"
+       [ ( AskRegion reg
+         , "Gain bonus for this region"
+         , askInputsMaybe_ pid "Choose resource"
+            [ ( AskTextResource "Gain" r
+              , "Gain this resource"
+              , doGainResources (Just "Tiberius") pid (bagFromNumList [(r,1)])
+              )
+            | r <- rs
+            ]
+         ) 
+       | (reg,bon) <- opts
+       , let rs = bonRes (bon ^. rbResource)
+       , not (null rs)
+       ]
+  where
+  bonRes bon =
+    case bon of
+      NoBonus -> []
+      VariableBonus -> normalResources
+      ResourceBonus r -> [r]
+
+actCommodus ::PlayerId -> Interact ()
+actCommodus pid =
+  do n <- countProvincesWithPresence pid
+     doGainResources (Just "Commodus") pid (bagFromNumList [(Tool,div n 3)])

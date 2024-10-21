@@ -69,6 +69,12 @@ doAddCards pid cs = updateThe_ (playerState pid % playerHand) (cs ++)
 hasForumTile :: PlayerId -> ForumTile -> Interact Bool
 hasForumTile pid t = isJust <$> the (playerState pid % playerForumTiles % at t)
 
+hasForumTileNum :: PlayerId -> ForumTile -> Interact (Maybe Int)
+hasForumTileNum pid t =
+  do ts <- the (playerState pid % playerForumTiles)
+     pure (lookup t (zip (Set.toList ts) [0..]))
+
+
 doDiscardForumTile :: PlayerId -> ForumTile -> Interact ()
 doDiscardForumTile pid t =
   do updateThe_ (playerState pid % playerForumTiles) (Set.delete t)

@@ -310,6 +310,14 @@ actConsul ignore pid =
   do doLogBy' pid [T "Consul"]
      doPickCards pid 1 ShopConsul ignore
 
+data BuildState = BuildState
+  { archBuilt    :: Bool
+  , archAnnelius :: Bool
+  , archMamilius :: Bool
+  , archMamericus :: Bool
+  , archMarcus   :: Bool
+  }
+
 actArchitect :: PlayerId -> Interact ()
 actArchitect pid =
   do doLogBy' pid [T "Architect"]
@@ -346,7 +354,7 @@ actArchitect pid =
                 r             <- Map.lookup cid prod
                 (money, cost) <- Map.lookup r cityCosts
                 let baseCost = money * (1 + houses)
-                pure (if aulus then (True, baseCost - 1) else (False,baseCost), map Resource cost)
+                pure (r, if aulus then (True, baseCost - 1) else (False,baseCost), cost)
       
 
        let cityOpts useAdj built =
@@ -356,19 +364,39 @@ actArchitect pid =
               | (cid,adj) <- if useAdj then adjPaths ++ ours else ours
               , Just cost <- [canBuild built cid]
               ]
-       buildHouse annaeus cityOpts
+       let s = BuildState { archBuilt = False, archAnnelius = annaeus
+                          , archMarcus = False, archMamilius = False, archMamericus = False }
+       buildHouse s cityOpts
 
 
   endBuild = (AskText "End Turn", "No more houses", pure ())
 
-  buildHouse adj cityOpts =
+
+  checkCitizen grd tile act =
+    do mb <- hasForumTileNum pid tile
+       pure
+        case mb of
+           Nothing -> []
+           Just n ->
+             [ (AskHandForum n, "Use " <> Text.pack (show tile), doDiscardForumTile pid tile >> act)
+             | grd ]
+
+  buildHouse s cityOpts =
     do houses    <- the (playerState pid % playerHousesToBuild)
        built     <- the (board % mapHouses)
        resources <- the (playerState pid % playerResources)
        money     <- the (playerState pid % playerMoney)
+       mamercusOpts   <- checkCitizen True Mamercus (buildHouse s { archMamericus = True } cityOpts)
+       marcusOpts     <- checkCitizen True Marcus (buildHouse s { archMarcus = True } cityOpts)
+       mamiliusOpts   <- checkCitizen (not (archBuilt s)) Mamilius
+                            (buildHouse s { archMamilius = True } cityOpts)
+       salt           <- the withSalt
 
        askInputs pid "Build houses" $
          endBuild :
+         mamiliusOpts ++
+         mamercusOpts ++
+         marcusOpts ++
          [ ( AskCity cid
            , "Build house here."
            , do doChangeMoney pid (- moneyCost)
@@ -378,11 +406,24 @@ actArchitect pid =
                 updateThe_ (board % mapHouses % at cid) (Just . (pid :) . fromMaybe [])
                 doLogBy' pid ([T "Built in", CID cid] ++
                                             [T "(Annaeus Arcadius)" | useAdj])
-                buildHouse (adj && not useAdj) cityOpts
+                let s1 = BuildState
+                           { archBuilt = True
+                           , archMamilius = archMamilius s
+                           , archMarcus = False
+                           , archMamericus = False
+                           , archAnnelius = archAnnelius s && not useAdj
+                           }
+                buildHouse s1 cityOpts
            )
          | houses >= 1
-         , ((cid,((discount,moneyCost),rCost)),useAdj) <- cityOpts adj built
+         , ((cid,(r, (discount,moneyCost'),rCost')),useAdj) <- cityOpts (archAnnelius s) built
+         , not (archMarcus s) || not salt || r == Salt
+         , let moneyCost = if archMamericus s || archMarcus s then 0 else moneyCost'
          , money >= moneyCost
+         , let rCost'' | archMarcus s = [Tool]
+                       | archMamilius s = filter (/= Brick) rCost'
+                       | otherwise = rCost'
+         , let rCost = map Resource rCost''
          , let cost = canAfford' rCost resources
          , not (null cost)
          ]
