@@ -135,8 +135,13 @@ class CardAction {
         push("li"); text("All provinces switch to resource"); pop()
         pop()
         break
+
       case "Senator":
         text("Buy up to 2 cards from the market")
+        break
+
+      case "Consul":
+        text("Buy 1 card from the market, without paying the additional market cost.")
         break
 
       case "Architect":
@@ -219,7 +224,8 @@ class CardType {
     if (this.val !== null) dom.classList.remove(this.val.tag.toLowerCase())
     this.val = x
     dom.classList.add(x.tag.toLowerCase())
-    lab.textContent = x.tag.replaceAll("u","v")
+    lab.textContent = x.tag === "Minerva"? x.contents
+                                         : x.tag.replaceAll("u","v")
     this.setHelp()
   }
 
