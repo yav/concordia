@@ -114,7 +114,7 @@ deck3 isBase
 deck4 isBase
   | isBase = architect : common
   | otherwise = architectMercator : common
-  where common = [architect, colonist, prefect, consul, diplomat4]
+  where common = [ colonist, prefect, consul, diplomat4]
 
 deck5 _isBase = [ advMercator, prefect, consul, diplomat5]
 
