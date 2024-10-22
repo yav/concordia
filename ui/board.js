@@ -127,14 +127,13 @@ class BoardMap {
     // The JSON data is on image which has been scaled
     // to fit in 1920x1080
     const r = this.img.width / this.img.height // r * h = w    
-    const normW1 = r * 1080
     let normW = 1920
     let normH = normW / r
     if (normH > 1080) {
       normH = 1080
       normW = r * normH
     }
-    const actualW = 0.8 * document.body.clientWidth
+    const actualW = uiGet("board").clientWidth
     const actualH = actualW / r
     this.img.style.width = "100%"
     this.scaleX = actualW / normW
