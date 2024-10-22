@@ -5,6 +5,7 @@ class GUI {
     this.quest            = new Question
     this.question         = new Text(uiGet("question"),false)
     this.board            = new Board()
+    this.attention        = new Attention()
     this.components = new Record({
       playerInfo: new List(() => new Player(playerContainer)),
       hand: new List(() => new Card(handContainer)),
@@ -24,6 +25,7 @@ class GUI {
     await this.board.set(obj.boardInfo)
     this.components.set(obj)
     this.version.set("version: " + obj.version)
+    this.attention.set(obj.attention)
   }
 
   destroy() {
@@ -95,5 +97,19 @@ function monitorSize(gui) {
   window.onresize = () => {
     if (timeout !== null) clearTimeout(timeout)
     timeout = setTimeout(() => gui.resize(), 500)
+  }
+}
+
+class Attention {
+  constructor() {
+    this.sound = uiGet("ding")
+    this.val = false
+  }
+  destroy() {}
+  set(x) {
+    if (!this.val && x) {
+      this.sound.play()
+    }
+    this.val = x
   }
 }

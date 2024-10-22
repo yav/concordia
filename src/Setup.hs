@@ -62,7 +62,10 @@ setupGame cfg0 =
        , _withSalt     = cfgUseSalt cfg
        , _forumSetup   = cfgUseForum cfg
        , _rng          = rgen
+       , _lastQuestion = Nothing
+       , _curQuestion  = Nothing
        }
+
 
 
 

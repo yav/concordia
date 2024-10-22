@@ -6,7 +6,7 @@ import Data.Text(Text)
 import KOI.Basics(PlayerId(..),WithPlayer(..))
 import KOI.Interact hiding (Interact,askInputsMaybe_,askInputs,askInputsMaybe,choose,chooseMaybe)
 import KOI.Interact qualified as I
-import State ( GameState )
+import State ( GameState, lastQuestion, curQuestion )
 import Question ( Question )
 import View ( stateView, View )
 
@@ -19,17 +19,24 @@ sync =
      update (SetState s)
      save
 
+doQ :: PlayerId -> Interact ()
+doQ pid =
+  do q <- the curQuestion
+     setThe lastQuestion q
+     setThe curQuestion (Just pid)
+     sync
+
 askInputsMaybe_ ::
   PlayerId -> Text -> [(Question,Text,Interact ())] -> Interact ()
 askInputsMaybe_ pid@(PlayerId name) txt opts =
-  sync >>
+  doQ pid >>
   I.askInputsMaybe_ (name <> ": " <> txt)
     [ (pid :-> q,lab,act) | (q,lab,act) <- opts ] 
 
 askInputsMaybe ::
   PlayerId -> Text -> [(Question,Text,Interact a)] -> Interact (Maybe a)
 askInputsMaybe pid@(PlayerId name) txt opts =
-  sync >>
+  doQ pid >>
   I.askInputsMaybe (name <> ": " <> txt)
     [ (pid :-> q,lab,act) | (q,lab,act) <- opts ] 
 
@@ -37,7 +44,7 @@ askInputsMaybe pid@(PlayerId name) txt opts =
 askInputs ::
   PlayerId -> Text -> [(Question,Text,Interact a)] -> Interact a
 askInputs pid@(PlayerId name) txt opts =
-  sync >>
+  doQ pid >>
   I.askInputs (name <> ": " <> txt)
     [ (pid :-> q,lab,act) | (q,lab,act) <- opts ] 
 

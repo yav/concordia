@@ -24,6 +24,7 @@ data GameState = GameState
   , _withSalt     :: !Bool
   , _forumSetup   :: !Bool
   , _rng          :: !RNG
+  , _lastQuestion, _curQuestion :: !(Maybe PlayerId)
   }
 
 data PlayerState = PlayerState

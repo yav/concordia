@@ -28,6 +28,7 @@ data View = View
   , logMessages :: [[LogWord]]
   , finished :: [(PlayerId,PlayerScore)]
   , version :: Text
+  , attention :: Bool
   } deriving (Generic,ToJSON)
 
 type CardView = CardG (God,Int)
@@ -101,6 +102,9 @@ stateView pid s = View
                                        (map totalScore pvs)
                  _ -> []
   , version = V.version
+  , attention = case s ^. curQuestion of
+                  Just p -> p == pid && Just pid /= (s ^. lastQuestion)
+                  Nothing -> False
   }
   where
   settingUpForum = s ^. forumSetup
