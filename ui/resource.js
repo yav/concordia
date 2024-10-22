@@ -66,7 +66,6 @@ class WildCost extends Const {
     dom.setOwner(owner)
     super(dom)
     this.dom = dom
-    dom.textContent = "?"
     dom.setTitle("Any resource")
   }
 

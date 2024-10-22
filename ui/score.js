@@ -3,11 +3,12 @@ class FinalScore extends List {
     const dom = uiGet("final-score") 
     super (() => new FinalScorePlayer(dom))
     this.visible = new Toggle(dom,"hidden")
-    uiGet("final-score-container").appendChild(dom)
+    this.hand = new Toggle(uiGet("hand"),"hidden")
   }
   set(xs) {
     const val = xs === null? [] : xs
     this.visible.set(val.length > 0)
+    this.hand.set(val.length === 0)
     super.set(val)
   }
 }
