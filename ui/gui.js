@@ -102,13 +102,29 @@ function monitorSize(gui) {
 
 class Attention {
   constructor() {
-    this.sound = uiGet("ding")
+    this.ding = uiGet("ding")
+    this.sound = uiGet("sound-control")
     this.val = false
+
+    this.enabled = true
+    this.update_sound = () => {
+      this.enabled = !this.enabled
+      const [remove,add] = this.enabled? ["sound_off","sound_on" ]
+                                       : ["sound_on", "sound_off"]
+      this.sound.classList.remove(remove)
+      this.sound.classList.add(add)
+    }
+    this.update_sound()
+    this.sound.addEventListener("click", this.update_sound)
   }
-  destroy() {}
+
+  destroy() {
+    this.sound.removeEventListener("click", this.update_sound)
+  }
+
   set(x) {
-    if (!this.val && x) {
-      this.sound.play()
+    if (this.enabled && !this.val && x) {
+      this.ding.play()
     }
     this.val = x
   }
