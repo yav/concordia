@@ -70,6 +70,7 @@ class TurnIndicator {
     this.indicator = new Toggle(uiGet("turn-indicator"),"hidden")
     this.icon = uiGet("icon")
     this.disappearing = null
+    this.spin = null
   }
 
   hide() {
@@ -77,15 +78,27 @@ class TurnIndicator {
     this.disappearing = setTimeout(() => {
        this.disappearing = null
        this.indicator.set(false)
-       this.icon.setAttribute("href","icons/c.gif")
-       
+       if (this.spin !== null) {
+        clearTimeout(this.spin)
+        this.spin = null
+       }
+       this.icon.setAttribute("href","icons/c.gif")    
     }, 200)
   }
 
   show() {
-    if (this.disappearing !== null) clearTimeout(this.disappearing)
+    if (this.disappearing !== null) {
+      clearTimeout(this.disappearing)
+      this.disappearing = null
+    }
+    if (this.spin !== null) return
     this.indicator.set(true)
-    this.icon.setAttribute("href","icons/attention.gif")
-    this.disappearing = null
+    let frame = 0
+    const next = () => {
+      frame = (frame + 1) % 4
+      this.icon.setAttribute("href","icons/c_" + frame + ".png")
+      this.spin = setTimeout(next, 1000)
+    }
+    next()
   }
 }
